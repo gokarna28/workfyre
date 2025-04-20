@@ -25,17 +25,6 @@
             <h1 class="text-3xl font-bold">Workfyre</h1>
         </div>
         <div class="flex items-center w-1/2 pl-70 gap-5 justify-right">
-            <div class="md:gap-4 gap-0 w-full">
-                <ul>
-                    <li class="flex items-center gap-0 md:gap-4 font-medium">
-                        <span
-                            class="rounded-full font-medium border border-slate-300 items-center justify-center">
-                            <i class="fa-solid fa-plus text-xl text-blue-500 p-4"></i>
-                        </span>
-                        <h2 class="text-xl hidden md:block">Create Projects</h2>
-                    </li>
-                </ul>
-            </div>
             <div class="w-full">
                 <ul class="flex items-center justify-center gap-5">
                     <li class="flex items-center gap-4 font-medium">

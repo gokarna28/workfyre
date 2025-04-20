@@ -13,7 +13,7 @@
 <header
         class="bg-transparent px-10 py-4 flex items-center justify-between z-2 w-full top-0">
         <div class="w-1/2">
-            <h1 class="text-3xl font-bold">Workfyre</h1>
+           <a href="index.php" ><h1 class="text-3xl font-bold">Workfyre</h1></a>
         </div>
         <div>
             nav bar

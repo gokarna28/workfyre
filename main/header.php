@@ -13,9 +13,7 @@
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.5/dist/js/bootstrap.min.js"
-        integrity="sha384-VQqxDN0EQCkWoxt/0vsQvZswzTHUVOImccYmSyhJTp7kGtPed0Qcx8rK9h9YEgx+"
-        crossorigin="anonymous"></script>
+
 </head>
 
 <body>
@@ -24,8 +22,13 @@
         <div class="w-1/2">
             <h1 class="text-3xl font-bold">Workfyre</h1>
         </div>
-        <div class="flex items-center w-1/2 pl-70 gap-5 justify-right">
+        <div class="flex items-center w-full gap-5 justify-between">
+            <div class="bg-slate-200 rounded-full py-2 px-4 w-full">
+                <i class="fa-solid fa-magnifying-glass mr-2"></i>
+                <input type="text" name="search" placeholder="Search here" class="outline-none" />
+            </div>
             <div class="w-full">
+
                 <ul class="flex items-center justify-center gap-5">
                     <li class="flex items-center gap-4 font-medium">
                         <span

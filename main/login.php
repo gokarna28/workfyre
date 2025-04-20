@@ -23,7 +23,7 @@
         </div>
         <div>
             <div class="flex flex-col justify-center gap-5 mb-5">
-                <a href="forgot-password.php">Forgot password?</a>
+                <a href="send-otp.php">Forgot password?</a>
                 <button type="submit" class="hover:bg-stone-900 hover:text-white text-xl font-medium border px-4 py-2 rounded-full">Login</button>
             </div>
             <div>

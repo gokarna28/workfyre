@@ -6,9 +6,10 @@
     <h2>Project Name</h2>
     <p class="mb-5">Short description will be placed here</p>
 
-    <div class="w-full flex items-center justify-between">
+    <div class="w-full flex items-center justify-between mb-10">
         <ul class="flex items-center w-1/2 border-b border-slate-300">
-            <li class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4"><span><i class="fa-solid fa-chart-bar"></i></span>Board</li>
+            <li class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4"><span><i
+                        class="fa-solid fa-chart-bar"></i></span>Board</li>
             <li class="mr-10 text-lg pb-4"><span><i class="fa-regular fa-file"></i></span>Files</li>
             <li class="mr-10 text-lg pb-4"><span><i class="fa-solid fa-users"></i></span>Team</li>
         </ul>
@@ -18,6 +19,104 @@
                 <i class="fa-solid fa-plus"></i>
                 <p class="text-lg font-medium">New Task</p>
             </button>
+        </div>
+    </div>
+    <div class="grid grid-cols-3 gap-4">
+        <!-- To Do Column -->
+        <div class="bg-white rounded shadow p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">To Do</h2>
+                <button
+                    class="add-task-btn text-sm px-2 py-1 bg-gray-100 hover:bg-gray-200 border border-slate-300 rounded hover:bg-blue-600"
+                    data-target="todo">+ Add</button>
+            </div>
+            <div id="todo" class="task-column space-y-3 min-h-[200px]">
+
+            </div>
+        </div>
+
+        <!-- In Progress Column -->
+        <div class="bg-white rounded shadow p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">In Progress</h2>
+                <button class="add-task-btn text-sm px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    data-target="inprogress">+ Add</button>
+            </div>
+            <div id="inprogress" class="task-column space-y-3 min-h-[200px]">
+
+            </div>
+        </div>
+
+        <!-- Done Column -->
+        <div class="bg-white rounded shadow p-4">
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-semibold">Done</h2>
+                <button class="add-task-btn text-sm px-2 py-1 bg-sky-500 text-white rounded hover:bg-sky-600"
+                    data-target="done">+ Add</button>
+            </div>
+            <div id="done" class="task-column space-y-3 min-h-[200px]">
+
+            </div>
+        </div>
+    </div>
+    <!-- Modal -->
+    <div id="taskModal" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-50">
+        <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">
+            <h3 class="text-xl font-semibold mb-4">Add Task</h3>
+            <div>
+                <label>Title:</label>
+                <input type="text" id="task_title" class="w-full border p-2 rounded mb-4 border border-slate-300"
+                    placeholder="Task title">
+            </div>
+            <div class="flex items-center w-full gap-5">
+                <div class="w-1/2">
+                    <label>priority:</label>
+                    <select id="task_priority" class="w-full border p-2 rounded mb-4 border border-slate-300">
+                        <option value="high">High</option>
+                        <option value="medium">Medium</option>
+                        <option value="low">Low</option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <label>Deadline:</label>
+                    <input type="date" id="task_deadline" class="w-full border p-2 rounded mb-4 border border-slate-300"
+                        placeholder="Task title">
+                </div>
+            </div>
+            <div class="flex items-center w-full gap-5">
+                <div class="w-1/2">
+                    <label>Dependencies:</label>
+                    <select id="task_dependencies" class="w-full border p-2 rounded mb-4 border border-slate-300">
+                        <option value="task1">task1</option>
+                        <option value="task2">task2</option>
+                        <option value="task3">task3</option>
+                    </select>
+                </div>
+                <div class="w-1/2">
+                    <label>Assign to:</label>
+                    <select id="task_assign" class="w-full border p-2 rounded mb-4 border border-slate-300">
+                        <option value="user1">user1</option>
+                        <option value="user2">user2</option>
+                        <option value="user3">user3</option>
+                    </select>
+                </div>
+            </div>
+            <div>
+                <label>Description:</label>
+                <textarea id="task_description" class="w-full border p-2 rounded mb-4 border border-slate-300"
+                    placeholder="description"></textarea>
+            </div>
+
+            <div>
+                <label>Attachments:</label>
+                <input type="file" id="task_attachments" class="w-full border p-2 rounded mb-4 border border-slate-300"
+                    placeholder="Task title">
+            </div>
+            <div class="flex justify-end space-x-2">
+                <button id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                <button id="addTaskBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
+                    Task</button>
+            </div>
         </div>
     </div>
 </section>

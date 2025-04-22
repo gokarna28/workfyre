@@ -2,26 +2,31 @@
 <?php include_once('../../header.php'); ?>
 
 
-<section class="pt-20 pl-80 w-full pr-10">
-    <h2>Project Name</h2>
-    <p class="mb-5">Short description will be placed here</p>
+<section class="pt-25 pl-85 w-full pr-10">
+    <div class="mb-5">
+        <div class="flex items-center gap-5">
+            <a href="http://workfyre.local/main/dashboard/projects.php" class="hover:bg-slate-100 p-2 rounded-lg"><i
+                    class="fa-solid fa-arrow-left"></i></a>
+            <h2 class="text-xl font-medium">Project Name</h2>
+        </div>
+
+        <p class="text-sm">Short description will be placed here</p>
+    </div>
 
     <div class="w-full flex items-center justify-between mb-10">
         <ul class="flex items-center w-1/2 border-b border-slate-300">
-            <li class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4"><span><i
-                        class="fa-solid fa-chart-bar"></i></span>Board</li>
-            <li class="mr-10 text-lg pb-4"><span><i class="fa-regular fa-file"></i></span>Files</li>
-            <li class="mr-10 text-lg pb-4"><span><i class="fa-solid fa-users"></i></span>Team</li>
+            <li id="projectBoard" class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer">
+                <span><i class="fa-solid fa-chart-bar"></i></span>Board
+            </li>
+            <li id="projectFiles" class="mr-10 text-lg pb-4 cursor-pointer"><span><i
+                        class="fa-regular fa-file"></i></span>Files</li>
+            <li id="projectTeam" class="mr-10 text-lg pb-4 cursor-pointer"><span><i
+                        class="fa-solid fa-users"></i></span>Team</li>
         </ul>
-        <div class="">
-            <button
-                class="flex items-center gap-2 hover:bg-stone-900 hover:text-white border border-slate-300 px-4 py-2 rounded-2xl">
-                <i class="fa-solid fa-plus"></i>
-                <p class="text-lg font-medium">New Task</p>
-            </button>
-        </div>
+
     </div>
-    <div class="grid grid-cols-3 gap-4">
+    <!-- board container -->
+    <div id="projectBoardContainer" class="grid grid-cols-3 gap-4">
         <!-- To Do Column -->
         <div class="bg-white rounded shadow p-4">
             <div class="flex justify-between items-center mb-4">
@@ -59,6 +64,74 @@
             </div>
         </div>
     </div>
+    <!-- files container -->
+    <div id="projectFilesContainer" class="hidden">
+        <div>
+            <ul>
+                <li class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
+                            <img src="http://workfyre.local/assets/images/image.png" class="w-full h-full object-cover"
+                                alt="default profile" />
+                        </span>
+                        <p class="text-lg">image.png</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-stone-900 hover:text-white">
+                            Upload
+                        </button>
+                        <button class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white">
+                            Delete
+                        </button>
+                    </div>
+                </li>
+                <li class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
+                            <img src="http://workfyre.local/assets/images/image.png" class="w-full h-full object-cover"
+                                alt="default profile" />
+                        </span>
+                        <p class="text-lg">image.png</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-stone-900 hover:text-white">
+                            Upload
+                        </button>
+                        <button class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white">
+                            Delete
+                        </button>
+                    </div>
+                </li>
+                <li class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
+                            <img src="http://workfyre.local/assets/images/image.png" class="w-full h-full object-cover"
+                                alt="default profile" />
+                        </span>
+                        <p class="text-lg">image.png</p>
+                    </div>
+                    <div class="flex items-center gap-2">
+                        <button
+                            class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-stone-900 hover:text-white">
+                            Upload
+                        </button>
+                        <button class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white">
+                            Delete
+                        </button>
+                    </div>
+                </li>
+            </ul>
+
+        </div>
+    </div>
+    <!-- team container -->
+    <div id="projectTeamContainer" class="hidden">Team</div>
+
     <!-- Modal -->
     <div id="taskModal" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">

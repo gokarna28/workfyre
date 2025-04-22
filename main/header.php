@@ -21,12 +21,12 @@
 
 <body>
     <header
-        class="bg-transparent px-10 py-4 flex items-center justify-between border-b border-slate-300 z-2 absolute w-full top-0">
+        class="bg-white px-10 py-4 flex items-center justify-between border-b border-slate-300 z-2 fixed w-full top-0">
         <div class="w-1/2">
             <h1 class="text-3xl font-bold">Workfyre</h1>
         </div>
         <div class="flex items-center w-full gap-5 justify-between">
-            <div class="bg-slate-200 rounded-full py-2 px-4 w-full">
+            <div class="bg-slate-100 rounded-full py-2 px-4 w-full">
                 <i class="fa-solid fa-magnifying-glass mr-2"></i>
                 <input type="text" name="search" placeholder="Search here" class="outline-none" />
             </div>

@@ -33,7 +33,7 @@ $(document).ready(function () {
             if (columnId === 'todo') {
                 task = $(`
                     <div id="tasks${taskIdCounter++}" class="p-3 bg-gray-100 rounded shadow-md cursor-move" draggable="true">
-                    <a href="templates/tasks.php">
+                    <a href="http://workfyre.local/main/dashboard/templates/tasks.php">
                         <h2 class="text-xl font-medium">${taskTitle}</h2>
                         <P class="text-sm mb-2">${taskDescriptions}</p>
                         <div
@@ -62,7 +62,7 @@ $(document).ready(function () {
             } else if (columnId === 'inprogress') {
                 task = $(`
                     <div id="tasks${taskIdCounter++}" class="p-3 bg-yellow-200 rounded shadow-md cursor-move" draggable="true">
-                    <a href="templates/tasks.php">
+                    <a href="http://workfyre.local/main/dashboard/templates/tasks.php">
                         <h2 class="text-xl font-medium">${taskTitle}</h2>
                         <P class="text-sm mb-2">${taskDescriptions}</p>
                         <div
@@ -91,7 +91,7 @@ $(document).ready(function () {
             } else if (columnId === 'done') {
                 task = $(`
                     <div id="tasks${taskIdCounter++}" class="p-3 bg-sky-200 rounded shadow-md cursor-move" draggable="true">
-                    <a href="templates/tasks.php">
+                    <a href="http://workfyre.local/main/dashboard/templates/tasks.php">
                         <h2 class="text-xl font-medium">${taskTitle}1</h2>
                         <P class="text-sm mb-2">${taskDescriptions}</p>
                         <div
@@ -162,4 +162,172 @@ $(document).ready(function () {
     $(document).on('dragstart', '.task-column > div', function (e) {
         e.originalEvent.dataTransfer.setData('text/plain', this.id);
     });
+
+
+
+
+    /** comment start */
+    let savedRange = null;
+    let clearedPlaceholder = false;
+
+    $(function () {
+        // Formatting helper
+        function format(command, value = null) {
+            const box = document.getElementById('messageBox');
+            box.focus();
+            document.execCommand(command, false, value);
+            $('a').attr('target', '_blank');
+        }
+
+        // Format buttons
+        $('#boldBtn').click(() => format('bold'));
+        $('#italicBtn').click(() => format('italic'));
+        $('#bulletBtn').click(() => format('insertUnorderedList'));
+
+        // Clear placeholder on first focus
+        $('#messageBox').on('focus', function () {
+            if (!clearedPlaceholder) {
+                $(this).html('');
+                clearedPlaceholder = true;
+            }
+        });
+
+        // Save/restore selection for links
+        function saveSelection() {
+            const sel = window.getSelection();
+            if (sel.rangeCount > 0) {
+                savedRange = sel.getRangeAt(0);
+            }
+        }
+
+        function restoreSelection() {
+            if (savedRange) {
+                const sel = window.getSelection();
+                sel.removeAllRanges();
+                sel.addRange(savedRange);
+            }
+        }
+
+        // Link logic
+        $('#linkBtn').click(() => {
+            saveSelection();
+            $('#linkModal').removeClass('hidden');
+            $('#linkInput').val('').focus();
+        });
+
+        $('#insertLinkBtn').click(() => {
+            const url = $('#linkInput').val().trim();
+
+            // Validate the URL using a simple regex pattern
+            const urlPattern = /^(https?|ftp):\/\/[^\s/$.?#].[^\s]*$/i;
+
+            if (url && urlPattern.test(url)) {
+                restoreSelection();
+                console.log(url)
+                format('createLink', url);
+
+                $('#linkModal').addClass('hidden');
+            } else {
+                // Show alert if the URL is not valid
+                alert("Please enter a valid URL.");
+            }
+        });
+
+        $('#cancelLinkBtn').click(() => {
+            $('#linkModal').addClass('hidden');
+        });
+
+        // File preview
+        $('#fileUpload').on('change', function () {
+            const files = this.files;
+            for (let i = 0; i < files.length; i++) {
+                const file = files[i];
+                if (file.type.startsWith('image/')) {
+                    const reader = new FileReader();
+                    reader.onload = function (e) {
+                        const img = `
+                            <br>
+                            <img src="${e.target.result}" 
+                                 class="preview-image inline-block max-w-[150px] max-h-[150px] m-2 rounded shadow cursor-pointer" />
+                        `;
+                        $('#messageBox').append(img);
+                    };
+                    reader.readAsDataURL(file);
+                } else {
+                    $('#messageBox').append(
+                        `<div class="text-sm text-gray-500 my-2">📎 ${file.name}</div>`
+                    );
+                }
+            }
+        });
+
+        // Send message
+        $('#sendBtn').click(() => {
+            const message = $('#messageBox').html().trim();
+            if (!message) {
+                alert("Please write a message or attach a file.");
+                return;
+            }
+            const messageHtml = `
+         <div class="p-4 border border-gray-300 bg-white rounded-lg mb-4">
+                <div class="flex items-center gap-2 justify-between mb-2">
+                    <div class="flex items-center gap-2">
+                        <span
+                            class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-8 h-8 overflow-hidden">
+                            <img src="http://workfyre.local/assets/images/default-profile.png"
+                                class="w-full h-full object-cover" alt="default profile" />
+                        </span>
+                        <p class="text-sm font-medium">Ramesh Karki</p>
+                    </div>
+                    <p class="text-sm font-thin">Apr-22-2025<span class="ml-2">4:41 PM</span></p>
+                </div>
+                <div class="text-gray-800 text-wrap">${message}</div>
+            </div>
+
+          </div>
+        `;
+            $('#messageList').append(messageHtml);
+            $('#messageBox').html('');
+            $('#fileUpload').val('');
+            clearedPlaceholder = false;
+        });
+    });
+    /**comment ends */
+
+    /**single tabs start*/
+    const projectBoard = $('#projectBoard');
+    const projectFiles = $('#projectFiles');
+    const projectTeam = $('#projectTeam');
+    const projectBoardContainer = $('#projectBoardContainer');
+    const projectFilesContainer = $('#projectFilesContainer');
+    const projectTeamContainer = $('#projectTeamContainer');
+
+    projectBoard.on("click", function () {
+        projectBoardContainer.removeClass('hidden');
+        projectFilesContainer.addClass('hidden');
+        projectTeamContainer.addClass('hidden');
+
+        projectBoard.addClass('text-sky-700 border-b-2 border-sky-700');
+        projectFiles.removeClass('text-sky-700 border-b-2 border-sky-700');
+        projectTeam.removeClass('text-sky-700 border-b-2 border-sky-700');
+    })
+    projectFiles.on("click", function () {
+        projectBoardContainer.addClass('hidden');
+        projectFilesContainer.removeClass('hidden');
+        projectTeamContainer.addClass('hidden');
+
+        projectBoard.removeClass('text-sky-700 border-b-2 border-sky-700');
+        projectFiles.addClass('text-sky-700 border-b-2 border-sky-700');
+        projectTeam.removeClass('text-sky-700 border-b-2 border-sky-700');
+    })
+    projectTeam.on("click", function () {
+        projectBoardContainer.addClass('hidden');
+        projectFilesContainer.addClass('hidden');
+        projectTeamContainer.removeClass('hidden');
+
+        projectBoard.removeClass('text-sky-700 border-b-2 border-sky-700');
+        projectFiles.removeClass('text-sky-700 border-b-2 border-sky-700');
+        projectTeam.addClass('text-sky-700 border-b-2 border-sky-700');
+    })
+    /**single tabs ends*/
 })

@@ -1,7 +1,7 @@
 <?php include_once('../sidebar.php'); ?>
 <?php include_once('../header.php'); ?>
 
-<section class="pt-20 pl-80 w-full pr-10">
+<section class="pt-25 pl-85 w-full pr-10">
     <h2>Project Dashboard</h2>
 
     <div class="flex items-center w-full justify-between mb-5">
@@ -39,52 +39,52 @@
                 <th class="text-lg text-start font-normal px-4 py-2">category</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Status</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Priority</th>
+                <th class="text-lg text-start font-normal px-4 py-2"></th>
             </thead>
             <tbody>
-                <tr class="cursor-pointer">
-                    <a href="/templates/single.php" class="border-b border-slate-200">
-                        <td class="p-4">Logo Design for cafe</td>
-                        <td class="p-4">april-20-2025</td>
-                        <td class="p-4">april-30-2025</td>
-                        <td class="p-4">Logo Design</td>
-                        <td class="p-4"><span
-                                class="bg-green-200 text-green-500 px-2 rounded-full items-center justify-center">active</span>
-                        </td>
-                        <td class="p-4"><span
-                                class="bg-red-200 text-red-500 px-2 rounded-full items-center justify-center">High</span>
-                        </td>
-                        <td class="p-4">:</td>
-                    </a>
+                <tr onclick="window.location='/main/dashboard/templates/single.php';"
+                    class="cursor-pointer hover:bg-slate-100">
+                    <td class="p-4">Logo Design for cafe</td>
+                    <td class="p-4">april-20-2025</td>
+                    <td class="p-4">april-30-2025</td>
+                    <td class="p-4">Logo Design</td>
+                    <td class="p-4">
+                        <span
+                            class="bg-green-200 text-green-500 px-2 rounded-full items-center justify-center">active</span>
+                    </td>
+                    <td class="p-4">
+                        <span class="bg-red-200 text-red-500 px-2 rounded-full items-center justify-center">High</span>
+                    </td>
+                    <td class="p-4">:</td>
                 </tr>
-                <tr class="cursor-pointer">
-                    <a href="/templates/single.php" class="border-b border-slate-200">
-                        <td class="p-4">Logo Design for cafe</td>
-                        <td class="p-4">april-20-2025</td>
-                        <td class="p-4">april-30-2025</td>
-                        <td class="p-4">Logo Design</td>
-                        <td class="p-4"><span
-                                class="bg-yellow-200 text-yellow-500 px-2 rounded-full items-center justify-center">In
-                                Progress</span></td>
-                        <td class="p-4"><span
-                                class="bg-stone-200 text-stone-500 px-2 rounded-full items-center justify-center">Medium</span>
-                        </td>
-                        <td class="p-4">:</td>
-                    </a>
+
+                <tr onclick="window.location='/main/dashboard/templates/single.php';"
+                    class="cursor-pointer hover:bg-slate-100">
+                    <td class="p-4">Logo Design for cafe</td>
+                    <td class="p-4">april-20-2025</td>
+                    <td class="p-4">april-30-2025</td>
+                    <td class="p-4">Logo Design</td>
+                    <td class="p-4"><span
+                            class="bg-yellow-200 text-yellow-500 px-2 rounded-full items-center justify-center">In
+                            Progress</span></td>
+                    <td class="p-4"><span
+                            class="bg-stone-200 text-stone-500 px-2 rounded-full items-center justify-center">Medium</span>
+                    </td>
+                    <td class="p-4">:</td>
                 </tr>
-                <tr class="cursor-pointer">
-                    <a href="/templates/single.php" class="border-b border-slate-200">
-                        <td class="p-4">Logo Design for cafe</td>
-                        <td class="p-4">april-20-2025</td>
-                        <td class="p-4">april-30-2025</td>
-                        <td class="p-4">Logo Design</td>
-                        <td class="p-4"><span
-                                class="bg-sky-200 text-sky-500 text-sm px-2 rounded-full items-center justify-center">Completed</span>
-                        </td>
-                        <td class="p-4"><span
-                                class="bg-orange-200 text-orange-500 px-2 rounded-full items-center justify-center">Low</span>
-                        </td>
-                        <td class="p-4">:</td>
-                    </a>
+                <tr onclick="window.location='/main/dashboard/templates/single.php';"
+                    class="cursor-pointer hover:bg-slate-100">
+                    <td class="p-4">Logo Design for cafe</td>
+                    <td class="p-4">april-20-2025</td>
+                    <td class="p-4">april-30-2025</td>
+                    <td class="p-4">Logo Design</td>
+                    <td class="p-4"><span
+                            class="bg-sky-200 text-sky-500 text-sm px-2 rounded-full items-center justify-center">Completed</span>
+                    </td>
+                    <td class="p-4"><span
+                            class="bg-orange-200 text-orange-500 px-2 rounded-full items-center justify-center">Low</span>
+                    </td>
+                    <td class="p-4">:</td>
                 </tr>
             </tbody>
         </table>

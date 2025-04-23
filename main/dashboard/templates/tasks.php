@@ -5,8 +5,8 @@
 <section class="pt-25 pl-85 w-full pr-10">
     <div class="mb-5">
         <div class="flex items-center gap-5">
-            <a href="http://workfyre.local/main/dashboard/templates/single.php" class="hover:bg-slate-100 p-2 rounded-lg"><i
-                    class="fa-solid fa-arrow-left"></i></a>
+            <a href="http://workfyre.local/main/dashboard/templates/single.php"
+                class="hover:bg-slate-100 p-2 rounded-lg"><i class="fa-solid fa-arrow-left"></i></a>
             <h2 class="text-xl font-medium">Project Name</h2>
         </div>
         <p class="mb-5 text-sm">Short description will be placed here...</p>
@@ -66,6 +66,17 @@
                     <button id="insertLinkBtn"
                         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Insert</button>
                 </div>
+            </div>
+        </div>
+
+        <!-- image preview popup   -->
+        <div id="imageModal"
+            class="fixed inset-0 bg-gray-400 bg-opacity-80 z-50 items-center justify-center p-4 hidden">
+            <div class="relative max-w-full max-h-full flex flex-col items-center">
+                <span class="flex w-full text-4xl items-center justify-end"><i
+                        class="fa-regular fa-circle-xmark cursor-pointer" id="closeImageModal"></i></span>
+                <img id="modalImage" src="" alt="Preview"
+                    class="max-w-full max-h-[90vh] rounded shadow-lg object-contain" />
             </div>
         </div>
 

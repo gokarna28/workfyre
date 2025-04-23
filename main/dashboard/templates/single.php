@@ -72,7 +72,7 @@
                     <div class="flex items-center gap-2">
                         <span
                             class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
-                            <img src="http://workfyre.local/assets/images/image.png" class="w-full h-full object-cover"
+                            <img src="http://workfyre.local/assets/images/image.png" class="preview-image cursor-pointer w-full h-full object-cover"
                                 alt="default profile" />
                         </span>
                         <p class="text-lg">image.png</p>
@@ -91,7 +91,7 @@
                     <div class="flex items-center gap-2">
                         <span
                             class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
-                            <img src="http://workfyre.local/assets/images/image.png" class="w-full h-full object-cover"
+                            <img src="http://workfyre.local/assets/images/image.png" class="preview-image cursor-pointer w-full h-full object-cover"
                                 alt="default profile" />
                         </span>
                         <p class="text-lg">image.png</p>
@@ -110,7 +110,7 @@
                     <div class="flex items-center gap-2">
                         <span
                             class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
-                            <img src="http://workfyre.local/assets/images/image.png" class="w-full h-full object-cover"
+                            <img src="http://workfyre.local/assets/images/image.png" class="preview-image cursor-pointer w-full h-full object-cover"
                                 alt="default profile" />
                         </span>
                         <p class="text-lg">image.png</p>
@@ -190,6 +190,15 @@
                 <button id="addTaskBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
                     Task</button>
             </div>
+        </div>
+    </div>
+    <!-- image preview popup   -->
+    <div id="imageModal" class="fixed inset-0 bg-gray-400 bg-opacity-80 z-50 items-center justify-center p-4 hidden">
+        <div class="relative max-w-full max-h-full flex flex-col items-center">
+            <span class="flex w-full text-4xl items-center justify-end"><i
+                    class="fa-regular fa-circle-xmark cursor-pointer" id="closeImageModal"></i></span>
+            <img id="modalImage" src="" alt="Preview"
+                class="max-w-full max-h-[90vh] rounded shadow-lg object-contain" />
         </div>
     </div>
 </section>

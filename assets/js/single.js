@@ -260,6 +260,19 @@ $(document).ready(function () {
                 }
             }
         });
+        // Show modal when clicking an image
+        $(document).on('click', '.preview-image', function () {
+            const src = $(this).attr('src');
+            $('#modalImage').attr('src', src);
+            $('#imageModal').removeClass('hidden');
+        });
+
+        // Close modal
+        $('#closeImageModal, #imageModal').on('click', function (e) {
+            if (e.target.id === 'imageModal' || e.target.id === 'closeImageModal') {
+                $('#imageModal').addClass('hidden');
+            }
+        });
 
         // Send message
         $('#sendBtn').click(() => {

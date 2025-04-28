@@ -1,3 +1,9 @@
+<?php 
+include_once(__DIR__ . '/../config/config.php');
+include_once(__DIR__ . '/../config/functions.php');
+
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -26,7 +32,7 @@
             <h1 class="text-3xl font-bold">Workfyre</h1>
         </div>
         <div class="flex items-center w-full gap-5 justify-between">
-            <div class="bg-slate-100 rounded-full py-2 px-4 w-full">
+            <div class="bg-slate-100 border border-slate-300 rounded-full py-2 px-4 w-full">
                 <i class="fa-solid fa-magnifying-glass mr-2"></i>
                 <input type="text" name="search" placeholder="Search here" class="outline-none" />
             </div>

@@ -343,4 +343,5 @@ $(document).ready(function () {
         projectTeam.addClass('text-sky-700 border-b-2 border-sky-700');
     })
     /**single tabs ends*/
+
 })

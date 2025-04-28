@@ -1,14 +1,7 @@
 <?php
-$hostname = 'localhost';
-$username = 'root';
-$password = 'root';
-$dbname = 'local';
 
-$conn = new mysqli($hostname, $username, $password, $dbname);
+define('HOMEPAGE_URL', value: 'http://workfyre.local');
 
-if ($conn) {
-    echo "successfully connected";
-} else {
-    echo "failed to connect" . mysqli_error($conn);
-}
+define('PUBLIC_PATH', HOMEPAGE_URL . '/assets/');
+define('PREFIX', 'workfyre_');
 ?>

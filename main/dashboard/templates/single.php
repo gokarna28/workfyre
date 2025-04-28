@@ -26,7 +26,7 @@
 
     </div>
     <!-- board container -->
-    <div id="projectBoardContainer" class="grid grid-cols-3 gap-4">
+    <div id="projectBoardContainer" class="grid grid-cols-3 gap-4 mb-5">
         <!-- To Do Column -->
         <div class="bg-white rounded shadow p-4">
             <div class="flex justify-between items-center mb-4">
@@ -35,8 +35,7 @@
                     class="add-task-btn text-sm px-2 py-1 bg-gray-100 hover:bg-gray-200 border border-slate-300 rounded hover:bg-blue-600"
                     data-target="todo">+ Add</button>
             </div>
-            <div id="todo" class="task-column space-y-3 min-h-[200px]">
-
+            <div id="todo" class="task-column space-y-3 min-h-[200px] max-h-[700px] snap-y overflow-y-auto">
             </div>
         </div>
 

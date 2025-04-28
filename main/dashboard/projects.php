@@ -32,7 +32,7 @@
     </div>
     <div class="w-full">
         <table class="w-full">
-            <thead class="bg-slate-200 w-full">
+            <thead class="bg-slate-100 w-full border-b border-slate-300">
                 <th class="text-lg text-start font-normal px-4 py-2">Project Name</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Start Date</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Deadline</th>
@@ -45,8 +45,8 @@
                 <tr onclick="window.location='/main/dashboard/templates/single.php';"
                     class="cursor-pointer hover:bg-slate-100">
                     <td class="p-4">Logo Design for cafe</td>
-                    <td class="p-4">april-20-2025</td>
-                    <td class="p-4">april-30-2025</td>
+                    <td class="p-4 text-sm font-thin">april-20-2025</td>
+                    <td class="p-4 text-sm font-thin">april-30-2025</td>
                     <td class="p-4">Logo Design</td>
                     <td class="p-4">
                         <span
@@ -61,8 +61,8 @@
                 <tr onclick="window.location='/main/dashboard/templates/single.php';"
                     class="cursor-pointer hover:bg-slate-100">
                     <td class="p-4">Logo Design for cafe</td>
-                    <td class="p-4">april-20-2025</td>
-                    <td class="p-4">april-30-2025</td>
+                    <td class="p-4 text-sm font-thin">april-20-2025</td>
+                    <td class="p-4 text-sm font-thin">april-30-2025</td>
                     <td class="p-4">Logo Design</td>
                     <td class="p-4"><span
                             class="bg-yellow-200 text-yellow-500 px-2 rounded-full items-center justify-center">In
@@ -75,8 +75,8 @@
                 <tr onclick="window.location='/main/dashboard/templates/single.php';"
                     class="cursor-pointer hover:bg-slate-100">
                     <td class="p-4">Logo Design for cafe</td>
-                    <td class="p-4">april-20-2025</td>
-                    <td class="p-4">april-30-2025</td>
+                    <td class="p-4 text-sm font-thin">april-20-2025</td>
+                    <td class="p-4 text-sm font-thin">april-30-2025</td>
                     <td class="p-4">Logo Design</td>
                     <td class="p-4"><span
                             class="bg-sky-200 text-sky-500 text-sm px-2 rounded-full items-center justify-center">Completed</span>

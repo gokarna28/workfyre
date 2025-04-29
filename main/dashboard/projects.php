@@ -36,56 +36,39 @@
                 <th class="text-lg text-start font-normal px-4 py-2">Project Name</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Start Date</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Deadline</th>
-                <th class="text-lg text-start font-normal px-4 py-2">category</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Status</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Priority</th>
                 <th class="text-lg text-start font-normal px-4 py-2"></th>
             </thead>
             <tbody>
-                <tr onclick="window.location='/main/dashboard/templates/single.php';"
-                    class="cursor-pointer hover:bg-slate-100">
-                    <td class="p-4">Logo Design for cafe</td>
-                    <td class="p-4 text-sm font-thin">april-20-2025</td>
-                    <td class="p-4 text-sm font-thin">april-30-2025</td>
-                    <td class="p-4">Logo Design</td>
-                    <td class="p-4">
-                        <span
-                            class="bg-green-200 text-green-500 px-2 rounded-full items-center justify-center">active</span>
-                    </td>
-                    <td class="p-4">
-                        <span class="bg-red-200 text-red-500 px-2 rounded-full items-center justify-center">High</span>
-                    </td>
-                    <td class="p-4">:</td>
-                </tr>
-
-                <tr onclick="window.location='/main/dashboard/templates/single.php';"
-                    class="cursor-pointer hover:bg-slate-100">
-                    <td class="p-4">Logo Design for cafe</td>
-                    <td class="p-4 text-sm font-thin">april-20-2025</td>
-                    <td class="p-4 text-sm font-thin">april-30-2025</td>
-                    <td class="p-4">Logo Design</td>
-                    <td class="p-4"><span
-                            class="bg-yellow-200 text-yellow-500 px-2 rounded-full items-center justify-center">In
-                            Progress</span></td>
-                    <td class="p-4"><span
-                            class="bg-stone-200 text-stone-500 px-2 rounded-full items-center justify-center">Medium</span>
-                    </td>
-                    <td class="p-4">:</td>
-                </tr>
-                <tr onclick="window.location='/main/dashboard/templates/single.php';"
-                    class="cursor-pointer hover:bg-slate-100">
-                    <td class="p-4">Logo Design for cafe</td>
-                    <td class="p-4 text-sm font-thin">april-20-2025</td>
-                    <td class="p-4 text-sm font-thin">april-30-2025</td>
-                    <td class="p-4">Logo Design</td>
-                    <td class="p-4"><span
-                            class="bg-sky-200 text-sky-500 text-sm px-2 rounded-full items-center justify-center">Completed</span>
-                    </td>
-                    <td class="p-4"><span
-                            class="bg-orange-200 text-orange-500 px-2 rounded-full items-center justify-center">Low</span>
-                    </td>
-                    <td class="p-4">:</td>
-                </tr>
+                <?php
+                // var_dump(getProjectDetails());
+                $projects = getProjectDetails();
+                if (!empty($projects)) {
+                    foreach ($projects as $project) {
+                        ?>
+                        <tr onclick="window.location='/main/dashboard/templates/single.php';"
+                            class="cursor-pointer hover:bg-slate-100">
+                            <td class="p-4"><?php echo  $shortTitle = mb_strlen($project['title']) > 20 ? mb_substr($project['title'], 0, 20) . '...' : $project['title'];?></td>
+                            <td class="p-4 text-sm font-thin"><?php echo $project['created_at']; ?></td>
+                            <td class="p-4 text-sm font-thin"><?php echo $project['deadline']; ?></td>
+                            <td class="p-4">
+                                <span
+                                    class="<?php echo getClasses($project['status']); ?> px-2 rounded-full items-center justify-center"><?php echo ucwords(str_replace('_', ' ', $project['status'])); ?></span>
+                            </td>
+                            <td class="p-4">
+                                <span
+                                    class="<?php echo getClasses($project['priority']); ?> px-2 rounded-full items-center justify-center"><?php echo ucwords(str_replace('_', ' ', subject: $project['priority'])); ?></span>
+                            </td>
+                            <td class="p-4">:</td>
+                        </tr>
+                        <?php
+                    }
+                } else {
+                    echo "No Project Found.";
+                }
+                ?>
+               
             </tbody>
         </table>
     </div>
@@ -121,7 +104,7 @@
                 </div>
 
                 <div>
-                    <input type="file" id="project_attachments" name="project_attachments" multiple/>
+                    <input type="file" id="project_attachments" name="project_attachments" multiple />
                     <label for="project_attachments"
                         class="block w-full cursor-pointer border p-2 rounded mb-4 border-slate-300 bg-white text-gray-600 text-center hover:bg-gray-100">
                         Click to select attachments

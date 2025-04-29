@@ -32,7 +32,7 @@ function ajaxCreateProject($params, $files)
         return;
     }
 
-    $createdAt = $updatedAt = date('Y-m-d H:i:s');
+    $createdAt = $updatedAt = strtolower(date('F-d-Y'));
     $params['created_at'] = $createdAt;
     $params['updated_at'] = $updatedAt;
 
@@ -65,13 +65,13 @@ function ajaxCreateProject($params, $files)
 
                     if (move_uploaded_file($tmpName, $targetPath)) {
                         // Relative path to store in the database
-                        $uploadedFile= $base_dir . $newFileName;
-                        $data=[
-                            'project_id'=>$result['project_id'],
-                            'created_at'=>$createdAt,
-                            'updated_at'=>$updatedAt,
-                            'attachment'=>$uploadedFile
-                        ];                     
+                        $uploadedFile = $base_dir . $newFileName;
+                        $data = [
+                            'project_id' => $result['project_id'],
+                            'created_at' => $createdAt,
+                            'updated_at' => $updatedAt,
+                            'attachment' => $uploadedFile
+                        ];
 
                         //save to the attachments table
                         saveProjectAttachments($data);

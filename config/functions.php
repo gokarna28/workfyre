@@ -165,3 +165,58 @@ function saveProjectAttachments($params)
         return "An error occurred: " . $e->getMessage();
     }
 }
+
+function getProjectDetails()
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "projects";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name");
+
+        if ($stmt->execute()) {
+            $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return !empty($projects) ? $projects : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function getClasses($params)
+{
+    $classes = ' ';
+    $status = strtolower($params);
+
+    switch ($status) {
+        case 'completed':
+            $classes .= ' bg-sky-200 text-sky-500';
+            break;
+        case 'in_progress':
+            $classes .= ' bg-yellow-200 text-yellow-500';
+            break;
+        case 'not_started':
+            $classes .= ' bg-stone-200 text-stone-500';
+            break;
+        case 'medium':
+            $classes .= ' bg-lime-200 text-lime-500';
+            break;
+        case 'low':
+            $classes .= ' bg-orange-200 text-orange-500';
+            break;
+        case 'active':
+            $classes .= ' bg-green-200 text-green-500';
+            break;
+
+        default:
+            $classes .= ' bg-offred color-red';
+            break;
+    }
+    return $classes;
+}

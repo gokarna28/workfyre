@@ -84,8 +84,6 @@ $(document).ready(function () {
     });
 
     function ajaxRegisterLogin(data) {
-        // console.log(data);
-        // return;
         $.ajax({
             type: 'POST',
             url: 'http://workfyre.local/main/dashboard/ajax-register-login.php',

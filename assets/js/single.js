@@ -26,7 +26,7 @@ $(document).ready(function () {
         const taskDescriptions = $('#task_description').val().trim();
 
         if (taskTitle !== '') {
-            const columnId = $(`#${currentColumn}`)[0].id; // get the column id
+            const columnId = $(`#${currentColumn}`)[0].id;
 
             let task; // use let instead of const since we may reassign
 
@@ -343,5 +343,22 @@ $(document).ready(function () {
         projectTeam.addClass('text-sky-700 border-b-2 border-sky-700');
     })
     /**single tabs ends*/
+
+
+
+
+
+
+    /**createing a project start here */
+    $(document).on('click', '#createNewProject', function () {
+        currentColumn = $(this).data('target');
+        $('#projectModal').removeClass('hidden');
+    });
+
+    // Hide modal
+    $('#cancelBtn').on('click', function () {
+        $('#projectModal').addClass('hidden');
+    });
+    /**creating a project ends here */
 
 })

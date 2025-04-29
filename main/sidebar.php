@@ -32,6 +32,13 @@ include_once('header.php');
                     <span class="hidden md:block">Settings</span>
                 </a>
             </li>
+            <li>
+                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/logout.php"
+                    class="hover:bg-white hover:bg-slate-100 hover:border hover:border-slate-300 cursor-pointer flex items-center gap-6 rounded-lg p-2 text-xl font-medium mb-6">
+                    <i class="fa-solid fa-arrow-right-from-bracket md:text-2xl text-xl"></i>
+                    <span class="hidden md:block">Logout</span>
+                </a>
+            </li>
 
         </ul>
     </div>

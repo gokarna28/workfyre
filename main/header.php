@@ -1,7 +1,12 @@
-<?php 
+<?php
+session_start();
 include_once(__DIR__ . '/../config/config.php');
 include_once(__DIR__ . '/../config/functions.php');
 
+if (!isUserLoggedIn()) {
+    header('Location: ' . HOMEPAGE_URL . '/main/login.php');
+    exit();
+}
 ?>
 
 <!DOCTYPE html>
@@ -23,6 +28,7 @@ include_once(__DIR__ . '/../config/functions.php');
         crossorigin="anonymous"></script>
 
     <script src="http://workfyre.local/assets/js/single.js"></script>
+    <script src="http://workfyre.local/assets/js/project-js.js"></script>
 </head>
 
 <body>

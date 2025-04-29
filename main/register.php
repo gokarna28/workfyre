@@ -4,7 +4,7 @@ include_once('public-templates/public-header.php');
 
 ?>
 <section class="w-full  h-full flex items-center justify-center">
-    <div class="w-1/2 mt-20 bg-white text-black px-10 py-20 rounded-xl">
+    <div class="w-1/2 mt-20 bg-white text-black px-10 py-20 rounded-xl mb-10">
         <div class="items-center justify-center flex flex-col mb-10">
             <h2>Workfyre</h2>
             <h1 class="text-3xl font-medium">Welcome to the workfyre</h1>
@@ -47,7 +47,7 @@ include_once('public-templates/public-header.php');
             <div>
                 <div class="flex flex-col justify-center gap-5 mb-5">
                     <button type="submit"
-                        class="bg-[#181832] text-white hover:bg-transparent hover:text-[#181832] cursor-pointer text-xl font-medium hover:border px-4 py-2 rounded-lg">Register</button>
+                        class="bg-[#181832] text-white hover:bg-transparent hover:text-[#181832] cursor-pointer text-xl font-bold hover:border p-4 rounded-lg">Register</button>
                 </div>
                 <div>
                     <p>Already have account? <a href="<?php echo HOMEPAGE_URL ?>/main/login.php"

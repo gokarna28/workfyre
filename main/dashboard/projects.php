@@ -7,8 +7,8 @@
     <div class="flex items-center w-full justify-between mb-5">
         <div class="flex items-center gap-2">
             <h2 class="text-2xl font-medium">All Projects</h2>
-            <span class="bg-slate-200 rounded-full items-center justify-center">
-                <p>12</p>
+            <span class="bg-slate-200 h-6 w-6 rounded-full flex items-center justify-center">
+                <span><?php echo count(getProjectDetails()); ?></span>
             </span>
         </div>
         <div class="">
@@ -32,24 +32,24 @@
     </div>
     <div class="w-full">
         <table class="w-full">
-            <thead class="bg-slate-100 w-full border-b border-slate-300">
+            <thead class="bg-stone-100 w-full border-b border-slate-300">
                 <th class="text-lg text-start font-normal px-4 py-2">Project Name</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Start Date</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Deadline</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Status</th>
                 <th class="text-lg text-start font-normal px-4 py-2">Priority</th>
-                <th class="text-lg text-start font-normal px-4 py-2"></th>
             </thead>
             <tbody>
                 <?php
-                // var_dump(getProjectDetails());
                 $projects = getProjectDetails();
                 if (!empty($projects)) {
                     foreach ($projects as $project) {
                         ?>
-                        <tr onclick="window.location='/main/dashboard/templates/single.php';"
+                        <tr onclick="window.location='/main/dashboard/templates/single.php?pid=<?php echo $project['id']; ?>';"
                             class="cursor-pointer hover:bg-slate-100">
-                            <td class="p-4"><?php echo  $shortTitle = mb_strlen($project['title']) > 20 ? mb_substr($project['title'], 0, 20) . '...' : $project['title'];?></td>
+                            <td class="p-4">
+                                <?php echo $shortTitle = mb_strlen($project['title']) > 20 ? mb_substr($project['title'], 0, 20) . '...' : $project['title']; ?>
+                            </td>
                             <td class="p-4 text-sm font-thin"><?php echo $project['created_at']; ?></td>
                             <td class="p-4 text-sm font-thin"><?php echo $project['deadline']; ?></td>
                             <td class="p-4">
@@ -60,7 +60,6 @@
                                 <span
                                     class="<?php echo getClasses($project['priority']); ?> px-2 rounded-full items-center justify-center"><?php echo ucwords(str_replace('_', ' ', subject: $project['priority'])); ?></span>
                             </td>
-                            <td class="p-4">:</td>
                         </tr>
                         <?php
                     }
@@ -68,7 +67,7 @@
                     echo "No Project Found.";
                 }
                 ?>
-               
+
             </tbody>
         </table>
     </div>
@@ -104,7 +103,9 @@
                 </div>
 
                 <div>
-                    <input type="file" id="project_attachments" name="project_attachments" multiple />
+                    <input type="file" id="project_attachments" name="project_attachments[]" multiple
+                        accept=".png,.jpg,.jpeg,.pdf,.doc,.docx,.zip" />
+
                     <label for="project_attachments"
                         class="block w-full cursor-pointer border p-2 rounded mb-4 border-slate-300 bg-white text-gray-600 text-center hover:bg-gray-100">
                         Click to select attachments

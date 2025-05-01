@@ -172,7 +172,7 @@ function getProjectDetails()
         global $conn;
         $table_name = PREFIX . "projects";
 
-        $stmt = $conn->prepare("SELECT * FROM $table_name");
+        $stmt = $conn->prepare("SELECT * FROM $table_name ORDER BY id desc");
 
         if ($stmt->execute()) {
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -219,4 +219,123 @@ function getClasses($params)
             break;
     }
     return $classes;
+}
+
+function getProjectDetailsByProjectID($project_id)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "projects";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE id=:id");
+        $stmt->bindParam(':id', $project_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $projects = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return !empty($projects) ? $projects : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function getProjectAttachments($project_id)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "project_attachments";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE project_id=:project_id");
+        $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $attachments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return !empty($attachments) ? $attachments : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function deleteProjectAttachment($attachment_id)
+{
+
+    try {
+        global $conn;
+        $table_name = PREFIX . "project_attachments";
+
+        $stmt = $conn->prepare("DELETE FROM $table_name WHERE id=:id");
+        $stmt->bindParam(':id', $attachment_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function getUsersDetails()
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "users";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name");
+        // $stmt->bindParam(':id', $attachment_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $users = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return $users;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function updateProjectMeta($project_id, $user_id, $created_at, $updated_at)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "project_meta";
+
+        $stmt = $conn->prepare("INSERT INTO $table_name (project_id, user_id, created_at, updated_at)VALUES( :project_id, :user_id, :created_at, :updated_at)");
+        $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+        $stmt->bindParam(':created_at', $created_at, PDO::PARAM_STR);
+        $stmt->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
 }

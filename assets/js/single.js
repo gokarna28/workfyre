@@ -361,4 +361,63 @@ $(document).ready(function () {
     });
     /**creating a project ends here */
 
+
+    /***Invite team start */
+    //opan the invite team form
+    $('#inviteTeamBtn').on('click', function () {
+        $('#inviteTeamForm').removeClass('hidden');
+    })
+    //close the modal
+    $('#inviteTeamCancelBtn').on('click', function () {
+        $('#inviteTeamForm').addClass('hidden');
+    });
+
+
+
+    $('#inviteTeamForm').on('submit', function (e) {
+        e.preventDefault(); // Prevent actual form submission
+
+        // Get all checked user_ids
+        const userIds = [];
+        $('input[name="user_id[]"]:checked').each(function () {
+            userIds.push($(this).val());
+        });
+
+        // Get project_id
+        const projectId = $('input[name="project_id"]').val();
+
+        var data={
+            user_ids:userIds,
+            project_id:projectId,
+            action: 'invite_team'
+        }
+        inviteTeam(data);
+    });
+
+    function inviteTeam(data) {
+        $.ajax({
+            type: 'POST',
+            url: 'http://workfyre.local/main/dashboard/ajax-project.php',
+            data: data,
+            success: function (response) {
+                console.log(response);
+                // if (response.status == 'success') {
+                //     $('#successMessage').html(`
+                //     <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                //      `)
+                //     setTimeout(() => {
+                //         window.location.href = '/main/dashboard/home.php';
+                //     }, 2000);
+                // } else {
+                //     $('#successMessage').html(`
+                //     <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                //      `)
+                // }
+            },
+            error: function (xhr, status, error) {
+                console.log("An error occurred: " + error);
+            }
+        });
+    }
+    /**Invite team end */
 })

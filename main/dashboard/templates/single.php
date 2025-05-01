@@ -1,16 +1,23 @@
 <?php include_once('../../sidebar.php'); ?>
 <?php include_once('../../header.php'); ?>
 
-
 <section class="pt-25 pl-85 w-full pr-10">
+
+    <?php
+    $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
+    $project = getProjectDetailsByProjectID($project_id);
+
+    $attachments = getProjectAttachments($project_id);
+    ?>
+
     <div class="mb-5">
-        <div class="flex items-center gap-5">
+        <div class="flex items-center gap-5 mb-2">
             <a href="http://workfyre.local/main/dashboard/projects.php" class="hover:bg-slate-100 p-2 rounded-lg"><i
                     class="fa-solid fa-arrow-left"></i></a>
-            <h2 class="text-xl font-medium">Project Name</h2>
+            <h2 class="text-xl font-medium"><?php echo $project['title']; ?></h2>
         </div>
 
-        <p class="text-sm">Short description will be placed here</p>
+        <p class="text-sm pl-15"><?php echo $project['description'] ?></p>
     </div>
 
     <div class="w-full flex items-center justify-between mb-10">
@@ -65,71 +72,137 @@
     </div>
     <!-- files container -->
     <div id="projectFilesContainer" class="hidden">
-        <div>
-            <ul>
-                <li class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
-                            <img src="http://workfyre.local/assets/images/image.png" class="preview-image cursor-pointer w-full h-full object-cover"
-                                alt="default profile" />
-                        </span>
-                        <p class="text-lg">image.png</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button
-                            class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-stone-900 hover:text-white">
-                            Upload
-                        </button>
-                        <button class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white">
-                            Delete
-                        </button>
-                    </div>
-                </li>
-                <li class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
-                            <img src="http://workfyre.local/assets/images/image.png" class="preview-image cursor-pointer w-full h-full object-cover"
-                                alt="default profile" />
-                        </span>
-                        <p class="text-lg">image.png</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button
-                            class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-stone-900 hover:text-white">
-                            Upload
-                        </button>
-                        <button class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white">
-                            Delete
-                        </button>
-                    </div>
-                </li>
-                <li class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
-                    <div class="flex items-center gap-2">
-                        <span
-                            class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden">
-                            <img src="http://workfyre.local/assets/images/image.png" class="preview-image cursor-pointer w-full h-full object-cover"
-                                alt="default profile" />
-                        </span>
-                        <p class="text-lg">image.png</p>
-                    </div>
-                    <div class="flex items-center gap-2">
-                        <button
-                            class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-stone-900 hover:text-white">
-                            Upload
-                        </button>
-                        <button class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white">
-                            Delete
-                        </button>
-                    </div>
-                </li>
-            </ul>
+        <div class="mb-2" id="deleteProjectAttachmentSuccessMessage"></div>
+        <ul>
+            <?php
+            if (!empty($attachments)) {
+                foreach ($attachments as $attachment) {
+                    $path = $attachment['attachment'];
+                    $filename = basename($path);
+                    $extension = strtolower(pathinfo($filename, PATHINFO_EXTENSION));
+                    $imageExtensions = ['jpg', 'jpeg', 'png', 'gif', 'bmp', 'webp'];
 
-        </div>
+                    $isImage = in_array($extension, $imageExtensions);
+                    $isOpenableFile = in_array($extension, ['pdf', 'zip']);
+
+                    $previewSrc = $isImage ? $path : '/assets/images/default-file-icon.png';
+
+                    // Start <a> tag if it's a PDF or ZIP
+                    if ($isOpenableFile) {
+                        echo '<a href="' . $path . '" target="_blank">';
+                    }
+                    ?>
+                    <li id="projectAttachmentConainer<?php echo $attachment['id'] ?>"
+                        class="shadow-sm p-2 rounded-lg flex items-center justify-between mb-5">
+                        <div class="flex items-center gap-2">
+                            <span
+                                class="rounded-lg font-medium border border-slate-300 flex items-center justify-center w-20 h-20 overflow-hidden bg-white">
+                                <img src="<?php echo $previewSrc; ?>"
+                                    class="preview-image cursor-pointer w-full h-full object-cover"
+                                    alt="<?php echo $filename; ?>" />
+                            </span>
+                            <p class="text-sm"><?php echo $filename; ?></p>
+                        </div>
+                        <?php
+                        // Close <a> tag if started
+                        if ($isOpenableFile) {
+                            echo '</a>';
+                        }
+                        ?>
+                        <div class="flex items-center gap-2">
+
+                            <button
+                                class="deleteProjectAttachment border border-slate-300 px-4 py-2 rounded-lg hover:bg-red-800 hover:text-white"
+                                data-attachment_id="<?php echo $attachment['id'] ?>">
+                                Delete
+                            </button>
+                        </div>
+                    </li>
+                    <?php
+
+                }
+            }
+
+            ?>
+
+        </ul>
     </div>
     <!-- team container -->
-    <div id="projectTeamContainer" class="hidden">Team</div>
+    <div id="projectTeamContainer" class="hidden">
+        <div class="items-center justify-end flex mb-5">
+            <button id="inviteTeamBtn"
+                class="border border-slate-300 px-4 py-2 rounded-lg hover:bg-blue-600 hover:text-white">
+                <i class="fa-solid fa-user-plus"></i>
+                Invite Team
+            </button>
+        </div>
+        <div class="">
+            <ul>
+                <li>user1</li>
+                <li>user1</li>
+                <li>user1</li>
+                <li>user1</li>
+                <li>user1</li>
+                <li>user1</li>
+                <li>user1</li>
+            </ul>
+        </div>
+
+
+        <!-- invite team modal -->
+        <div id="inviteTeamForm" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-50">
+            <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">
+                <h3 class="text-xl font-semibold mb-4">Invite Team to the <span
+                        class="font-bold"><?php echo $project['title'] ?></span></h3>
+                <form id="inviteTeamForm" method="POST">
+                    <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
+
+                    <div
+                        class="flex flex-col items-start justify-center w-full gap-5 border-t border-slate-300 p-4 w-full">
+                        <ul class="w-full max-h-[500px] snap-y overflow-y-auto">
+                            <?php
+                            // var_dump(getUsersDetails());
+                            $users = getUsersDetails();
+                            if ($users) {
+                                foreach ($users as $user) {
+                                    ?>
+                                    <li class="mb-5 w-full">
+                                        <label class="flex items-center gap-5 hover:bg-slate-100 p-3 rounded-lg">
+                                            <input class="w-6 h-6" type="checkbox" name="user_id[]"
+                                                value="<?php echo $user['id']; ?>">
+                                            <div class="flex items-center justify-between w-full">
+                                                <div class="flex items-center gap-2">
+                                                    <span
+                                                        class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-8 h-8 overflow-hidden">
+                                                        <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                            class="w-full h-full object-cover" alt="default profile" />
+                                                    </span>
+                                                    <p class="text-lg">
+                                                        <?php echo ucfirst($user['firstname'] . ' ' . $user['lastname']) ?>
+                                                    </p>
+                                                </div>
+                                                <p>Email:<span
+                                                        class="ml-2 text-sm font-light"><?php echo $user['email'] ?></span></p>
+                                            </div>
+                                        </label>
+                                    </li>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </ul>
+                    </div>
+
+                    <div class="flex justify-end space-x-2">
+                        <button id="inviteTeamCancelBtn"
+                            class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                        <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
+                            Task</button>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </div>
 
     <!-- Modal -->
     <div id="taskModal" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-50">

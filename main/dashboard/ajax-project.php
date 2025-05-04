@@ -125,16 +125,59 @@ function ajaxDeleteProjectAttachment($params)
 function ajaxInviteTeam($params)
 {
     try {
-
         if ($params) {
-            $created_at = $updated_at = strtolower(date('F-d-Y'));
+            $created_at = $updated_at = (date('F-d-Y'));
             foreach ($params['user_ids'] as $user_id) {
-                $result = updateProjectMeta($params['project_id'], $user_id, $created_at, $updated_at);
-                if($result){
-                    //here will be the mail send function to the users 
 
-                }else{
-                    echo json_encode(['status' => 'error', 'message' => 'Failed to Invite.']);
+                $result = updateProjectMeta($params['project_id'], $user_id, $created_at, $updated_at);
+               
+                if ($result['status'] == 'success') {
+                    $users = getUsersDetailsByUser_id($user_id);
+                    $project = getProjectDetailsByProjectID($params['project_id']);
+                    $projectMeta = getProjectMeta($params['project_id']);
+
+                    /**send mail to the invited user */
+                    $to = $users['email'];
+                    $subject = "WORKFYRE - Project Invitation";
+
+                    // Replace with actual project details and user ID/token
+                    $projectName = ucfirst($project['title']);
+                    $projectId = $project['id'];
+                    $invite_id = $result['inserted_id'];
+                    $userId = $users['id'];
+                    $acceptLink = HOMEPAGE_URL . "/main/accept-invite.php?invite_id=$invite_id";
+
+                    $message = "
+                    <html>
+                    <head>
+                      <title>Project Invitation</title>
+                    </head>
+                    <body>
+                      <p>Hello!</p>
+                      <p>You have been invited to join the project <strong>$projectName</strong> on Workfyre.</p>
+                      <p>Click the button below to accept the invitation:</p>
+                      <a href='$acceptLink' style='display:inline-block;padding:10px 20px;background-color:#28a745;color:white;text-decoration:none;border-radius:5px;'>Accept</a>
+                      <p>If the button doesn't work, copy and paste this link into your browser:<br>$acceptLink</p>
+                      <br>
+                      <p>Thank you,<br>Workfyre Team</p>
+                    </body>
+                    </html>
+                    ";
+
+                    $headers = "MIME-Version: 1.0" . "\r\n";
+                    $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
+                    $headers .= "From: noreply@workfyre.com.np";
+
+                    if (mail($to, $subject, $message, $headers)) {
+                        echo json_encode(['status' => 'success', 'message' => 'A Invitation mail is sent to the users.', 'project_meta'=>$projectMeta]);
+
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Failed to send invitation mail to the users.']);
+
+                    }
+
+                } else {
+                    echo json_encode(['status' => 'error', 'message' => $result['message']]);
                 }
             }
 

@@ -55,7 +55,7 @@
                             <td class="p-4">
                                 <span
                                     class="<?php echo getClasses($project['status']); ?> px-2 rounded-full items-center justify-center"><?php echo ucwords(str_replace('_', ' ', $project['status'])); ?></span>
-                            </td>
+                            </td> 
                             <td class="p-4">
                                 <span
                                     class="<?php echo getClasses($project['priority']); ?> px-2 rounded-full items-center justify-center"><?php echo ucwords(str_replace('_', ' ', subject: $project['priority'])); ?></span>

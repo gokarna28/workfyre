@@ -136,15 +136,39 @@
                 Invite Team
             </button>
         </div>
-        <div class="">
-            <ul>
-                <li>user1</li>
-                <li>user1</li>
-                <li>user1</li>
-                <li>user1</li>
-                <li>user1</li>
-                <li>user1</li>
-                <li>user1</li>
+        <div class="border-t border-slate-300 p-4">
+            <ul id="invitation_container<?php echo $project_id; ?>">
+                <?php
+                $projectMeta = getProjectMeta($project_id);
+                if (is_array($projectMeta) && isset($projectMeta)) {
+                    foreach ($projectMeta as $projectM) {
+                        ?>
+                        <li class="mb-5">
+                            <div class="flex items-center justify-between">
+                                <div class="flex items-center gap-5">
+                                    <span
+                                        class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-8 h-8 overflow-hidden">
+                                        <img src="http://workfyre.local/assets/images/default-profile.png"
+                                            class="w-full h-full object-cover" alt="default profile" />
+                                    </span>
+                                    <p class="text-lg font-medium">
+                                        <?php echo $projectM['firstname'] . ' ' . $projectM['lastname']; ?></p>
+                                </div>
+                                <div class="text-sm">Email:<span class="ml-2 text-sm font-light">gokarnachy28@gmail.com</span>
+                                </div>
+                                <div class="text-sm">status:<span
+                                        class="<?php echo getClasses($projectM['status']) ?> ml-2 px-2 rounded-full text-sm"><?php echo ucfirst($projectM['status']); ?></span>
+                                </div>
+                                <span class="text-sm font-light"><?php echo $projectM['created_at'] ?></span>
+                            </div>
+                        </li>
+                        <?php
+                    }
+                } else {
+                    echo "No User Found.";
+                }
+                ?>
+
             </ul>
         </div>
 
@@ -154,12 +178,14 @@
             <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">
                 <h3 class="text-xl font-semibold mb-4">Invite Team to the <span
                         class="font-bold"><?php echo $project['title'] ?></span></h3>
+                <div class="mb-2" id="inviteTeamSuccessMessage"></div>
                 <form id="inviteTeamForm" method="POST">
                     <input type="hidden" name="project_id" value="<?php echo $project['id']; ?>">
 
                     <div
                         class="flex flex-col items-start justify-center w-full gap-5 border-t border-slate-300 p-4 w-full">
-                        <ul class="w-full max-h-[500px] snap-y overflow-y-auto">
+                        <ul 
+                            class="w-full max-h-[500px] snap-y overflow-y-auto">
                             <?php
                             // var_dump(getUsersDetails());
                             $users = getUsersDetails();
@@ -197,7 +223,7 @@
                         <button id="inviteTeamCancelBtn"
                             class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
                         <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
-                            Task</button>
+                            Team</button>
                     </div>
                 </form>
             </div>

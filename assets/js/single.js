@@ -386,9 +386,9 @@ $(document).ready(function () {
         // Get project_id
         const projectId = $('input[name="project_id"]').val();
 
-        var data={
-            user_ids:userIds,
-            project_id:projectId,
+        var data = {
+            user_ids: userIds,
+            project_id: projectId,
             action: 'invite_team'
         }
         inviteTeam(data);
@@ -401,18 +401,45 @@ $(document).ready(function () {
             data: data,
             success: function (response) {
                 console.log(response);
-                // if (response.status == 'success') {
-                //     $('#successMessage').html(`
-                //     <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
-                //      `)
-                //     setTimeout(() => {
-                //         window.location.href = '/main/dashboard/home.php';
-                //     }, 2000);
-                // } else {
-                //     $('#successMessage').html(`
-                //     <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
-                //      `)
-                // }
+
+                if (response.status == 'success') {
+
+                    $('#inviteTeamSuccessMessage').html(`
+                    <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                     `)
+                    //push the container
+                    response.project_meta.forEach(element => {
+                        $(`#invitation_container${data.project_id}`).append(`
+                            <li class="mb-5">
+                                <div class="flex items-center justify-between">
+                                    <div class="flex items-center gap-5">
+                                        <span class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-8 h-8 overflow-hidden">
+                                            <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                 class="w-full h-full object-cover" alt="default profile" />
+                                        </span>
+                                        <p class="text-lg font-medium">${element.firstname + ' ' + element.lastname}</p>
+                                    </div>
+                                    <div class="text-sm">Email:<span class="ml-2 text-sm font-light">${element.email}</span></div>
+                                    <div class="text-sm">Status:
+                                        <span class="bg-yellow-200 text-yellow-500 ml-2 px-2 rounded-full text-sm">
+                                            ${String(element.status).charAt(0).toUpperCase() + String(element.status).slice(1)}
+                                        </span>
+                                    </div>
+                                    <span class="text-sm font-light">${element.created_at}</span>
+                                </div>
+                            </li>
+                        `);
+                    });
+                    
+
+                    setTimeout(() => {
+                        $('#inviteTeamForm').addClass('hidden');
+                    }, 2000);
+                } else {
+                    $('#inviteTeamSuccessMessage').html(`
+                    <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                     `)
+                }
             },
             error: function (xhr, status, error) {
                 console.log("An error occurred: " + error);

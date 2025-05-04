@@ -201,7 +201,13 @@ function getClasses($params)
         case 'in_progress':
             $classes .= ' bg-yellow-200 text-yellow-500';
             break;
+        case 'pending':
+            $classes .= ' bg-yellow-200 text-yellow-500';
+            break;
         case 'not_started':
+            $classes .= ' bg-stone-200 text-stone-500';
+            break;
+        case 'inrolled':
             $classes .= ' bg-stone-200 text-stone-500';
             break;
         case 'medium':
@@ -321,14 +327,26 @@ function updateProjectMeta($project_id, $user_id, $created_at, $updated_at)
         global $conn;
         $table_name = PREFIX . "project_meta";
 
-        $stmt = $conn->prepare("INSERT INTO $table_name (project_id, user_id, created_at, updated_at)VALUES( :project_id, :user_id, :created_at, :updated_at)");
+        //check if the user is alread inrolled
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE project_id=:project_id AND user_id=:user_id");
         $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
         $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
-        $stmt->bindParam(':created_at', $created_at, PDO::PARAM_STR);
-        $stmt->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
+        $stmt->execute();
+        $count = $stmt->rowCount();
+        if ($count > 0) {
+            return ['status' => 'error', 'message' => 'User is already inrolled to the project.'];
+        } else {
+            $stmt = $conn->prepare("INSERT INTO $table_name (project_id, user_id, created_at, updated_at)VALUES( :project_id, :user_id, :created_at, :updated_at)");
+            $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
+            $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+            $stmt->bindParam(':created_at', $created_at, PDO::PARAM_STR);
+            $stmt->bindParam(':updated_at', $updated_at, PDO::PARAM_STR);
 
-        if ($stmt->execute()) {
-            return true;
+            if ($stmt->execute()) {
+                $lastInsertId = $conn->lastInsertId();
+
+                return ['status' => 'success', 'inserted_id' => $lastInsertId];
+            }
         }
 
     } catch (PDOException $e) {
@@ -338,4 +356,57 @@ function updateProjectMeta($project_id, $user_id, $created_at, $updated_at)
         error_log("An error occurred: " . $e->getMessage());
         return "An error occurred: " . $e->getMessage();
     }
+}
+
+function getUsersDetailsByUser_id($user_id)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "users";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE id=:user_id");
+        $stmt->bindParam(':user_id', $user_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $users = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $users;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function getProjectMeta($project_id)
+{
+    try {
+        global $conn;
+        $table_meta = PREFIX . "project_meta";
+        $table_users = PREFIX . "users";
+
+        $stmt = $conn->prepare("
+            SELECT pm.*, u.firstname, u.lastname, u.email 
+            FROM $table_meta AS pm
+            INNER JOIN $table_users AS u ON pm.user_id = u.id WHERE pm.project_id=$project_id ORDER BY pm.id DESC
+        ");
+
+        if ($stmt->execute()) {
+            $projectMeta = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if($projectMeta){
+                return $projectMeta;
+            }
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+
 }

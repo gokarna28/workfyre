@@ -16,6 +16,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'user_login':
                 userLogin($data);
                 break;
+            case 'accept_invite':
+                ajaxUpdateProjectMeta($data);
+                break;
         }
     } catch (Exception $e) {
         error_log('Error processing request: ' . $e->getMessage());
@@ -83,11 +86,31 @@ function userLogin($data)
         }
 
         $response = loginUser($data);
-       
+
         if ($response === true) {
             echo json_encode(['status' => 'success', 'message' => 'Login Successfully.']);
         } else {
             echo json_encode(['status' => 'error', 'message' => $response]);
+        }
+
+    } catch (Exception $e) {
+        error_log('Error processing request: ' . $e->getMessage());
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function ajaxUpdateProjectMeta($params)
+{
+    try {
+        if ($params) {
+
+            $response = updateProjectMeta($params);
+            if ($response === true) {
+                echo json_encode(['status' => 'success', 'message' => 'Successfully Inrolled to the Project.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to Inrolled to the Project.']);
+            }
+
         }
 
     } catch (Exception $e) {

@@ -400,7 +400,6 @@ $(document).ready(function () {
             url: 'http://workfyre.local/main/dashboard/ajax-project.php',
             data: data,
             success: function (response) {
-                console.log(response);
 
                 if (response.status == 'success') {
 
@@ -409,7 +408,7 @@ $(document).ready(function () {
                      `)
                     //push the container
                     response.project_meta.forEach(element => {
-                        $(`#invitation_container${data.project_id}`).append(`
+                        $(`#invitation_container${data.project_id}`).prepend(`
                             <li class="mb-5">
                                 <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-5">

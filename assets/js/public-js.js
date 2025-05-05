@@ -109,4 +109,43 @@ $(document).ready(function () {
         });
     }
 
+
+
+    /**update project meta start */
+    $('#acceptTeamToProject').on('submit', function (e) {
+        e.preventDefault();
+        var invite_id = $(this).find('input[name="invite_id"]').val();
+        var inviteData = {
+            invite_id: invite_id,
+            invite_statu: 'inrolled',
+            action: 'accept_invite'
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: 'http://workfyre.local/main/dashboard/ajax-register-login.php',
+            data: inviteData,
+            success: function (response) {
+                console.log(response);
+                if (response.status == 'success') {
+                    $('#successMessage').html(`
+                <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                 `)
+                    setTimeout(() => {
+                        window.location.href = '/main/login.php';
+                    }, 2000);
+                } else {
+                    $('#successMessage').html(`
+                <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                 `)
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("An error occurred: " + error);
+            }
+        });
+
+    })
+    /**update project meta end */
+
 });

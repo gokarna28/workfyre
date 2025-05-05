@@ -129,12 +129,13 @@ function ajaxInviteTeam($params)
             $created_at = $updated_at = (date('F-d-Y'));
             foreach ($params['user_ids'] as $user_id) {
 
-                $result = updateProjectMeta($params['project_id'], $user_id, $created_at, $updated_at);
+                $result = insertDataProjectMeta($params['project_id'], $user_id, $created_at, $updated_at);
                
                 if ($result['status'] == 'success') {
                     $users = getUsersDetailsByUser_id($user_id);
                     $project = getProjectDetailsByProjectID($params['project_id']);
-                    $projectMeta = getProjectMeta($params['project_id']);
+                    // $projectMeta = getProjectMeta($params['project_id']);
+                    $projectTeamAdded=getProjectTeamByPm_id($result['inserted_id']);
 
                     /**send mail to the invited user */
                     $to = $users['email'];
@@ -144,8 +145,8 @@ function ajaxInviteTeam($params)
                     $projectName = ucfirst($project['title']);
                     $projectId = $project['id'];
                     $invite_id = $result['inserted_id'];
-                    $userId = $users['id'];
-                    $acceptLink = HOMEPAGE_URL . "/main/accept-invite.php?invite_id=$invite_id";
+                    // $userId = $users['id'];
+                    $acceptLink = HOMEPAGE_URL . "/main/accept-invite.php?invite_id=$invite_id&project_id=$projectId";
 
                     $message = "
                     <html>
@@ -169,7 +170,7 @@ function ajaxInviteTeam($params)
                     $headers .= "From: noreply@workfyre.com.np";
 
                     if (mail($to, $subject, $message, $headers)) {
-                        echo json_encode(['status' => 'success', 'message' => 'A Invitation mail is sent to the users.', 'project_meta'=>$projectMeta]);
+                        echo json_encode(['status' => 'success', 'message' => 'A Invitation mail is sent to the users.', 'project_meta'=>$projectTeamAdded]);
 
                     } else {
                         echo json_encode(['status' => 'error', 'message' => 'Failed to send invitation mail to the users.']);

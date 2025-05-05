@@ -321,7 +321,7 @@ function getUsersDetails()
     }
 }
 
-function updateProjectMeta($project_id, $user_id, $created_at, $updated_at)
+function insertDataProjectMeta($project_id, $user_id, $created_at, $updated_at)
 {
     try {
         global $conn;
@@ -396,7 +396,7 @@ function getProjectMeta($project_id)
 
         if ($stmt->execute()) {
             $projectMeta = $stmt->fetchAll(PDO::FETCH_ASSOC);
-            if($projectMeta){
+            if ($projectMeta) {
                 return $projectMeta;
             }
         }
@@ -409,4 +409,59 @@ function getProjectMeta($project_id)
         return "An error occurred: " . $e->getMessage();
     }
 
+}
+
+function getProjectTeamByPm_id($pm_id)
+{
+    try {
+        global $conn;
+        $table_meta = PREFIX . "project_meta";
+        $table_users = PREFIX . "users";
+
+        $stmt = $conn->prepare("
+            SELECT pm.*, u.firstname, u.lastname, u.email 
+            FROM $table_meta AS pm
+            INNER JOIN $table_users AS u ON pm.user_id = u.id WHERE pm.id=$pm_id ORDER BY pm.id DESC
+        ");
+
+        if ($stmt->execute()) {
+            $projectMeta = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($projectMeta) {
+                return $projectMeta;
+            }
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+
+}
+
+function updateProjectMeta($params)
+{
+    try {
+        global $conn;
+        $table_meta = PREFIX . "project_meta";
+
+        $stmt = $conn->prepare("
+        UPDATE $table_meta SET status=:status WHERE id=:id
+    ");
+        $stmt->bindParam(':status', $params['invite_statu'], PDO::PARAM_STR);
+        $stmt->bindParam(':id', $params['invite_id'], PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
 }

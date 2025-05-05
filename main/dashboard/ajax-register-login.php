@@ -19,6 +19,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'accept_invite':
                 ajaxUpdateProjectMeta($data);
                 break;
+               
         }
     } catch (Exception $e) {
         error_log('Error processing request: ' . $e->getMessage());

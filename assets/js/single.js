@@ -16,16 +16,90 @@ $(document).ready(function () {
     });
 
     // Add task from modal
-    $('#addTaskBtn').on('click', function () {
-        const taskTitle = $('#task_title').val().trim();
-        const taskPriority = $('#task_priority').val().trim();
-        const taskDeadline = $('#task_deadline').val().trim();
-        const taskAssignto = $('#task_assign').val().trim();
-        const taskAttachments = $('#task_attachments').val().trim();
-        const taskDependencies = $('#task_dependencies').val().trim();
-        const taskDescriptions = $('#task_description').val().trim();
+    $('#createTaskForm').on('submit', function (e) {
+        e.preventDefault();
+        const projectId = $(this).find('input[name="project_id"]').val().trim();
+        const taskTitle = $(this).find('input[name="task_title"]').val().trim();
+        const taskPriority = $(this).find('select[name="task_priority"]').val().trim();
+        const taskDeadline = $(this).find('input[name="task_deadline"]').val().trim();
+        const taskAssignto = $(this).find('select[name="task_assign"]').val().trim(); 
+        const taskDependencies = $(this).find('select[name="task_dependencies"]').val().trim();
+        const taskDescription = $(this).find('textarea[name="task_description"]').val().trim();
+        
+        var fileInput = $(this).find('input[name="task_attachments[]"]')[0];
+
+        // Create FormData object
+        var formData = new FormData();
+        formData.append('project_id', projectId);
+        formData.append('task_title', taskTitle);
+        formData.append('task_priority', taskPriority);
+        formData.append('task_deadline', taskDeadline);
+        formData.append('task_assignto', taskAssignto);
+        formData.append('task_dependencies', taskDependencies);
+        formData.append('task_description', taskDescription);
+        formData.append('action', 'create_task');
+
+        if (fileInput && fileInput.files.length > 0) {
+            for (var i = 0; i < fileInput.files.length; i++) {
+                formData.append('task_attachments[]', fileInput.files[i]);
+            }
+        }
 
         if (taskTitle !== '') {
+
+            $.ajax({
+                type: 'POST',
+                url: 'http://workfyre.local/main/dashboard/ajax-project.php',
+                data: formData,
+                processData: false,
+                contentType: false,
+                success: function (response) {
+                    console.log(response);
+                    return;
+                    if (response.status == 'success') {
+
+                        $('#inviteTeamSuccessMessage').html(`
+                        <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                         `)
+                        //push the container
+                        response.project_meta.forEach(element => {
+                            $(`#invitation_container${data.project_id}`).prepend(`
+                                <li class="mb-5">
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-5">
+                                            <span class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-8 h-8 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                     class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <p class="text-lg font-medium">${element.firstname + ' ' + element.lastname}</p>
+                                        </div>
+                                        <div class="text-sm">Email:<span class="ml-2 text-sm font-light">${element.email}</span></div>
+                                        <div class="text-sm">Status:
+                                            <span class="bg-yellow-200 text-yellow-500 ml-2 px-2 rounded-full text-sm">
+                                                ${String(element.status).charAt(0).toUpperCase() + String(element.status).slice(1)}
+                                            </span>
+                                        </div>
+                                        <span class="text-sm font-light">${element.created_at}</span>
+                                    </div>
+                                </li>
+                            `);
+                        });
+
+
+                        setTimeout(() => {
+                            $('#inviteTeamForm').addClass('hidden');
+                        }, 2000);
+                    } else {
+                        $('#inviteTeamSuccessMessage').html(`
+                        <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                         `)
+                    }
+                },
+                error: function (xhr, status, error) {
+                    console.log("An error occurred: " + error);
+                }
+            });
+
             const columnId = $(`#${currentColumn}`)[0].id;
 
             let task; // use let instead of const since we may reassign
@@ -131,7 +205,9 @@ $(document).ready(function () {
             $('#taskModal').addClass('hidden');
         }
     });
-
+    //date piker dissable past date
+    const today = new Date().toISOString().split('T')[0];
+    $('input[type="date"]').attr('min', today);
 
     // Drag & drop logic
     $('.task-column').on('dragover', function (e) {
@@ -429,7 +505,7 @@ $(document).ready(function () {
                             </li>
                         `);
                     });
-                    
+
 
                     setTimeout(() => {
                         $('#inviteTeamForm').addClass('hidden');

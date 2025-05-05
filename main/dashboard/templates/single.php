@@ -152,7 +152,8 @@
                                             class="w-full h-full object-cover" alt="default profile" />
                                     </span>
                                     <p class="text-lg font-medium">
-                                        <?php echo $projectM['firstname'] . ' ' . $projectM['lastname']; ?></p>
+                                        <?php echo $projectM['firstname'] . ' ' . $projectM['lastname']; ?>
+                                    </p>
                                 </div>
                                 <div class="text-sm">Email:<span class="ml-2 text-sm font-light">gokarnachy28@gmail.com</span>
                                 </div>
@@ -184,8 +185,7 @@
 
                     <div
                         class="flex flex-col items-start justify-center w-full gap-5 border-t border-slate-300 p-4 w-full">
-                        <ul 
-                            class="w-full max-h-[500px] snap-y overflow-y-auto">
+                        <ul class="w-full max-h-[500px] snap-y overflow-y-auto">
                             <?php
                             // var_dump(getUsersDetails());
                             $users = getUsersDetails();
@@ -230,64 +230,90 @@
         </div>
     </div>
 
-    <!-- Modal -->
+    <!-- carate task modal -->
     <div id="taskModal" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">
-            <h3 class="text-xl font-semibold mb-4">Add Task</h3>
-            <div>
-                <label>Title:</label>
-                <input type="text" id="task_title" class="w-full border p-2 rounded mb-4 border border-slate-300"
-                    placeholder="Task title">
-            </div>
-            <div class="flex items-center w-full gap-5">
-                <div class="w-1/2">
-                    <label>priority:</label>
-                    <select id="task_priority" class="w-full border p-2 rounded mb-4 border border-slate-300">
-                        <option value="high">High</option>
-                        <option value="medium">Medium</option>
-                        <option value="low">Low</option>
-                    </select>
+            <form id="createTaskForm" method="POST" enctype="multipart/form-data">
+                <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
+                <h3 class="text-xl font-semibold mb-4">Add Task</h3>
+                <div>
+                    <label>Title:</label>
+                    <input type="text" id="task_title" name="task_title"
+                        class="w-full border p-2 rounded mb-4 border border-slate-300" placeholder="Task title"
+                        required>
                 </div>
-                <div class="w-1/2">
-                    <label>Deadline:</label>
-                    <input type="date" id="task_deadline" class="w-full border p-2 rounded mb-4 border border-slate-300"
-                        placeholder="Task title">
+                <div class="flex items-center w-full gap-5">
+                    <div class="w-1/2">
+                        <label>priority:</label>
+                        <select id="task_priority" name="task_priority"
+                            class="w-full border p-2 rounded mb-4 border border-slate-300">
+                            <option value="high">High</option>
+                            <option value="medium">Medium</option>
+                            <option value="low">Low</option>
+                        </select>
+                    </div>
+                    <div class="w-1/2">
+                        <label>Deadline:</label>
+                        <input type="date" id="task_deadline" name="task_deadline"
+                            class="w-full border p-2 rounded mb-4 border border-slate-300" placeholder="Task title"
+                            required>
+                    </div>
                 </div>
-            </div>
-            <div class="flex items-center w-full gap-5">
-                <div class="w-1/2">
-                    <label>Dependencies:</label>
-                    <select id="task_dependencies" class="w-full border p-2 rounded mb-4 border border-slate-300">
-                        <option value="task1">task1</option>
-                        <option value="task2">task2</option>
-                        <option value="task3">task3</option>
-                    </select>
-                </div>
-                <div class="w-1/2">
-                    <label>Assign to:</label>
-                    <select id="task_assign" class="w-full border p-2 rounded mb-4 border border-slate-300">
-                        <option value="user1">user1</option>
-                        <option value="user2">user2</option>
-                        <option value="user3">user3</option>
-                    </select>
-                </div>
-            </div>
-            <div>
-                <label>Description:</label>
-                <textarea id="task_description" class="w-full border p-2 rounded mb-4 border border-slate-300"
-                    placeholder="description"></textarea>
-            </div>
+                <div class="flex items-center w-full gap-5">
+                    <div class="w-1/2">
+                        <label>Dependencies:</label>
+                        <select id="task_dependencies" name="task_dependencies"
+                            class="w-full border p-2 rounded mb-4 border border-slate-300">
+                            <option value="">Task</option>
+                            <?php $tasks = getTasksDetailsByProject_id($project['id']);
+                            foreach ($tasks as $task) {
+                                ?>
+                                <option value="<?php echo $task['id'] ?>"><?php echo ucfirst($task['title']) ?></option>
+                                <?php
+                            } ?>
 
-            <div>
-                <label>Attachments:</label>
-                <input type="file" id="task_attachments" class="w-full border p-2 rounded mb-4 border border-slate-300"
-                    placeholder="Task title">
-            </div>
-            <div class="flex justify-end space-x-2">
-                <button id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
-                <button id="addTaskBtn" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
-                    Task</button>
-            </div>
+                        </select>
+                    </div>
+                    <div class="w-1/2">
+                        <label>Assign to:</label>
+                        <select id="task_assign" name="task_assign"
+                            class="w-full border p-2 rounded mb-4 border border-slate-300" required>
+                            <option value="">assign to</option>
+                            <?php $users = getProjectMetaByStatus($project['id'], 'inrolled');
+                            if ($users) {
+                                foreach ($users as $user) {
+                                    ?>
+                                    <option value="<?php echo $user['id'] ?>">
+                                        <?php echo ucfirst($user['firstname'] . ' ' . $user['lastname']) ?>
+                                    </option>
+                                    <?php
+                                }
+                            }
+                            ?>
+                        </select>
+                    </div>
+                </div>
+                <div>
+                    <label>Description:</label>
+                    <textarea id="task_description" name="task_description"
+                        class="w-full border p-2 rounded mb-4 border border-slate-300" placeholder="description"
+                        required></textarea>
+                </div>
+
+                <div>
+                    <label>Attachments:</label>
+                    <input type="file" id="task_attachments" name="task_attachments[]"
+                        class="w-full border p-2 rounded mb-4 border border-slate-300" placeholder="Task title"
+                        multiple>
+                </div>
+                <div class="flex justify-end space-x-2">
+                    <button id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button type="submit" id="addTaskBtn" name="addTaskBtn"
+                        class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
+                        Task</button>
+                </div>
+            </form>
+
         </div>
     </div>
     <!-- image preview popup   -->

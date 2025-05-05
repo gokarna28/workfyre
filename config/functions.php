@@ -139,6 +139,38 @@ function createProject($params)
     }
 }
 
+function createTask($params)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "tasks";
+
+        $stmt = $conn->prepare("INSERT INTO $table_name (project_id, title, priority, deadline, assign_to, description, created_at, updated_at) 
+        VALUES (:project_id, :title, :priority, :deadline, :assign_to, :description, :created_at, :updated_at)");
+
+        $stmt->bindParam(':project_id', $params['project_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':title', $params['task_title'], PDO::PARAM_STR);
+        $stmt->bindParam(':priority', $params['task_priority'], PDO::PARAM_STR);
+        $stmt->bindParam(':deadline', $params['task_deadline'], PDO::PARAM_STR);
+        $stmt->bindParam(':assign_to', $params['task_assignto'], PDO::PARAM_INT);
+        $stmt->bindParam(':description', $params['task_description'], PDO::PARAM_STR);
+        $stmt->bindParam(':created_at', $params['created_at'], PDO::PARAM_STR);
+        $stmt->bindParam(':updated_at', $params['updated_at'], PDO::PARAM_STR);
+
+        if ($stmt->execute()) {
+            $task_id = $conn->lastInsertId();
+            return ['status' => 'success', 'task_id' => $task_id];
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
 function saveProjectAttachments($params)
 {
     try {
@@ -235,6 +267,30 @@ function getProjectDetailsByProjectID($project_id)
 
         $stmt = $conn->prepare("SELECT * FROM $table_name WHERE id=:id");
         $stmt->bindParam(':id', $project_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $projects = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return !empty($projects) ? $projects : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function getTasksDetailsByProject_id($project_id)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "tasks";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE project_id=:project_id");
+        $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             $projects = $stmt->fetch(PDO::FETCH_ASSOC);
@@ -410,6 +466,42 @@ function getProjectMeta($project_id)
     }
 
 }
+function getProjectMetaByStatus($project_id,$status = "inrolled")
+{
+    try {
+        global $conn;
+        $table_meta = PREFIX . "project_meta";
+        $table_users = PREFIX . "users";
+
+        $stmt = $conn->prepare("
+            SELECT  u.id, u.firstname, u.lastname, u.email 
+            FROM $table_meta AS pm
+            INNER JOIN $table_users AS u ON pm.user_id = u.id 
+            WHERE pm.status = :status AND project_id=:project_id
+            ORDER BY pm.id DESC
+        ");
+
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $projectMeta = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            if ($projectMeta) {
+                return $projectMeta;
+            }
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+
+    return []; // Return empty array if no results or on failure
+}
+
 
 function getProjectTeamByPm_id($pm_id)
 {

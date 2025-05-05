@@ -20,6 +20,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'invite_team':
                 ajaxInviteTeam($data);
                 break;
+            case 'create_task':
+                ajaxCreateTask($data, $files);
+                break;
 
         }
     } catch (Exception $e) {
@@ -130,12 +133,12 @@ function ajaxInviteTeam($params)
             foreach ($params['user_ids'] as $user_id) {
 
                 $result = insertDataProjectMeta($params['project_id'], $user_id, $created_at, $updated_at);
-               
+
                 if ($result['status'] == 'success') {
                     $users = getUsersDetailsByUser_id($user_id);
                     $project = getProjectDetailsByProjectID($params['project_id']);
                     // $projectMeta = getProjectMeta($params['project_id']);
-                    $projectTeamAdded=getProjectTeamByPm_id($result['inserted_id']);
+                    $projectTeamAdded = getProjectTeamByPm_id($result['inserted_id']);
 
                     /**send mail to the invited user */
                     $to = $users['email'];
@@ -170,7 +173,7 @@ function ajaxInviteTeam($params)
                     $headers .= "From: noreply@workfyre.com.np";
 
                     if (mail($to, $subject, $message, $headers)) {
-                        echo json_encode(['status' => 'success', 'message' => 'A Invitation mail is sent to the users.', 'project_meta'=>$projectTeamAdded]);
+                        echo json_encode(['status' => 'success', 'message' => 'A Invitation mail is sent to the users.', 'project_meta' => $projectTeamAdded]);
 
                     } else {
                         echo json_encode(['status' => 'error', 'message' => 'Failed to send invitation mail to the users.']);
@@ -183,12 +186,83 @@ function ajaxInviteTeam($params)
             }
 
 
-            // if ($result) {
-            //     echo json_encode(['status' => 'success', 'message' => 'File Deleted Successfully.']);
-            // } else {
-            //     echo json_encode(['status' => 'error', 'message' => 'Failed to Delete.']);
-            // }
         }
+    } catch (Exception $e) {
+        error_log('Error processing request: ' . $e->getMessage());
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function ajaxCreateTask($params, $files)
+{
+    try {
+        if (empty($params['task_title']) || empty($params['task_priority']) || empty($params['task_description'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
+            return;
+        }
+
+        $createdAt = $updatedAt = strtolower(date('F-d-Y'));
+        $params['created_at'] = $createdAt;
+        $params['updated_at'] = $updatedAt;
+
+        //insert to database 
+        $result = createTask($params);
+        var_dump($result);
+        exit;
+
+        if ($result['status'] == 'success') {
+            echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.']);
+
+            //upload the attachments
+            if (isset($files['project_attachments']) && is_array($files['project_attachments']['name'])) {
+                $base_dir = '/assets/uploads/';
+                $uploadDir = $_SERVER['DOCUMENT_ROOT'] . $base_dir;
+
+                if (!file_exists($uploadDir)) {
+                    mkdir($uploadDir, 0777, true);
+                }
+
+                $uploadedFiles = [];
+
+                foreach ($files['project_attachments']['name'] as $index => $name) {
+                    $tmpName = $files['project_attachments']['tmp_name'][$index];
+                    $error = $files['project_attachments']['error'][$index];
+
+                    if ($error === UPLOAD_ERR_OK) {
+                        // Use current date-time instead of time()
+                        $datePrefix = date('Ymd_His');
+                        $newFileName = $datePrefix . '_' . preg_replace('/[^a-zA-Z0-9._-]/', '_', basename($name));
+                        $targetPath = $uploadDir . $newFileName;
+
+                        if (move_uploaded_file($tmpName, $targetPath)) {
+                            // Relative path to store in the database
+                            $uploadedFile = $base_dir . $newFileName;
+                            $data = [
+                                'project_id' => $result['project_id'],
+                                'created_at' => $createdAt,
+                                'updated_at' => $updatedAt,
+                                'attachment' => $uploadedFile
+                            ];
+
+                            //save to the attachments table
+                            saveProjectAttachments($data);
+
+                        } else {
+                            echo json_encode(['status' => 'error', 'message' => 'Failed to move file: ' . $name]);
+                            return;
+                        }
+                    } else {
+                        echo json_encode(['status' => 'error', 'message' => 'Upload error on file: ' . $name]);
+                        return;
+                    }
+                }
+
+
+            }
+        } else {
+            echo json_encode(['status' => 'error', 'message' => 'Failed to create the project.']);
+        }
+
     } catch (Exception $e) {
         error_log('Error processing request: ' . $e->getMessage());
         echo json_encode(['error' => $e->getMessage()]);

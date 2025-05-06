@@ -51,6 +51,9 @@ $(document).ready(function () {
         }
 
         if (taskTitle !== '') {
+            const columnId = $(`#${currentColumn}`)[0].id;
+
+            let task; // use let instead of const since we may reassign
 
             $.ajax({
                 type: 'POST',
@@ -63,13 +66,11 @@ $(document).ready(function () {
                     // return;
                     if (response.status == 'success') {
 
-                        // $('#inviteTeamSuccessMessage').html(`
-                        // <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
-                        //  `)
+                        $('#taskCreateSuccessMessage').html(`
+                        <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                         `)
                         //push the container
-                        const columnId = $(`#${currentColumn}`)[0].id;
 
-                        let task; // use let instead of const since we may reassign
 
                         if (columnId === 'todo') {
                             task = $(`
@@ -197,23 +198,67 @@ $(document).ready(function () {
         e.preventDefault();
     });
 
+    //task status update function
+    function ajaxTaskStatus(taskData) {
+        $.ajax({
+            type: 'POST',
+            url: 'http://workfyre.local/main/dashboard/ajax-project.php',
+            data: taskData,
+            success: function (response) {
+                // console.log(response);
+                
+            },
+            error: function (xhr, status, error) {
+                console.log("An error occurred: " + error);
+            }
+        });
+    }
     $('.task-column').on('drop', function (e) {
         e.preventDefault();
         const taskId = e.originalEvent.dataTransfer.getData('text/plain');
         const task = document.getElementById(taskId);
         this.appendChild(task);
+
+        //retrive the taskid
+        var task_id = $(task).data('task_id');
+        // console.log(task_id);
         if (this.id === 'inprogress') {
             $(task).removeClass('bg-gray-100');
             $(task).removeClass('bg-sky-200');
             $(task).addClass('bg-yellow-200');
+
+            var params = {
+                task_id: task_id,
+                task_status: 'in-progress',
+                action: 'update_task_status'
+            }
+            //call the function update task status
+            ajaxTaskStatus(params);
+
         } else if (this.id === 'done') {
             $(task).removeClass('bg-gray-100');
             $(task).removeClass('bg-yellow-200');
             $(task).addClass('bg-sky-200');
+
+            var params = {
+                task_id: task_id,
+                task_status: 'completed',
+                action: 'update_task_status'
+            }
+            //call the function update task status
+            ajaxTaskStatus(params);
         } else {
             $(task).removeClass('bg-yellow-200');
             $(task).removeClass('bg-sky-200');
             $(task).addClass('bg-gray-100');
+
+            var params = {
+                task_id: task_id,
+                task_status: 'not-started',
+                action: 'update_task_status'
+            }
+            //call the function update task status
+            ajaxTaskStatus(params);
         }
     });
 
@@ -222,7 +267,14 @@ $(document).ready(function () {
         e.originalEvent.dataTransfer.setData('text/plain', this.id);
     });
 
-
+    $('.assignUserProfile').hover(
+        function () {
+            $(this).siblings('.userNameTooltip').fadeIn(150); // show on hover in
+        },
+        function () {
+            $(this).siblings('.userNameTooltip').fadeOut(150); // hide on hover out
+        }
+    );
 
 
     /** comment start */

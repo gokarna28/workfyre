@@ -283,32 +283,35 @@ function getClasses($params)
 
     switch ($status) {
         case 'completed':
-            $classes .= ' bg-sky-200 text-sky-500';
+            $classes .= ' bg-sky-200 text-sky-600';
             break;
-        case 'in_progress':
-            $classes .= ' bg-yellow-200 text-yellow-500';
+        case 'in-progress':
+            $classes .= ' bg-yellow-200 text-yellow-600';
             break;
         case 'pending':
-            $classes .= ' bg-yellow-200 text-yellow-500';
+            $classes .= ' bg-yellow-200 text-yellow-600';
             break;
-        case 'not_started':
-            $classes .= ' bg-stone-200 text-stone-500';
+        case 'not-started':
+            $classes .= ' bg-stone-200 text-stone-600';
             break;
         case 'inrolled':
-            $classes .= ' bg-stone-200 text-stone-500';
+            $classes .= ' bg-stone-200 text-stone-600';
             break;
         case 'medium':
-            $classes .= ' bg-lime-200 text-lime-500';
+            $classes .= ' bg-lime-200 text-lime-600';
             break;
         case 'low':
-            $classes .= ' bg-orange-200 text-orange-500';
+            $classes .= ' bg-orange-200 text-orange-600';
             break;
         case 'active':
-            $classes .= ' bg-green-200 text-green-500';
+            $classes .= ' bg-green-200 text-green-600';
+            break;
+        case 'high':
+            $classes .= ' bg-red-200 text-red-600';
             break;
 
         default:
-            $classes .= ' bg-offred color-red';
+            $classes .= ' bg-red-200 text-red-600';
             break;
     }
     return $classes;
@@ -351,6 +354,30 @@ function getTasksDetailsByProject_id($project_id)
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return !empty($projects) ? $projects : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function getTasksDetailsByStatus($project_id, $status)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "tasks";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE status = :status AND project_id = :project_id ORDER BY id DESC");
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+        $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
+        if ($stmt->execute()) {
+            $tasks = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return !empty($tasks) ? $tasks : "";
         }
 
     } catch (PDOException $e) {
@@ -599,6 +626,34 @@ function updateProjectMeta($params)
     ");
         $stmt->bindParam(':status', $params['invite_statu'], PDO::PARAM_STR);
         $stmt->bindParam(':id', $params['invite_id'], PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+
+function updateTaskStatus($params)
+{
+    try {
+        global $conn;
+        $table_meta = PREFIX . "tasks";
+        $updatedAt = strtolower(date('F-d-Y'));
+
+        $stmt = $conn->prepare("
+        UPDATE $table_meta SET status=:status, updated_at=:updated_at WHERE id=:id
+    ");
+        $stmt->bindParam(':status', $params['task_status'], PDO::PARAM_STR);
+        $stmt->bindParam(':updated_at', $updatedAt, PDO::PARAM_STR);
+        $stmt->bindParam(':id', $params['task_id'], PDO::PARAM_INT);
 
         if ($stmt->execute()) {
             return true;

@@ -23,6 +23,10 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'create_task':
                 ajaxCreateTask($data, $files);
                 break;
+            case 'update_task_status':
+                ajaxUpdateTaskStatus($data);
+                break;
+
 
         }
     } catch (Exception $e) {
@@ -277,6 +281,23 @@ function ajaxCreateTask($params, $files)
             echo json_encode(['status' => 'error', 'message' => 'Failed to create the project.']);
         }
 
+    } catch (Exception $e) {
+        error_log('Error processing request: ' . $e->getMessage());
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function ajaxUpdateTaskStatus($params)
+{
+    try {
+        if (isset($params)) {
+            $result = updateTaskStatus($params);
+            if ($result) {
+                echo json_encode(['status' => 'success', 'message' => 'Task Status Updated to' . ' ' . $params['task_status'] . ' ' . 'Successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to Delete.']);
+            }
+        }
     } catch (Exception $e) {
         error_log('Error processing request: ' . $e->getMessage());
         echo json_encode(['error' => $e->getMessage()]);

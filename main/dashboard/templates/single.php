@@ -34,6 +34,7 @@
     </div>
     <!-- board container -->
     <div id="projectBoardContainer" class="grid grid-cols-3 gap-4 mb-5">
+
         <!-- To Do Column -->
         <div class="bg-white rounded shadow p-4">
             <div class="flex justify-between items-center mb-4">
@@ -43,6 +44,52 @@
                     data-target="todo">+ Add</button>
             </div>
             <div id="todo" class="task-column space-y-3 min-h-[200px] max-h-[700px] snap-y overflow-y-auto">
+                <?php
+                $taskDetails = getTasksDetailsByStatus($project_id, 'not-started');
+                if (isset($taskDetails) && is_array($taskDetails)) {
+                    foreach ($taskDetails as $taskCard) {
+                        ?>
+                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-gray-100 rounded shadow-md cursor-move"
+                            draggable="true" data-task_id="<?php echo $taskCard['id'];?>">
+                            <a
+                                href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
+                                <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                <P class="text-sm mb-2 w-full">
+                                    <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                </p>
+                                <div
+                                    class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                    <P><?php echo $taskCard['deadline']; ?></p>
+                                    <span
+                                        class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                        </spam>
+                                </div>
+
+                                <div class="flex items-center justify-between text-sm relative">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-regular fa-comments"></i>
+                                        <p>12 Comments</p>
+                                    </div>
+                                    <div class="flex items-center gap-1"><span>Assign to:</span>
+                                        <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                        <span
+                                            class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                            <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                class="w-full h-full object-cover" alt="default profile" />
+                                        </span>
+                                        <div
+                                            class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                            <span><?php echo $assignUser['firstname'] . ' ' . $assignUser['lastname']; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
+
             </div>
         </div>
 
@@ -50,11 +97,55 @@
         <div class="bg-white rounded shadow p-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold">In Progress</h2>
-                <button class="add-task-btn text-sm px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
-                    data-target="inprogress">+ Add</button>
+                <!-- <button class="add-task-btn text-sm px-2 py-1 bg-yellow-500 text-white rounded hover:bg-yellow-600"
+                    data-target="inprogress">+ Add</button> -->
             </div>
             <div id="inprogress" class="task-column space-y-3 min-h-[200px]">
+                <?php
+                $taskDetails = getTasksDetailsByStatus($project_id, 'in-progress');
+                if (isset($taskDetails) && is_array($taskDetails)) {
+                    foreach ($taskDetails as $taskCard) {
+                        ?>
+                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-yellow-200 rounded shadow-md cursor-move"
+                            draggable="true" data-task_id="<?php echo $taskCard['id'];?>">
+                            <a
+                                href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
+                                <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                <P class="text-sm mb-2 w-full">
+                                    <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                </p>
+                                <div
+                                    class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                    <P><?php echo $taskCard['deadline']; ?></p>
+                                    <span
+                                        class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                        </spam>
+                                </div>
 
+                                <div class="flex items-center justify-between text-sm relative">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-regular fa-comments"></i>
+                                        <p>12 Comments</p>
+                                    </div>
+                                    <div class="flex items-center gap-1"><span>Assign to:</span>
+                                        <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                        <span
+                                            class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                            <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                class="w-full h-full object-cover" alt="default profile" />
+                                        </span>
+                                        <div
+                                            class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                            <span><?php echo $assignUser['firstname'] . ' ' . $assignUser['lastname']; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
             </div>
         </div>
 
@@ -62,11 +153,55 @@
         <div class="bg-white rounded shadow p-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold">Done</h2>
-                <button class="add-task-btn text-sm px-2 py-1 bg-sky-500 text-white rounded hover:bg-sky-600"
-                    data-target="done">+ Add</button>
+                <!-- <button class="add-task-btn text-sm px-2 py-1 bg-sky-500 text-white rounded hover:bg-sky-600"
+                    data-target="done">+ Add</button> -->
             </div>
             <div id="done" class="task-column space-y-3 min-h-[200px]">
+                <?php
+                $taskDetails = getTasksDetailsByStatus($project_id,'completed');
+                if (isset($taskDetails) && is_array($taskDetails)) {
+                    foreach ($taskDetails as $taskCard) {
+                        ?>
+                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-sky-200 rounded shadow-md cursor-move"
+                            draggable="true" data-task_id="<?php echo $taskCard['id'];?>">
+                            <a
+                                href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
+                                <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                <P class="text-sm mb-2 w-full">
+                                    <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                </p>
+                                <div
+                                    class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                    <P><?php echo $taskCard['deadline']; ?></p>
+                                    <span
+                                        class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                        </spam>
+                                </div>
 
+                                <div class="flex items-center justify-between text-sm relative">
+                                    <div class="flex items-center gap-1">
+                                        <i class="fa-regular fa-comments"></i>
+                                        <p>12 Comments</p>
+                                    </div>
+                                    <div class="flex items-center gap-1"><span>Assign to:</span>
+                                        <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                        <span
+                                            class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                            <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                class="w-full h-full object-cover" alt="default profile" />
+                                        </span>
+                                        <div
+                                            class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                            <span><?php echo $assignUser['firstname'] . ' ' . $assignUser['lastname']; ?></span>
+                                        </div>
+                                    </div>
+                                </div>
+                            </a>
+                        </div>
+                        <?php
+                    }
+                }
+                ?>
             </div>
         </div>
     </div>
@@ -236,6 +371,7 @@
             <form id="createTaskForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
                 <h3 class="text-xl font-semibold mb-4">Add Task</h3>
+                <div class="mb-2" id="taskCreateSuccessMessage"></div>
                 <div>
                     <label>Title:</label>
                     <input type="text" id="task_title" name="task_title"
@@ -262,7 +398,8 @@
                 <div class="flex items-center w-full gap-5">
                     <div class="w-full">
                         <label class="block mb-2 font-medium text-slate-700">Dependencies:</label>
-                        <div id="task_dependencies_wrapper" class="mb-4 space-y-1 border border-slate-300 rounded p-4 max-h-30 snap-y overflow-y-auto">
+                        <div id="task_dependencies_wrapper"
+                            class="mb-4 space-y-1 border border-slate-300 rounded p-4 max-h-30 snap-y overflow-y-auto">
                             <?php
                             $tasks = getTasksDetailsByProject_id($project['id']);
                             if (is_array($tasks)) {
@@ -275,7 +412,7 @@
                                     </label>
                                     <?php
                                 }
-                            }else{
+                            } else {
                                 echo "No Task Yet.";
                             }
                             ?>
@@ -283,7 +420,7 @@
                     </div>
                 </div>
                 <div class="flex items-center w-full gap-5">
-                   
+
                     <div class="w-1/2">
                         <label>Assign to:</label>
                         <select id="task_assign" name="task_assign"

@@ -29,6 +29,9 @@ if (!isUserLoggedIn()) {
 
     <script src="http://workfyre.local/assets/js/single.js"></script>
     <script src="http://workfyre.local/assets/js/project-js.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <!-- <script src="http://workfyre.local/assets/js/script.js"></script> -->
+
 </head>
 
 <body>

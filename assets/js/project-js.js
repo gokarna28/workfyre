@@ -55,7 +55,7 @@ $(document).ready(function () {
         var project_description = $(this).find('textarea[name="project_description"]').val().trim();
 
 
-        var fileInput = $(this).find('input[name="project_attachments"]')[0];
+        var fileInput = $(this).find('input[name="project_attachments[]"]')[0];
 
         // Create FormData object
         var formData = new FormData();

@@ -39,6 +39,7 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
 //create project
 function ajaxCreateProject($params, $files)
 {
+
     try {
         if (empty($params['project_title']) || empty($params['project_priority']) || empty($params['project_description'])) {
             echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
@@ -199,6 +200,7 @@ function ajaxInviteTeam($params)
 
 function ajaxCreateTask($params, $files)
 {
+
     try {
         if (empty($params['task_title']) || empty($params['task_priority']) || empty($params['task_description'])) {
             echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
@@ -213,6 +215,20 @@ function ajaxCreateTask($params, $files)
         $result = createTask($params);
 
         if ($result['status'] == 'success') {
+            $assignUser = getUsersDetailsByUser_id($params['task_assignto']);
+            $classes = getClasses($params['task_priority']);
+            //data to send in the response 
+            $response = [
+                'task_id' => $result['task_id'],
+                'project_id' => $params['project_id'],
+                'title' => $params['task_title'],
+                'priority' => $params['task_priority'],
+                'description' => strlen($params['task_description']) > 20 ? substr($params['task_description'], 0, 40) . '...' : $params['task_description'],
+                'deadline' => $params['task_deadline'],
+                'assignto_user' => $assignUser['firstname'] . ' ' . $assignUser['lastname'],
+                'priority_class' => $classes,
+            ];
+
 
             $task_dependencies = json_decode($params['task_dependencies'], true);
 
@@ -239,7 +255,7 @@ function ajaxCreateTask($params, $files)
                     mkdir($uploadDir, 0777, true);
                 }
 
-                $uploadedFiles = [];
+                // $uploadedFiles = [];
 
                 foreach ($files['task_attachments']['name'] as $index => $name) {
                     $tmpName = $files['task_attachments']['tmp_name'][$index];
@@ -275,7 +291,7 @@ function ajaxCreateTask($params, $files)
                 }
             }
 
-            echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.']);
+            echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.', 'task_card_details' => $response]);
 
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Failed to create the project.']);

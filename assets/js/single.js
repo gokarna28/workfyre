@@ -69,102 +69,54 @@ $(document).ready(function () {
                         $('#taskCreateSuccessMessage').html(`
                         <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
                          `)
+
                         //push the container
 
 
-                        if (columnId === 'todo') {
-                            task = $(`
-                                <div id="tasks${taskIdCounter++}" class="p-3 bg-gray-100 rounded shadow-md cursor-move" draggable="true">
-                                <a href="http://workfyre.local/main/dashboard/templates/tasks.php">
-                                    <h2 class="text-xl font-medium">${taskTitle}</h2>
-                                    <P class="text-sm mb-2">${taskDependencies}</p>
-                                    <div
-                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
-                                        <P>${taskDeadline}</p>
-                                        <span class="bg-indigo-400 text-white rounded-full px-2 items-center justify-center">${taskPriority}
-                                            </spam>
-                                    </div>
-            
-                                    <div class="flex items-center justify-between text-sm">
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-regular fa-comments"></i>
-                                            <p>12 comments</p>
-                                        </div>
-                                        <div class="flex items-center gap-1"><span>Assign to:</span>
-                                            <span
-                                                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
-                                                <img src="http://workfyre.local/assets/images/default-profile.png"
-                                                    class="w-full h-full object-cover" alt="default profile" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            `);
-                        } else if (columnId === 'inprogress') {
-                            task = $(`
-                                <div id="tasks${taskIdCounter++}" class="p-3 bg-yellow-200 rounded shadow-md cursor-move" draggable="true">
-                                <a href="http://workfyre.local/main/dashboard/templates/tasks.php">
-                                    <h2 class="text-xl font-medium">${taskTitle}</h2>
-                                    <P class="text-sm mb-2">${taskDescriptions}</p>
-                                    <div
-                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
-                                        <P>${taskDeadline}</p>
-                                        <span class="bg-stone-400 text-white rounded-full px-2 items-center justify-center">${taskPriority}
-                                            </spam>
-                                    </div>
-            
-                                    <div class="flex items-center justify-between text-sm">
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-regular fa-comments"></i>
-                                            <p>12 comments</p>
-                                        </div>
-                                        <div class="flex items-center gap-1"><span>Assign to:</span>
-                                            <span
-                                                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
-                                                <img src="http://workfyre.local/assets/images/default-profile.png"
-                                                    class="w-full h-full object-cover" alt="default profile" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            `);
-                        } else if (columnId === 'done') {
-                            task = $(`
-                                <div id="tasks${taskIdCounter++}" class="p-3 bg-sky-200 rounded shadow-md cursor-move" draggable="true">
-                                <a href="http://workfyre.local/main/dashboard/templates/tasks.php">
-                                    <h2 class="text-xl font-medium">${taskTitle}1</h2>
-                                    <P class="text-sm mb-2">${taskDescriptions}</p>
-                                    <div
-                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
-                                        <P>${taskDeadline}</p>
-                                        <span class="bg-green-400 text-white rounded-full px-2 items-center justify-center">${taskPriority}
-                                            </spam>
-                                    </div>
-            
-                                    <div class="flex items-center justify-between text-sm">
-                                        <div class="flex items-center gap-1">
-                                            <i class="fa-regular fa-comments"></i>
-                                            <p>12 comments</p>
-                                        </div>
-                                        <div class="flex items-center gap-1"><span>Assign to:</span>
-                                            <span
-                                                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
-                                                <img src="http://workfyre.local/assets/images/default-profile.png"
-                                                    class="w-full h-full object-cover" alt="default profile" />
-                                            </span>
-                                        </div>
-                                    </div>
-                                </a>
-                            </div>
-                            `);
-                        }
+                        // if (columnId === 'todo') {
+                        console.log(response.task_card_details);
+                        $('#todo').prepend(`
+                                        <div id="tasks${response.task_card_details.task_id}" class="p-3 bg-gray-100 rounded shadow-md cursor-move"
+                                        draggable="true" data-task_id="${response.task_card_details.task_id}">
+                                        <a
+                                            href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=${response.task_card_details.project_id}&tid=${response.task_card_details.task_id}">
+                                            <h2 class="text-xl font-medium">${response.task_card_details.title}</h2>
+                                            <P class="text-sm mb-2 w-full">
+                                            ${response.task_card_details.description}
+                                            </p>
+                                            <div
+                                                class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                                <P>${response.task_card_details.deadline}</p>
+                                                <span
+                                                    class="${response.task_card_details.priority_class} rounded-full flex px-2 items-center justify-center">${response.task_card_details.priority}
+                                                    </spam>
+                                            </div>
 
-
-                        // setTimeout(() => {
-                        //     $('#inviteTeamForm').addClass('hidden');
-                        // }, 2000);
+                                            <div class="flex items-center justify-between text-sm relative">
+                                                <div class="flex items-center gap-1">
+                                                    <i class="fa-regular fa-comments"></i>
+                                                    <p>12 Comments</p>
+                                                </div>
+                                                <div class="flex items-center gap-1"><span>Assign to:</span>
+                                                    
+                                                    <span
+                                                        class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                        <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                            class="w-full h-full object-cover" alt="default profile" />
+                                                    </span>
+                                                    <div
+                                                        class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                        <span>${response.task_card_details.assignto_user}</span>
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </a>
+                                    </div>
+                            `);
+                        setTimeout(() => {
+                            $('#taskModal').addClass('hidden');
+                        }, 2000);
+                       
                     } else {
                         $('#inviteTeamSuccessMessage').html(`
                         <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
@@ -182,11 +134,8 @@ $(document).ready(function () {
                 e.originalEvent.dataTransfer.setData('text/plain', this.id);
             });
 
-            // Append task to the correct column
-            $(`#${currentColumn}`).append(task);
+           
 
-            // Hide the modal
-            $('#taskModal').addClass('hidden');
         }
     });
     //date piker dissable past date
@@ -206,7 +155,7 @@ $(document).ready(function () {
             data: taskData,
             success: function (response) {
                 // console.log(response);
-                
+
             },
             error: function (xhr, status, error) {
                 console.log("An error occurred: " + error);

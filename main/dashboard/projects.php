@@ -13,14 +13,14 @@
         </div>
         <div class="">
             <button id="createNewProject"
-                class="flex items-center gap-2 hover:bg-stone-900 hover:text-white border cursor-pointer border-slate-300 px-4 py-2 rounded-2xl">
+                class="flex items-center gap-2 hover:bg-stone-900 hover:text-white border cursor-pointer border-slate-300 px-4 py-2 rounded">
                 <i class="fa-solid fa-plus"></i>
                 <p class="text-lg font-medium">New Project</p>
             </button>
         </div>
     </div>
     <div class="w-full flex items-center">
-        <div class="border flex border-slate-300 mb-5 w-35 p-2 rounded-xl items-center">
+        <div class="border flex border-slate-300 mb-5 w-35 p-2 rounded items-center">
             <i class="fa-solid fa-filter"></i>
             <select class="outline-none">
                 <option value="">Add Filter</option>

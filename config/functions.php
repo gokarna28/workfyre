@@ -201,6 +201,7 @@ function updateTaskDependencies($params)
 
 function saveProjectAttachments($params)
 {
+  
     try {
         global $conn;
         $table_name = PREFIX . "project_attachments";

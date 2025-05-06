@@ -260,20 +260,30 @@
                     </div>
                 </div>
                 <div class="flex items-center w-full gap-5">
-                    <div class="w-1/2">
-                        <label>Dependencies:</label>
-                        <select id="task_dependencies" name="task_dependencies"
-                            class="w-full border p-2 rounded mb-4 border border-slate-300">
-                            <option value="">Task</option>
-                            <?php $tasks = getTasksDetailsByProject_id($project['id']);
-                            foreach ($tasks as $task) {
-                                ?>
-                                <option value="<?php echo $task['id'] ?>"><?php echo ucfirst($task['title']) ?></option>
-                                <?php
-                            } ?>
-
-                        </select>
+                    <div class="w-full">
+                        <label class="block mb-2 font-medium text-slate-700">Dependencies:</label>
+                        <div id="task_dependencies_wrapper" class="mb-4 space-y-1 border border-slate-300 rounded p-4 max-h-30 snap-y overflow-y-auto">
+                            <?php
+                            $tasks = getTasksDetailsByProject_id($project['id']);
+                            if (is_array($tasks)) {
+                                foreach ($tasks as $task) {
+                                    ?>
+                                    <label class="flex items-center space-x-2">
+                                        <input type="checkbox" name="task_dependencies[]" value="<?php echo $task['id']; ?>"
+                                            class="task-dependency-checkbox">
+                                        <span><?php echo ucfirst($task['title']); ?></span>
+                                    </label>
+                                    <?php
+                                }
+                            }else{
+                                echo "No Task Yet.";
+                            }
+                            ?>
+                        </div>
                     </div>
+                </div>
+                <div class="flex items-center w-full gap-5">
+                   
                     <div class="w-1/2">
                         <label>Assign to:</label>
                         <select id="task_assign" name="task_assign"

@@ -89,12 +89,12 @@
       <h2>How It Works</h2>
       <div id="popupContent" style="margin-bottom:20px;">
         <!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls>
+        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
           <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
             type="video/mp4">
         </video>
       </div>
-      <div id="triggeredButtonContainer"></div>
+      <div id="triggeredButtonContainer" style="display:flex; align-items:center; justify-content:center;"></div>
     </div>
   </div>
 
@@ -114,7 +114,7 @@
       buyButton.addEventListener('click', function (e) {
         e.preventDefault();
         popupContent.innerHTML = `<!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls>
+        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
           <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
             type="video/mp4">
         </video>`;
@@ -131,7 +131,7 @@
       joinaPoc.addEventListener('click', function (e) {
         e.preventDefault();
         popupContent.innerHTML = `<!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls>
+        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
           <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
             type="video/mp4">
         </video>`;
@@ -147,7 +147,7 @@
       getAiHelp.addEventListener('click', function (e) {
         e.preventDefault();
         popupContent.innerHTML = `<!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls>
+        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
           <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
             type="video/mp4">
         </video>`;
@@ -166,19 +166,21 @@
           // Inject GraceBook content
           popupContent.innerHTML = `
         <div style="text-align: center; padding: 1rem;">
-          <h3>🟣 Join the GraceBook Community</h3>
-          <p>To participate fully, prepare the following:</p>
-          <ul style="list-style: none; padding: 0;">
-            <li>✅ QRTiger vCard Profile</li>
-            <li>✅ PayPal or Venmo Account</li>
-            <li>✅ Mobile Device (Smartphone preferred)</li>
-            <li>✅ Valid Email Address</li>
-          </ul>
-          <a href="https://discord.gg/Z77f4CEd" target="_blank"
-            style="font-size: 1.2rem; background: purple; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none;">
-            Enter GraceBook Server
-          </a>
-        </div>
+  <h3>🟣 Join the GraceBook Community</h3>
+  <p>To participate fully, prepare the following:</p>
+  <ul style="list-style: none; padding: 0; text-align: left; display: inline-block;">
+    <li>✅ QRTiger vCard Profile</li>
+    <li>✅ PayPal or Venmo Account</li>
+    <li>✅ Mobile Device (Smartphone preferred)</li>
+    <li>✅ Valid Email Address</li>
+  </ul>
+  <br>
+  <a href="https://discord.gg/Z77f4CEd" target="_blank"
+    style="font-size: 1.2rem; background: purple; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none;">
+    Enter GraceBook Server
+  </a>
+</div>
+
       `;
         }
       });

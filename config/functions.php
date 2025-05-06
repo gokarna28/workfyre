@@ -171,6 +171,34 @@ function createTask($params)
     }
 }
 
+function updateTaskDependencies($params)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "dependencies";
+
+        $stmt = $conn->prepare("INSERT INTO $table_name (task_id, dependency_task_id, created_at, updated_at) 
+        VALUES (:task_id, :dependency_task_id, :created_at, :updated_at)");
+
+        $stmt->bindParam(':task_id', $params['task_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':dependency_task_id', $params['dependency_task_id'], PDO::PARAM_STR);
+        $stmt->bindParam(':created_at', $params['created_at'], PDO::PARAM_STR);
+        $stmt->bindParam(':updated_at', $params['updated_at'], PDO::PARAM_STR);
+
+        if ($stmt->execute()) {
+            $task_id = $conn->lastInsertId();
+            return ['status' => 'success', 'task_id' => $task_id];
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
 function saveProjectAttachments($params)
 {
     try {
@@ -181,6 +209,33 @@ function saveProjectAttachments($params)
         VALUES (:project_id, :attachment, :created_at, :updated_at)");
 
         $stmt->bindParam(':project_id', $params['project_id'], PDO::PARAM_INT);
+        $stmt->bindParam(':attachment', $params['attachment'], PDO::PARAM_STR);
+        $stmt->bindParam(':created_at', $params['created_at'], PDO::PARAM_STR);
+        $stmt->bindParam(':updated_at', $params['updated_at'], PDO::PARAM_STR);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+function saveTaskAttachments($params)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "task_attachments";
+
+        $stmt = $conn->prepare("INSERT INTO $table_name (task_id, attachment, created_at, updated_at) 
+        VALUES (:task_id, :attachment, :created_at, :updated_at)");
+
+        $stmt->bindParam(':task_id', $params['task_id'], PDO::PARAM_INT);
         $stmt->bindParam(':attachment', $params['attachment'], PDO::PARAM_STR);
         $stmt->bindParam(':created_at', $params['created_at'], PDO::PARAM_STR);
         $stmt->bindParam(':updated_at', $params['updated_at'], PDO::PARAM_STR);
@@ -293,7 +348,7 @@ function getTasksDetailsByProject_id($project_id)
         $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
 
         if ($stmt->execute()) {
-            $projects = $stmt->fetch(PDO::FETCH_ASSOC);
+            $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
 
             return !empty($projects) ? $projects : "";
         }
@@ -466,7 +521,7 @@ function getProjectMeta($project_id)
     }
 
 }
-function getProjectMetaByStatus($project_id,$status = "inrolled")
+function getProjectMetaByStatus($project_id, $status = "inrolled")
 {
     try {
         global $conn;

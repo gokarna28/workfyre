@@ -207,14 +207,27 @@ function ajaxCreateTask($params, $files)
 
         //insert to database 
         $result = createTask($params);
-        var_dump($result);
-        exit;
 
         if ($result['status'] == 'success') {
-            echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.']);
+
+            $task_dependencies = json_decode($params['task_dependencies'], true);
+
+            if (isset($task_dependencies) && is_array($task_dependencies)) {
+                foreach ($task_dependencies as $dependency) {
+                    $dependencyParams = [
+                        'task_id' => $result['task_id'],
+                        'dependency_task_id' => $dependency,
+                        'created_at' => $createdAt,
+                        'updated_at' => $updatedAt
+                    ];
+
+                    updateTaskDependencies($dependencyParams);
+                }
+            }
+
 
             //upload the attachments
-            if (isset($files['project_attachments']) && is_array($files['project_attachments']['name'])) {
+            if (isset($files['task_attachments']) && is_array($files['task_attachments']['name'])) {
                 $base_dir = '/assets/uploads/';
                 $uploadDir = $_SERVER['DOCUMENT_ROOT'] . $base_dir;
 
@@ -224,9 +237,9 @@ function ajaxCreateTask($params, $files)
 
                 $uploadedFiles = [];
 
-                foreach ($files['project_attachments']['name'] as $index => $name) {
-                    $tmpName = $files['project_attachments']['tmp_name'][$index];
-                    $error = $files['project_attachments']['error'][$index];
+                foreach ($files['task_attachments']['name'] as $index => $name) {
+                    $tmpName = $files['task_attachments']['tmp_name'][$index];
+                    $error = $files['task_attachments']['error'][$index];
 
                     if ($error === UPLOAD_ERR_OK) {
                         // Use current date-time instead of time()
@@ -238,14 +251,14 @@ function ajaxCreateTask($params, $files)
                             // Relative path to store in the database
                             $uploadedFile = $base_dir . $newFileName;
                             $data = [
-                                'project_id' => $result['project_id'],
+                                'task_id' => $result['task_id'],
                                 'created_at' => $createdAt,
                                 'updated_at' => $updatedAt,
                                 'attachment' => $uploadedFile
                             ];
 
                             //save to the attachments table
-                            saveProjectAttachments($data);
+                            saveTaskAttachments($data);
 
                         } else {
                             echo json_encode(['status' => 'error', 'message' => 'Failed to move file: ' . $name]);
@@ -256,9 +269,10 @@ function ajaxCreateTask($params, $files)
                         return;
                     }
                 }
-
-
             }
+
+            echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.']);
+
         } else {
             echo json_encode(['status' => 'error', 'message' => 'Failed to create the project.']);
         }

@@ -17,6 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'delete_project_attachment':
                 ajaxDeleteProjectAttachment($data);
                 break;
+                case 'delete_task_attachment':
+                    ajaxDeleteTaskAttachment($data);
+                    break;
             case 'invite_team':
                 ajaxInviteTeam($data);
                 break;
@@ -118,6 +121,24 @@ function ajaxDeleteProjectAttachment($params)
         if (isset($params['attachmentId'])) {
 
             $result = deleteProjectAttachment($params['attachmentId']);
+            if ($result) {
+                echo json_encode(['status' => 'success', 'message' => 'File Deleted Successfully.']);
+            } else {
+                echo json_encode(['status' => 'error', 'message' => 'Failed to Delete.']);
+            }
+        }
+    } catch (Exception $e) {
+        error_log('Error processing request: ' . $e->getMessage());
+        echo json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function ajaxDeleteTaskAttachment($params)
+{
+    try {
+        if (isset($params['attachmentId'])) {
+
+            $result = deleteTaskAttachment($params['attachmentId']);
             if ($result) {
                 echo json_encode(['status' => 'success', 'message' => 'File Deleted Successfully.']);
             } else {

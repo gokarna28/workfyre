@@ -142,6 +142,40 @@ $(document).ready(function () {
 
 
     });
+    $('.deleteTaskAttachment').on('click', function () {
+        const attachmentId = $(this).data('attachment_id');
+
+        var data = {
+            attachmentId: attachmentId,
+            action: 'delete_task_attachment'
+        }
+        $.ajax({
+            type: 'POST',
+            url: 'http://workfyre.local/main/dashboard/ajax-project.php',
+            data: data,
+            success: function (response) {
+                if (response.status == 'success') {
+                    $('#projectAttachmentConainer' + data.attachmentId).addClass('hidden');
+                    $('#deleteProjectAttachmentSuccessMessage').html(`
+                        <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                    `);
+
+                    setTimeout(() => {
+                        $('#deleteProjectAttachmentSuccessMessage').html('');
+                    }, 2000);
+                } else {
+                    $('#successMessage').html(`
+                        <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                    `);
+                }
+            },
+            error: function (xhr, status, error) {
+                console.log("An error occurred: " + error);
+            }
+        });
+
+
+    });
 
 
 

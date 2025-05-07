@@ -7,6 +7,9 @@ if (!isUserLoggedIn()) {
     header('Location: ' . HOMEPAGE_URL . '/main/login.php');
     exit();
 }
+
+$current_page = getCurrentPageName(); 
+
 ?>
 
 <!DOCTYPE html>
@@ -63,7 +66,7 @@ if (!isUserLoggedIn()) {
                     </li>
                     <li class="flex items-center gap-4 font-medium">
                         <span
-                            class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden p-2">
+                            class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
                             <img src="http://workfyre.local/assets/images/default-profile.png"
                                 class="w-full h-full object-cover" alt="default profile" />
                         </span>

@@ -17,17 +17,17 @@
             <h2 class="text-xl font-medium"><?php echo $project['title']; ?></h2>
         </div>
 
-        <p class="text-sm pl-15"><?php echo $project['description'] ?></p>
+        <p class="text-sm pl-10"><?php echo $project['description'] ?></p>
     </div>
 
     <div class="w-full flex items-center justify-between mb-10">
         <ul class="flex items-center w-1/2 border-b border-slate-300">
-            <li id="projectBoard" class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer">
+            <li id="projectBoard" class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer flex gap-2">
                 <span><i class="fa-solid fa-chart-bar"></i></span>Board
             </li>
-            <li id="projectFiles" class="mr-10 text-lg pb-4 cursor-pointer"><span><i
+            <li id="projectFiles" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i
                         class="fa-regular fa-file"></i></span>Files</li>
-            <li id="projectTeam" class="mr-10 text-lg pb-4 cursor-pointer"><span><i
+            <li id="projectTeam" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i
                         class="fa-solid fa-users"></i></span>Team</li>
         </ul>
 
@@ -256,6 +256,8 @@
                     <?php
 
                 }
+            }else{
+                echo "No Attachments Found.";
             }
 
             ?>

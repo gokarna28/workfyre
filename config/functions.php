@@ -2,6 +2,21 @@
 include_once('connection.php');
 include_once('config.php');
 
+
+//current url
+// function getCurrentUrl() {
+//     $protocol = (!empty($_SERVER['HTTPS']) && $_SERVER['HTTPS'] !== 'off') ? "https://" : "http://";
+//     $host = $_SERVER['HTTP_HOST'];
+//     $requestUri = $_SERVER['REQUEST_URI'];
+
+//     return $protocol . $host . $requestUri;
+// }
+
+function getCurrentPageName() {
+    return basename($_SERVER['REQUEST_URI']);
+}
+
+
 //crete user
 function registerUser($params)
 {
@@ -366,6 +381,31 @@ function getTasksDetailsByProject_id($project_id)
     }
 }
 
+
+function getTasksDetailsByTask_id($task_id)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "tasks";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE id=:task_id");
+        $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $tasks = $stmt->fetch(PDO::FETCH_ASSOC);
+
+            return !empty($tasks) ? $tasks : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
 function getTasksDetailsByStatus($project_id, $status)
 {
     try {
@@ -414,12 +454,60 @@ function getProjectAttachments($project_id)
     }
 }
 
+function getTaskAttachments($task_id)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "task_attachments";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE id=:task_id");
+        $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            $attachments = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+            return !empty($attachments) ? $attachments : "";
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
 function deleteProjectAttachment($attachment_id)
 {
 
     try {
         global $conn;
         $table_name = PREFIX . "project_attachments";
+
+        $stmt = $conn->prepare("DELETE FROM $table_name WHERE id=:id");
+        $stmt->bindParam(':id', $attachment_id, PDO::PARAM_INT);
+
+        if ($stmt->execute()) {
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
+
+function deleteTaskAttachment($attachment_id)
+{
+
+    try {
+        global $conn;
+        $table_name = PREFIX . "task_attachments";
 
         $stmt = $conn->prepare("DELETE FROM $table_name WHERE id=:id");
         $stmt->bindParam(':id', $attachment_id, PDO::PARAM_INT);

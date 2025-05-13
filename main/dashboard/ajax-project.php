@@ -336,22 +336,17 @@ function ajaxCreateTask($params, $files)
                     'predecessors' => $predecessorIds
                 ];
 
-
-                //get the params for critial path
-                $criticalParams = calculateCriticalPath($taskCriticalDetails);
-                var_dump($criticalParams);
+                
             }
 
-
-
-            // $data = [
-            //     'task_id' => $result['task_id'],
-
-            // ];
-
+            //get the params for critial path
+            $allCriticalParams = calculateCriticalPath($taskCriticalDetails);
             //update the task critical params
-            // updateTaskCriticalPathParams($data);
-/**ends */
+            foreach ($allCriticalParams as $criticalParams) {
+                updateTaskCriticalPathParams($criticalParams);
+            }
+
+            /**ends */
 
             echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.', 'task_card_details' => $response]);
 

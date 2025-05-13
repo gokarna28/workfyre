@@ -188,17 +188,19 @@ function createTask($params)
 }
 function updateTaskCriticalPathParams($params)
 {
+    
     try {
         global $conn;
         $table_name = PREFIX . "tasks";
 
-        $stmt = $conn->prepare("UPDATE $table_name SET early_start=:early_start, early_finish=:early_finish, latest_start=:latest_start, latest_finish=:latest_finish,slack=slack");
+        $stmt = $conn->prepare("UPDATE $table_name SET early_start=:early_start, early_finish=:early_finish, latest_start=:latest_start, latest_finish=:latest_finish,slack=:slack, critical=:critical WHERE id=:task_id");
 
-        $stmt->bindParam(':early_start', $params['early_start'], PDO::PARAM_INT);
-        $stmt->bindParam(':early_finish', $params['task_early_finish'], PDO::PARAM_INT);
-        $stmt->bindParam(':latest_start', $params['latest_start'], PDO::PARAM_INT);
-        $stmt->bindParam(':latest_finish', $params['latest_finish'], PDO::PARAM_INT);
+        $stmt->bindParam(':early_start', $params['es'], PDO::PARAM_INT);
+        $stmt->bindParam(':early_finish', $params['ef'], PDO::PARAM_INT);
+        $stmt->bindParam(':latest_start', $params['ls'], PDO::PARAM_INT);
+        $stmt->bindParam(':latest_finish', $params['lf'], PDO::PARAM_INT);
         $stmt->bindParam(':slack', $params['slack'], PDO::PARAM_INT);
+        $stmt->bindParam(':critical', $params['critical'], PDO::PARAM_INT);
         $stmt->bindParam(':task_id', $params['task_id'], PDO::PARAM_INT);
 
 
@@ -895,12 +897,13 @@ function calculateCriticalPath($tasks)
         $lf = $lfLs[$id]['lf'];
         $slack = $ls - $es;
         $results[$id] = [
+            'task_id'=>$id,
             'es' => $es,
             'ef' => $ef,
             'ls' => $ls,
             'lf' => $lf,
             'slack' => $slack,
-            'critical' => $slack == 0
+            'critical' => $slack == 0?1:0
         ];
     }
 

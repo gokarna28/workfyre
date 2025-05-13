@@ -22,26 +22,7 @@
             <h2>Gantt Chart with Critical Path</h2>
             <div id="chart_div"></div>
         </div>
-        <?php
-$taskData=getTasksDetailsByProject_id($project_id);
-// var_dump($taskData);
-
-        $tasks = [
-            ['id' => 'A', 'duration' => 3, 'predecessors' => []],
-            ['id' => 'B', 'duration' => 2, 'predecessors' => ['A']],
-            ['id' => 'C', 'duration' => 1, 'predecessors' => ['A']],
-            ['id' => 'D', 'duration' => 4, 'predecessors' => ['B', 'C']],
-        ];
-
-        $results = calculateCriticalPath($tasks);
-        // var_dump($results);
-
-        foreach ($results as $id => $info) {
-            echo "Task $id: ES={$info['es']}, EF={$info['ef']}, LS={$info['ls']}, LF={$info['lf']}, Slack={$info['slack']}";
-            echo $info['critical'] ? " (Critical)" : "";
-            echo "<br>";
-        }
-        ?>
+        
     </div>
 
     <div class="w-full flex items-center justify-between mb-10">

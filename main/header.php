@@ -33,7 +33,9 @@ $current_page = getCurrentPageName();
     <script src="http://workfyre.local/assets/js/single.js"></script>
     <script src="http://workfyre.local/assets/js/project-js.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <!-- <script src="http://workfyre.local/assets/js/script.js"></script> -->
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script src="http://workfyre.local/assets/js/script.js"></script>
+
 
 </head>
 
@@ -41,7 +43,7 @@ $current_page = getCurrentPageName();
     <header
         class="bg-white px-10 py-4 flex items-center justify-between border-b border-slate-300 z-2 fixed w-full top-0">
         <div class="w-1/2">
-            <h1 class="text-3xl font-bold">Workfyre</h1>
+            <h1 class="text-3xl font-bold"><a href="<?php echo HOMEPAGE_URL?>/main/dashboard/home.php">Workfyre</a></h1>
         </div>
         <div class="flex items-center w-full gap-5 justify-between">
             <div class="bg-slate-100 border border-slate-300 rounded-full py-2 px-4 w-full">

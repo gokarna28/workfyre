@@ -18,12 +18,40 @@
         </div>
 
         <p class="text-sm pl-10"><?php echo $project['description'] ?></p>
+        <div>
+            <h2>Gantt Chart with Critical Path</h2>
+            <div id="chart_div"></div>
+        </div>
+        <?php
+$taskData=getTasksDetailsByProject_id($project_id);
+// var_dump($taskData);
+
+        $tasks = [
+            ['id' => 'A', 'duration' => 3, 'predecessors' => []],
+            ['id' => 'B', 'duration' => 2, 'predecessors' => ['A']],
+            ['id' => 'C', 'duration' => 1, 'predecessors' => ['A']],
+            ['id' => 'D', 'duration' => 4, 'predecessors' => ['B', 'C']],
+        ];
+
+        $results = calculateCriticalPath($tasks);
+        // var_dump($results);
+
+        foreach ($results as $id => $info) {
+            echo "Task $id: ES={$info['es']}, EF={$info['ef']}, LS={$info['ls']}, LF={$info['lf']}, Slack={$info['slack']}";
+            echo $info['critical'] ? " (Critical)" : "";
+            echo "<br>";
+        }
+        ?>
     </div>
 
     <div class="w-full flex items-center justify-between mb-10">
         <ul class="flex items-center w-1/2 border-b border-slate-300">
-            <li id="projectBoard" class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer flex gap-2">
+            <li id="projectBoard"
+                class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer flex gap-2">
                 <span><i class="fa-solid fa-chart-bar"></i></span>Board
+            </li>
+            <li id="projectTimeline" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2">
+                <span><i class="fa-solid fa-chart-bar"></i></span>Timeline
             </li>
             <li id="projectFiles" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i
                         class="fa-regular fa-file"></i></span>Files</li>
@@ -50,7 +78,7 @@
                     foreach ($taskDetails as $taskCard) {
                         ?>
                         <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-gray-100 rounded shadow-md cursor-move"
-                            draggable="true" data-task_id="<?php echo $taskCard['id'];?>">
+                            draggable="true" data-task_id="<?php echo $taskCard['id']; ?>">
                             <a
                                 href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
                                 <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
@@ -107,7 +135,7 @@
                     foreach ($taskDetails as $taskCard) {
                         ?>
                         <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-yellow-200 rounded shadow-md cursor-move"
-                            draggable="true" data-task_id="<?php echo $taskCard['id'];?>">
+                            draggable="true" data-task_id="<?php echo $taskCard['id']; ?>">
                             <a
                                 href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
                                 <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
@@ -158,12 +186,12 @@
             </div>
             <div id="done" class="task-column space-y-3 min-h-[200px]">
                 <?php
-                $taskDetails = getTasksDetailsByStatus($project_id,'completed');
+                $taskDetails = getTasksDetailsByStatus($project_id, 'completed');
                 if (isset($taskDetails) && is_array($taskDetails)) {
                     foreach ($taskDetails as $taskCard) {
                         ?>
                         <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-sky-200 rounded shadow-md cursor-move"
-                            draggable="true" data-task_id="<?php echo $taskCard['id'];?>">
+                            draggable="true" data-task_id="<?php echo $taskCard['id']; ?>">
                             <a
                                 href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
                                 <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
@@ -256,7 +284,7 @@
                     <?php
 
                 }
-            }else{
+            } else {
                 echo "No Attachments Found.";
             }
 
@@ -456,7 +484,7 @@
                         multiple>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
                     <button type="submit" id="addTaskBtn" name="addTaskBtn"
                         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
                         Task</button>

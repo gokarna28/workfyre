@@ -17,9 +17,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'delete_project_attachment':
                 ajaxDeleteProjectAttachment($data);
                 break;
-                case 'delete_task_attachment':
-                    ajaxDeleteTaskAttachment($data);
-                    break;
+            case 'delete_task_attachment':
+                ajaxDeleteTaskAttachment($data);
+                break;
             case 'invite_team':
                 ajaxInviteTeam($data);
                 break;
@@ -236,6 +236,7 @@ function ajaxCreateTask($params, $files)
         $result = createTask($params);
 
         if ($result['status'] == 'success') {
+
             $assignUser = getUsersDetailsByUser_id($params['task_assignto']);
             $classes = getClasses($params['task_priority']);
             //data to send in the response 
@@ -311,6 +312,46 @@ function ajaxCreateTask($params, $files)
                     }
                 }
             }
+
+            /**update the critical path params to the task table */
+            $tasks = getTasksDetailsByProject_id($params['project_id']);
+
+            $taskCriticalDetails = [];
+
+            foreach ($tasks as $task) {
+                $taskDependencies = getTaskDependencies($task['id']);
+                $predecessorIds = array_column($taskDependencies, 'dependency_task_id');
+
+                //convert deadline in days
+                $deadline = $task['deadline'];
+                $today = new DateTime(); // today
+                $endDate = new DateTime($deadline);
+
+                $interval = $today->diff($endDate);
+                $durationInDays = (int) $interval->format('%r%a');
+
+                $taskCriticalDetails[] = [
+                    'id' => $task['id'],
+                    'duration' => $durationInDays,
+                    'predecessors' => $predecessorIds
+                ];
+
+
+                //get the params for critial path
+                $criticalParams = calculateCriticalPath($taskCriticalDetails);
+                var_dump($criticalParams);
+            }
+
+
+
+            // $data = [
+            //     'task_id' => $result['task_id'],
+
+            // ];
+
+            //update the task critical params
+            // updateTaskCriticalPathParams($data);
+/**ends */
 
             echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.', 'task_card_details' => $response]);
 

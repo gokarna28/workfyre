@@ -12,7 +12,8 @@ include_once('config.php');
 //     return $protocol . $host . $requestUri;
 // }
 
-function getCurrentPageName() {
+function getCurrentPageName()
+{
     return basename($_SERVER['REQUEST_URI']);
 }
 
@@ -185,6 +186,35 @@ function createTask($params)
         return "An error occurred: " . $e->getMessage();
     }
 }
+function updateTaskCriticalPathParams($params)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "tasks";
+
+        $stmt = $conn->prepare("UPDATE $table_name SET early_start=:early_start, early_finish=:early_finish, latest_start=:latest_start, latest_finish=:latest_finish,slack=slack");
+
+        $stmt->bindParam(':early_start', $params['early_start'], PDO::PARAM_INT);
+        $stmt->bindParam(':early_finish', $params['task_early_finish'], PDO::PARAM_INT);
+        $stmt->bindParam(':latest_start', $params['latest_start'], PDO::PARAM_INT);
+        $stmt->bindParam(':latest_finish', $params['latest_finish'], PDO::PARAM_INT);
+        $stmt->bindParam(':slack', $params['slack'], PDO::PARAM_INT);
+        $stmt->bindParam(':task_id', $params['task_id'], PDO::PARAM_INT);
+
+
+        if ($stmt->execute()) {
+            // $task_id = $conn->lastInsertId();
+            return true;
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
 
 function updateTaskDependencies($params)
 {
@@ -214,9 +244,36 @@ function updateTaskDependencies($params)
     }
 }
 
+function getTaskDependencies($task_id)
+{
+
+    try {
+        global $conn;
+        $table_name = PREFIX . "dependencies";
+
+        $stmt = $conn->prepare("SELECT * FROM $table_name WHERE task_id=:task_id");
+
+        $stmt->bindParam(':task_id', $task_id, PDO::PARAM_INT);
+
+
+        if ($stmt->execute()) {
+            $dependencies = $stmt->fetchAll(PDO::FETCH_ASSOC);
+            return !empty($dependencies) ? $dependencies : [];
+
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return "Database error: " . $e->getMessage();
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return "An error occurred: " . $e->getMessage();
+    }
+}
+
 function saveProjectAttachments($params)
 {
-  
+
     try {
         global $conn;
         $table_name = PREFIX . "project_attachments";
@@ -756,3 +813,98 @@ function updateTaskStatus($params)
         return "An error occurred: " . $e->getMessage();
     }
 }
+
+function calculateCriticalPath($tasks)
+{
+    $taskMap = [];
+    foreach ($tasks as $task) {
+        $taskMap[$task['id']] = $task;
+    }
+
+    // Step 1: Forward Pass (ES and EF)
+    $esEf = [];
+
+    $forwardPass = function ($taskId) use (&$taskMap, &$esEf, &$forwardPass) {
+        $task = $taskMap[$taskId];
+        if (empty($task['predecessors'])) {
+            $es = 0;
+        } else {
+            $maxEf = 0;
+            foreach ($task['predecessors'] as $preId) {
+                if (!isset($esEf[$preId])) {
+                    $forwardPass($preId);
+                }
+                $maxEf = max($maxEf, $esEf[$preId]['ef']);
+            }
+            $es = $maxEf;
+        }
+
+        $duration = is_numeric($task['duration']) ? (float)$task['duration'] : 0;
+        $ef = $es + $duration;
+        $esEf[$taskId] = ['es' => $es, 'ef' => $ef];
+    };
+
+    foreach ($tasks as $task) {
+        $forwardPass($task['id']);
+    }
+
+    // Step 2: Backward Pass (LS and LF)
+    $lfLs = [];
+    $maxEf = max(array_column($esEf, 'ef'));
+
+    $backwardPass = function ($taskId) use (&$taskMap, &$lfLs, $esEf, &$backwardPass) {
+        $task = $taskMap[$taskId];
+
+        $successors = [];
+        foreach ($taskMap as $otherTask) {
+            if (in_array($taskId, $otherTask['predecessors'])) {
+                $successors[] = $otherTask['id'];
+            }
+        }
+
+        if (empty($successors)) {
+            $lf = $maxEf = max(array_column($esEf, 'ef'));
+        } else {
+            $minLs = INF;
+            foreach ($successors as $succId) {
+                if (!isset($lfLs[$succId])) {
+                    $backwardPass($succId);
+                }
+                $minLs = min($minLs, $lfLs[$succId]['ls']);
+            }
+            $lf = $minLs;
+        }
+
+        $duration = is_numeric($task['duration']) ? (float)$task['duration'] : 0;
+        $ls = $lf - $duration;
+        $lfLs[$taskId] = ['lf' => $lf, 'ls' => $ls];
+    };
+
+    $reversedTasks = array_reverse($tasks);
+    foreach ($reversedTasks as $task) {
+        $backwardPass($task['id']);
+    }
+
+    // Step 3: Combine all and calculate slack
+    $results = [];
+    foreach ($tasks as $task) {
+        $id = $task['id'];
+        $es = $esEf[$id]['es'];
+        $ef = $esEf[$id]['ef'];
+        $ls = $lfLs[$id]['ls'];
+        $lf = $lfLs[$id]['lf'];
+        $slack = $ls - $es;
+        $results[$id] = [
+            'es' => $es,
+            'ef' => $ef,
+            'ls' => $ls,
+            'lf' => $lf,
+            'slack' => $slack,
+            'critical' => $slack == 0
+        ];
+    }
+
+    return $results;
+}
+
+

@@ -1,207 +1,372 @@
-<section style="background-color: #f3f0ff; padding: 3rem 1rem; font-family: 'Segoe UI', sans-serif; color: #333;">
-  <div style="max-width: 1000px; margin: auto; text-align: center;">
+<?php
 
-    <!-- Featured Voucher Image -->
-    <img src="http://workfyre.local/assets/images/YAM-is-On-06-01.png" alt="YAM-is-ON Trading Voucher"
-      style="width: 100%; max-width: 1000px; border-radius: 16px; margin-bottom: 2rem; box-shadow: 0 4px 14px rgba(0,0,0,0.2);" />
+// $tasks = [
+//   'A' => ['duration' => 3, 'dependencies' => []],
+//   'B' => ['duration' => 2, 'dependencies' => ['A']],
+//   'C' => ['duration' => 1, 'dependencies' => ['A']],
+//   'D' => ['duration' => 4, 'dependencies' => ['B', 'C']],
+// ];
 
-    <h1 style="font-size: 2.5rem; color: #4b0082; margin-bottom: 1rem;">🌊 How It Works</h1>
-    <p style="font-size: 1.25rem; line-height: 1.6; margin-bottom: 2rem;">
-      The smallest acts — a box, a scan, a story — can unlock real community value.
-      This is the <strong>Krill Movement</strong>, powered by AI, delivered through Proof of Delivery.
-      <br><strong>Welcome to “YAM-is-ON” Delivery.</strong>
-    </p>
+// function criticalPath($tasks)
+// {
+//   // Step 1: Calculate Earliest Start and Finish times
+//   $es = []; // Earliest Start
+//   $ef = []; // Earliest Finish
 
-    <div
-      style="text-align: left; background-color: #fff; padding: 2rem; border-radius: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1);">
-      <h2 style="color: #663399; font-size: 1.75rem; margin-bottom: 1rem;">📦 1. Find a Box</h2>
-      <p>Gather items you no longer need — books, tools, heirlooms — and give them a second life.</p>
+//   function calcEarly($taskId, &$tasks, &$es, &$ef)
+//   {
+//     if (isset($es[$taskId]))
+//       return;
 
-      <h2 style="color: #663399; font-size: 1.75rem; margin-top: 2rem;">🎫 2. Add a YAM Voucher Sticker</h2>
-      <p>Buy a <strong>10-pack for $3</strong>. Each sticker (just 30¢) transforms your delivery into a trackable story
-        and earns community value.</p>
+//     $task = $tasks[$taskId];
+//     $dependencies = $task['dependencies'];
 
-      <h2 style="color: #663399; font-size: 1.75rem; margin-top: 2rem;">📲 3. Scan Twice — Delivery Done</h2>
-      <ul style="padding-left: 1.5rem; list-style: disc;">
-        <li><strong>Seller scans</strong> to name the buyer.</li>
-        <li><strong>Buyer scans</strong> on arrival.</li>
-        <li>Two scans = <strong>Proof of Delivery (PoD)</strong> — no middleman required.</li>
-      </ul>
+//     if (empty($dependencies)) {
+//       $es[$taskId] = 0;
+//     } else {
+//       foreach ($dependencies as $dep) {
+//         calcEarly($dep, $tasks, $es, $ef);
+//       }
+//       $es[$taskId] = max(array_map(function ($d) use ($ef) {
+//         return $ef[$d];
+//       }, $dependencies));
+//     }
 
-      <h2 style="color: #663399; font-size: 1.75rem; margin-top: 2rem;">🤖 4. Let AI Assist You</h2>
-      <p>
-        From pricing to storytelling, AI is here to help you every step — especially helpful for seniors.
-        Our system acts like a friendly memory specialist in your pocket.
-      </p>
+//     $ef[$taskId] = $es[$taskId] + $task['duration'];
+//   }
 
-      <h2 style="color: #663399; font-size: 1.75rem; margin-top: 2rem;">🦐 5. Join the Krill — Not the Whale</h2>
-      <p>
-        Alone, you’re small. But together, like krill, we move the ocean.
-        This system organizes small acts to starve wasteful systems. We don’t feed the whales — we organize to outswim
-        them.
-      </p>
+//   foreach (array_keys($tasks) as $taskId) {
+//     calcEarly($taskId, $tasks, $es, $ef);
+//   }
 
-      <h2 style="color: #663399; font-size: 1.75rem; margin-top: 2rem;">💜 6. Earn + Share in the Cookie Jar Economy
-      </h2>
-      <p>
-        Every scan delivers value. Buyers earn 7%. Sellers earn 3%.
-        Each month’s profits are shared on the 1st. <strong>Redemption Day</strong> is every September 1st.
-        <br>This is <strong>member capitalism</strong> — where dignity, not dollars, leads the way.
-      </p>
-    </div>
+//   // Step 2: Calculate Latest Finish and Start times
+//   $lf = [];
+//   $ls = [];
 
-    <!-- Call to Action Section -->
-    <div style="margin-top: 3rem;">
-      <h2 style="color: #4b0082;">🚀 Ready to Start?</h2>
-      <p style="font-size: 1.1rem; max-width: 700px; margin: 1rem auto;">
-        All it takes is one sticker, one scan, and one story.
-        <br><strong>Let there be peace on Earth… and let it begin with your box.</strong>
-      </p>
-      <div style="display: flex; flex-wrap: wrap; justify-content: center; gap: 1rem; margin-top: 1rem;">
-        <a id="buyYamVouchers" href="#"
-          style="background-color: #6a0dad; color: #fff; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: bold;">🛒
-          Buy 10-Pack ($3)</a>
-        <a id="joinaPoc" href="#"
-          style="background-color: #9370db; color: #fff; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: bold;">👥
-          Join a POC</a>
-        <!-- /ai-onboarding -->
-        <a id="getAiHelp" href="#"
-          style="background-color: #b19cd9; color: #fff; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: bold;">🤖
-          Get AI Help</a>
-      </div>
-    </div>
+//   // Find the project duration
+//   $projectDuration = max($ef);
 
-    <!-- Footer Note -->
-    <div style="margin-top: 4rem; font-style: italic; color: #444;">
-      “YAM-is-ON” Delivery | Atlanta, USA | Member Treasury | Détente 2.0 World Peace
-    </div>
-  </div>
-  <!-- Popup Modal -->
-  <div id="yamModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; 
-    background:rgba(0,0,0,0.5); justify-content:center; align-items:center;">
+//   function calcLate($taskId, &$tasks, &$es, &$ef, &$ls, &$lf)
+//   {
+//     if (isset($lf[$taskId]))
+//       return;
 
-    <div style="background:white; padding:20px; border-radius:8px; max-width:700px; position:relative; width:100%">
-      <button id="closeModal"
-        style="position:absolute; top:10px; right:10px; background:transparent; color:black; border:none; font-weight: 500; font-size:18px; cursor:pointer;">
-        ✕
-      </button>
+//     // Get successors of the task
+//     $successors = [];
+//     foreach ($tasks as $id => $task) {
+//       if (in_array($taskId, $task['dependencies'])) {
+//         $successors[] = $id;
+//       }
+//     }
 
-      <h2>How It Works</h2>
-      <div id="popupContent" style="margin-bottom:20px;">
-        <!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
-          <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
-            type="video/mp4">
-        </video>
-      </div>
-      <div id="triggeredButtonContainer" style="display:flex; align-items:center; justify-content:center;"></div>
-    </div>
-  </div>
+//     if (empty($successors)) {
+//       $lf[$taskId] = $ef[$taskId]; // Or projectDuration
+//     } else {
+//       foreach ($successors as $succ) {
+//         calcLate($succ, $tasks, $es, $ef, $ls, $lf);
+//       }
+//       $lf[$taskId] = min(array_map(function ($s) use ($ls) {
+//         return $ls[$s];
+//       }, $successors));
+//     }
+
+//     $ls[$taskId] = $lf[$taskId] - $tasks[$taskId]['duration'];
+//   }
+
+//   foreach (array_keys($tasks) as $taskId) {
+//     calcLate($taskId, $tasks, $es, $ef, $ls, $lf);
+//   }
+
+//   // Step 3: Determine slack and critical path
+//   $criticalPath = [];
+
+//   foreach ($tasks as $id => $task) {
+//     $slack = $ls[$id] - $es[$id];
+//     if ($slack === 0) {
+//       $criticalPath[] = $id;
+//     }
+//     echo "<br>";
+//     echo "Task $id: ES={$es[$id]}, EF={$ef[$id]}, LS={$ls[$id]}, LF={$lf[$id]}, Slack=$slack\n";
+//   }
+//   echo "<br>";
+
+//   echo "\nCritical Path: " . implode(" → ", $criticalPath) . "\n";
+// }
+
+// // Sample input
+// $tasks = [
+//   'A' => ['duration' => 3, 'dependencies' => []],
+//   'B' => ['duration' => 2, 'dependencies' => ['A']],
+//   'C' => ['duration' => 1, 'dependencies' => ['A']],
+//   'D' => ['duration' => 4, 'dependencies' => ['B', 'C']],
+// ];
+
+// criticalPath($tasks);
 
 
 
-  <script>
-    document.addEventListener('DOMContentLoaded', function () {
-      const buyButton = document.getElementById('buyYamVouchers');
-      const joinaPoc = document.getElementById('joinaPoc');
-      const getAiHelp = document.getElementById('getAiHelp');
-      const modal = document.getElementById('yamModal');
-      const closeBtn = document.getElementById('closeModal');
-      const triggeredButtonContainer = document.getElementById('triggeredButtonContainer');
-      const popupContent = document.getElementById('popupContent'); // Make sure you have this in HTML
 
-      // Buy Button
-      buyButton.addEventListener('click', function (e) {
-        e.preventDefault();
-        popupContent.innerHTML = `<!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
-          <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
-            type="video/mp4">
-        </video>`;
-        triggeredButtonContainer.innerHTML = `
-                <a href="https://www.smallstreet.app/product/yam-is-on-sticker/" 
-            target="_blank"
-            style="background-color: #6a0dad; color: #fff; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: bold;">
-            🛒 Buy 10-Pack ($3)
-          </a>`;
-        modal.style.display = 'flex';
-      });
+function calculateCriticalPath($tasks)
+{
+  $taskMap = [];
+  foreach ($tasks as $task) {
+    $taskMap[$task['id']] = $task;
+  }
 
-      // Join a POC Button
-      joinaPoc.addEventListener('click', function (e) {
-        e.preventDefault();
-        popupContent.innerHTML = `<!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
-          <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
-            type="video/mp4">
-        </video>`;
-        triggeredButtonContainer.innerHTML = `
-      <a id="joinaPocInsidePopup" href="#"  target="_blank"
-        style="background-color: #9370db; color: #fff; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: bold;">
-        👥 Join a POC
-      </a>`;
-        modal.style.display = 'flex';
-      });
-
-      // Get AI Help Button
-      getAiHelp.addEventListener('click', function (e) {
-        e.preventDefault();
-        popupContent.innerHTML = `<!-- Local or hosted video -->
-        <video style="margin-bottom:20px;" width="100%" controls autoplay muted playsinline>
-          <source src="http://workfyre.local/assets/images/Delivering Legacy The Purpose Party_1080p.mp4"
-            type="video/mp4">
-        </video>`;
-        triggeredButtonContainer.innerHTML = `
-      <a href="#"
-        style="background-color: #b19cd9; color: #fff; padding: 1rem 2rem; border-radius: 10px; text-decoration: none; font-weight: bold;">
-        🤖 Get AI Help
-      </a>`;
-        modal.style.display = 'flex';
-      });
-
-      triggeredButtonContainer.addEventListener('click', function (e) {
-        if (e.target && e.target.id === 'joinaPocInsidePopup') {
-          e.preventDefault();
-
-          // Inject GraceBook content
-          popupContent.innerHTML = `
-        <div style="text-align: center; padding: 1rem;">
-  <h3>🟣 Join the GraceBook Community</h3>
-  <p>To participate fully, prepare the following:</p>
-  <ul style="list-style: none; padding: 0; text-align: left; display: inline-block;">
-    <li>✅ QRTiger vCard Profile</li>
-    <li>✅ PayPal or Venmo Account</li>
-    <li>✅ Mobile Device (Smartphone preferred)</li>
-    <li>✅ Valid Email Address</li>
-  </ul>
-  <br>
-  <a href="https://discord.gg/Z77f4CEd" target="_blank"
-    style="font-size: 1.2rem; background: purple; color: white; padding: 10px 20px; border-radius: 10px; text-decoration: none;">
-    Enter GraceBook Server
-  </a>
-</div>
-
-      `;
+  // Step 1: Forward Pass (ES and EF)
+  $esEf = [];
+  function forwardPass($taskId, $taskMap, &$esEf)
+  {
+    $task = $taskMap[$taskId];
+    if (empty($task['predecessors'])) {
+      $es = 0;
+    } else {
+      $maxEf = 0;
+      foreach ($task['predecessors'] as $preId) {
+        if (!isset($esEf[$preId])) {
+          forwardPass($preId, $taskMap, $esEf);
         }
-      });
+        $maxEf = max($maxEf, $esEf[$preId]['ef']);
+      }
+      $es = $maxEf;
+    }
+    $ef = $es + $task['duration'];
+    $esEf[$taskId] = ['es' => $es, 'ef' => $ef];
+  }
 
-      // Close modal button
-      closeBtn.addEventListener('click', function () {
-        modal.style.display = 'none';
-        const video = modal.querySelector('video');
-        if (video) video.pause();
-      });
+  foreach ($tasks as $task) {
+    forwardPass($task['id'], $taskMap, $esEf);
+  }
 
-      // Close modal on outside click
-      modal.addEventListener('click', function (e) {
-        if (e.target === modal) {
-          modal.style.display = 'none';
-          const video = modal.querySelector('video');
-          if (video) video.pause();
+  // Step 2: Backward Pass (LS and LF)
+  $lfLs = [];
+  $maxEf = max(array_column($esEf, 'ef'));
+
+  function backwardPass($taskId, $taskMap, &$lfLs, $esEf)
+  {
+    $task = $taskMap[$taskId];
+    $successors = [];
+    foreach ($taskMap as $otherTask) {
+      if (in_array($taskId, $otherTask['predecessors'])) {
+        $successors[] = $otherTask['id'];
+      }
+    }
+
+    if (empty($successors)) {
+      $lf = $maxEf = max(array_column($esEf, 'ef'));
+    } else {
+      $minLs = INF;
+      foreach ($successors as $succId) {
+        if (!isset($lfLs[$succId])) {
+          backwardPass($succId, $taskMap, $lfLs, $esEf);
         }
-      });
-    });
+        $minLs = min($minLs, $lfLs[$succId]['ls']);
+      }
+      $lf = $minLs;
+    }
 
+    $ls = $lf - $task['duration'];
+    $lfLs[$taskId] = ['lf' => $lf, 'ls' => $ls];
+  }
+
+  $reversedTasks = array_reverse($tasks);
+  foreach ($reversedTasks as $task) {
+    backwardPass($task['id'], $taskMap, $lfLs, $esEf);
+  }
+
+  // Step 3: Combine all and calculate slack
+  $results = [];
+  foreach ($tasks as $task) {
+    $id = $task['id'];
+    $es = $esEf[$id]['es'];
+    $ef = $esEf[$id]['ef'];
+    $ls = $lfLs[$id]['ls'];
+    $lf = $lfLs[$id]['lf'];
+    $slack = $ls - $es;
+    $results[$id] = [
+      'es' => $es,
+      'ef' => $ef,
+      'ls' => $ls,
+      'lf' => $lf,
+      'slack' => $slack,
+      'critical' => $slack === 0
+    ];
+  }
+
+  return $results;
+}
+
+
+
+$tasks = [
+  ['id' => 'A', 'duration' => 3, 'predecessors' => []],
+  ['id' => 'B', 'duration' => 2, 'predecessors' => ['A']],
+  ['id' => 'C', 'duration' => 1, 'predecessors' => ['A']],
+  ['id' => 'D', 'duration' => 4, 'predecessors' => ['B', 'C']],
+];
+
+$results = calculateCriticalPath($tasks);
+echo "<pre>";
+ var_dump($results);
+echo "<pre>";
+
+foreach ($results as $id => $info) {
+  echo "Task $id: ES={$info['es']}, EF={$info['ef']}, LS={$info['ls']}, LF={$info['lf']}, Slack={$info['slack']}";
+  echo $info['critical'] ? " (Critical)" : "";
+  echo "<br>";
+}
+
+?>
+
+
+
+
+
+
+
+
+
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <script type="module">
+    import mermaid from 'https://cdn.jsdelivr.net/npm/mermaid@10/dist/mermaid.esm.min.mjs';
+    mermaid.initialize({ startOnLoad: true });
   </script>
+</head>
 
-</section>
+<body>
+
+  <div class="mermaid">
+    graph TD
+    A[Task A<br />Duration: 3] --> B[Task B<br />Duration: 2]
+    A --> C[Task C<br />Duration: 1]
+    B --> D[Task D<br />Duration: 4]
+    C --> D
+  </div>
+
+</body>
+
+</html>
+<!-- 
+<html>
+  <head>
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+    <script type="text/javascript">
+      google.charts.load('current', {'packages':['gantt']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function daysToMilliseconds(days) {
+        return days * 24 * 60 * 60 * 1000;
+      }
+
+      function drawChart() {
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Task ID');
+        data.addColumn('string', 'Task Name');
+        data.addColumn('string', 'Resource');
+        data.addColumn('date',   'Start Date');
+        data.addColumn('date',   'End Date');
+        data.addColumn('number', 'Duration');
+        data.addColumn('number', 'Percent Complete');
+        data.addColumn('string', 'Dependencies');
+
+        data.addRows([
+          ['Create',  'Create outline',  'Critical', new Date(2025, 9, 8), new Date(2025, 9, 9), null, 100, null],
+          ['Write',   'Write draft',     'Critical', new Date(2025, 9, 9), new Date(2025, 9, 15), null, 100, 'Create'],
+          ['Edit',    'Edit and create final draft', 'Critical', new Date(2025, 9, 15), new Date(2025, 9, 18), null, 100, 'Write'],
+          ['Finalize','Finalize and approve final draft', 'Critical', new Date(2025, 9, 18), new Date(2025, 9, 22), null, 0, 'Edit'],
+          ['Upload',  'Upload blog',     'Critical', new Date(2025, 9, 22), new Date(2025, 9, 25), null, 0, 'Finalize'],
+          
+          ['Visuals', 'Design blog visuals', 'Non-critical', new Date(2025, 9, 15), new Date(2025, 9, 21), null, 0, null],
+          ['Anim',    'Add animations to visuals', 'Non-critical', new Date(2025, 9, 21), new Date(2025, 9, 25), null, 0, 'Visuals'],
+        ]);
+
+        var options = {
+          height: 400,
+          gantt: {
+            criticalPathEnabled: true,
+            criticalPathStyle: {
+              stroke: '#e64a19',
+              strokeWidth: 3
+            },
+            labelStyle: {
+              fontName: "Arial",
+              fontSize: 14,
+              color: '#555'
+            }
+          }
+        };
+
+        var chart = new google.visualization.Gantt(document.getElementById('gantt_chart'));
+        chart.draw(data, options);
+      }
+    </script>
+  </head>
+  <body>
+    <h2>Blog Workflow Gantt Chart (Critical Path Highlighted)</h2>
+    <div id="gantt_chart" style="width: 100%; height: 500px;"></div>
+  </body>
+</html> -->
+
+<!DOCTYPE html>
+<html>
+
+<head>
+  <title>Critical Path Gantt Chart</title>
+  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+  <script type="text/javascript">
+    google.charts.load('current', { 'packages': ['gantt'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function daysToMilliseconds(days) {
+      return days * 24 * 60 * 60 * 1000;
+    }
+
+    function drawChart() {
+      var data = new google.visualization.DataTable();
+
+      data.addColumn('string', 'Task ID');
+      data.addColumn('string', 'Task Name');
+      data.addColumn('string', 'Resource');
+      data.addColumn('date', 'Start Date');
+      data.addColumn('date', 'End Date');
+      data.addColumn('number', 'Duration');
+      data.addColumn('number', 'Percent Complete');
+      data.addColumn('string', 'Dependencies');
+
+      // Task info from PHP structure and critical path: A -> B -> D
+      data.addRows([
+        ['A', 'Task A', 'critical', new Date(2025, 4, 1), new Date(2025, 4, 4), null, 100, null],
+        ['B', 'Task B', 'critical', new Date(2025, 4, 4), new Date(2025, 4, 6), null, 100, 'A'],
+        ['C', 'Task C', 'non-critical', new Date(2025, 4, 4), new Date(2025, 4, 5), null, 100, 'A'],
+        ['D', 'Task D', 'critical', new Date(2025, 4, 6), new Date(2025, 4, 10), null, 100, 'B,C']
+      ]);
+
+      var options = {
+        height: 300,
+        gantt: {
+          criticalPathEnabled: true,
+          criticalPathStyle: {
+            stroke: '#e64a19',
+            strokeWidth: 5
+          },
+          defaultStartDate: new Date(2025, 4, 1)
+        }
+      };
+
+      var chart = new google.visualization.Gantt(document.getElementById('chart_div'));
+
+      chart.draw(data, options);
+    }
+  </script>
+</head>
+
+<body>
+  <h2>Gantt Chart with Critical Path</h2>
+  <div id="chart_div"></div>
+</body>
+
+</html>

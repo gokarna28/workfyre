@@ -1,6 +1,86 @@
 <?php include_once('../../sidebar.php'); ?>
 <?php include_once('../../header.php'); ?>
 
+
+<script type="text/javascript">
+    google.charts.load('current', { 'packages': ['timeline'] });
+    google.charts.setOnLoadCallback(drawChart);
+
+    function drawChart() {
+        var container = document.getElementById('chart_div');
+        var chart = new google.visualization.Timeline(container);
+        var dataTable = new google.visualization.DataTable();
+
+        dataTable.addColumn({ type: 'string', id: 'Task ID' });
+        dataTable.addColumn({ type: 'string', id: 'Task Name' });
+        dataTable.addColumn({ type: 'string', id: 'style', role: 'style' });
+        dataTable.addColumn({ type: 'date', id: 'Start Date' });
+        dataTable.addColumn({ type: 'date', id: 'End Date' });
+
+        <?php
+        $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
+        $taskData = getTasksDetailsByProject_id($project_id);
+        $chartData = [];
+
+        if (is_array($taskData) && !empty($taskData)) {
+            echo "var rows = [";
+            foreach ($taskData as $tData) {
+                $start = strtotime($tData['created_at']);
+                $end = strtotime($tData['deadline']);
+                $critical = $tData['critical'];
+
+                // Calculate duration in days and hours
+                $duration_seconds = $end - $start;
+                $days = floor($duration_seconds / (60 * 60 * 24));
+                $remaining_seconds = $duration_seconds % (60 * 60 * 24);
+                $hours = floor($remaining_seconds / (60 * 60));
+
+                $duration_text = '';
+                if ($days > 0) {
+                    $duration_text .= $days . ' day' . ($days > 1 ? 's' : '');
+                }
+                if ($hours > 0) {
+                    $duration_text .= ($days > 0 ? ' - ' : '') . $hours . ' hr' . ($hours > 1 ? 's' : '');
+                }
+
+                $startDate = getdate($start);
+                $endDate = getdate($end);
+                $taskName = $tData['title'] . ' (' . $duration_text . ')' . ($critical == 1 ? ' (Critical)' : ' (Non-critical)');
+                $barColor = $critical == 1 ? '#FF6363' : '#A0C878'; // Red for critical, Green for non-critical
+        
+                echo "[ 
+                    '{$tData['id']}',
+                    '{$taskName}',
+                    '{$barColor}',
+                    new Date({$startDate['year']}, " . ($startDate['mon'] - 1) . ", {$startDate['mday']}), 
+                    new Date({$endDate['year']}, " . ($endDate['mon'] - 1) . ", {$endDate['mday']})
+                ],";
+            }
+            echo "];";
+
+            echo "dataTable.addRows(rows);";
+        }
+        ?>
+
+        var options = {
+            height: '100%',
+            timeline: {
+                showRowLabels: true,
+                showBarLabels: true,
+                singleColor: false
+            },
+            hAxis: {
+                format: 'MMM d',  
+                minorGridlines: {
+                    count: 0
+                }
+            }
+        };
+
+        chart.draw(dataTable, options);
+    }
+</script>
+
 <section class="pt-25 pl-85 w-full pr-10">
 
     <?php
@@ -18,11 +98,16 @@
         </div>
 
         <p class="text-sm pl-10"><?php echo $project['description'] ?></p>
-        <div>
-            <h2>Gantt Chart with Critical Path</h2>
-            <div id="chart_div"></div>
-        </div>
-        
+
+        <?php
+        $taskData = getTasksDetailsByProject_id($project_id);
+        if (is_array($taskData) && !empty($taskData)) { ?>
+            <div class="mb-4 mt-4">
+                <h2 class="text-xl font-semibold mb-4">Project Timeline - Gantt Chart</h2>
+                <div id="chart_div" class="w-full bg-white p-4 rounded-lg shadow-md"
+                    style="min-height: 300px; max-height: 600px;"></div>
+            </div>
+        <?php } ?>
     </div>
 
     <div class="w-full flex items-center justify-between mb-10">
@@ -465,7 +550,8 @@
                         multiple>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancelBtn" class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
+                    <button type="button" id="cancelBtn"
+                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
                     <button type="submit" id="addTaskBtn" name="addTaskBtn"
                         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
                         Task</button>

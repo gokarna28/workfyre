@@ -27,7 +27,7 @@ include_once(__DIR__ . '/../../config/functions.php');
 <body class="">
 
     <header
-        class="bg-[#060026] text-white px-10 py-4 flex items-center justify-between w-full top-0 border-b border-slate-800 z-20">
+        class="bg-[#1a143b] text-white px-10 py-4 flex items-center justify-between w-full top-0 border-b border-slate-800 z-20">
 
         <div class="w-1/2">
             <a href="<?php echo HOMEPAGE_URL ?>">
@@ -39,9 +39,9 @@ include_once(__DIR__ . '/../../config/functions.php');
         </div>
         <div class="gap-4 flex items-center">
             <a href="<?php echo HOMEPAGE_URL ?>/main/login.php"
-                class="border border-slate-300 rounded-lg py-2 px-6 text-lg bg-stone-300">Login</a>
-            <a href="<?php echo HOMEPAGE_URL ?>/main/register.php"
-                class="border border-slate-300 hover:bg-stone-300 rounded-lg py-2 px-6 text-lg">Register</a>
+                class="rounded-full py-2 px-6 text-lg bg-[#6c63ff]">Login</a>
+            <!-- <a href="<?php //echo HOMEPAGE_URL ?>/main/register.php"
+                class="border border-slate-300 hover:bg-stone-300 rounded-lg py-2 px-6 text-lg">Register</a> -->
         </div>
 
     </header>

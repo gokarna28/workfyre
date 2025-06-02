@@ -149,59 +149,107 @@ $(document).ready(function () {
     /**update project meta end */
 
     /**slider section */
-    let currentIndex = 1; // Start from the real first slide (after clone)
-  const slideWidth = 336;
-  const $slider = $('#slider');
-  const $slides = $slider.children();
-
-  // Clone first and last slides
-  const $firstClone = $slides.first().clone();
-  const $lastClone = $slides.last().clone();
-
-  $slider.append($firstClone); // add to end
-  $slider.prepend($lastClone); // add to start
-
-  const totalSlides = $slider.children().length;
-
-  // Set initial position to show the first real slide
-  $slider.css('transform', `translateX(-${slideWidth * currentIndex}px)`);
-
-  function goToSlide(index, withTransition = true) {
-    if (!withTransition) {
-      $slider.css('transition', 'none');
-    } else {
-      $slider.css('transition', 'transform 0.5s ease');
+    let currentIndex = 1;
+    const slideWidth = 336;
+    const $slider = $('#slider');
+    let isTransitioning = false;
+    
+    // Clone first and last
+    const $slides = $slider.children();
+    const $firstClone = $slides.first().clone();
+    const $lastClone = $slides.last().clone();
+    
+    $slider.append($firstClone);
+    $slider.prepend($lastClone);
+    
+    // Update slide count
+    const totalSlides = $slider.children().length;
+    
+    // Set width dynamically
+    $slider.css({
+      width: `${slideWidth * totalSlides}px`,
+      display: 'flex',
+      transition: 'transform 0.5s ease',
+      transform: `translateX(-${slideWidth * currentIndex}px)`
+    });
+    
+    // Slide function
+    function goToSlide(index, transition = true) {
+      if (transition) {
+        $slider.css('transition', 'transform 0.5s ease');
+      } else {
+        $slider.css('transition', 'none');
+      }
+    
+      $slider.css('transform', `translateX(-${slideWidth * index}px)`);
     }
-
-    $slider.css('transform', `translateX(-${slideWidth * index}px)`);
-  }
-
-  function nextSlide() {
-    currentIndex++;
-    goToSlide(currentIndex);
-
-    if (currentIndex === totalSlides - 1) {
+    
+    // Next slide
+    function nextSlide() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+    
+      currentIndex++;
+      goToSlide(currentIndex);
+    
       setTimeout(() => {
-        currentIndex = 1;
-        goToSlide(currentIndex, false);
-      }, 500); // match transition duration
-    }
-  }
-
-  function prevSlide() {
-    currentIndex--;
-    goToSlide(currentIndex);
-
-    if (currentIndex === 0) {
-      setTimeout(() => {
-        currentIndex = totalSlides - 2;
-        goToSlide(currentIndex, false);
+        if (currentIndex === totalSlides - 1) {
+          currentIndex = 1;
+          goToSlide(currentIndex, false);
+        }
+        isTransitioning = false;
       }, 500);
     }
-  }
+    
+    // Previous slide
+    function prevSlide() {
+      if (isTransitioning) return;
+      isTransitioning = true;
+    
+      currentIndex--;
+      goToSlide(currentIndex);
+    
+      setTimeout(() => {
+        if (currentIndex === 0) {
+          currentIndex = totalSlides - 2;
+          goToSlide(currentIndex, false);
+        }
+        isTransitioning = false;
+      }, 500);
+    }
+    
+    // Events
+    $('#next').click(nextSlide);
+    $('#prev').click(prevSlide);
+    
+    // Auto Scroll
+    setInterval(nextSlide, 4000);
+    
+    //task card carasoul
+    const track = document.getElementById('carousel-track');
+    const cards = Array.from(track.children);
 
-  $('#next').click(nextSlide);
-  $('#prev').click(prevSlide);
+    // Clone all cards for looping effect
+    cards.forEach(card => {
+        const clone = card.cloneNode(true);
+        track.appendChild(clone);
+    });
 
-  setInterval(nextSlide, 4000);
+    let scrollX = 0;
+    const scrollSpeed = 0.5; // Adjust for faster/slower scroll
+
+    function animateScroll() {
+        scrollX += scrollSpeed;
+        track.style.transform = `translateX(-${scrollX}px)`;
+
+        // Reset scroll when halfway (original + clones = 2x)
+        if (scrollX >= track.scrollWidth / 2) {
+            scrollX = 0;
+        }
+
+        requestAnimationFrame(animateScroll);
+    }
+
+    animateScroll();
+
 });

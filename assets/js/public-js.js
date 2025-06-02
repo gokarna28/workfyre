@@ -148,4 +148,60 @@ $(document).ready(function () {
     })
     /**update project meta end */
 
+    /**slider section */
+    let currentIndex = 1; // Start from the real first slide (after clone)
+  const slideWidth = 336;
+  const $slider = $('#slider');
+  const $slides = $slider.children();
+
+  // Clone first and last slides
+  const $firstClone = $slides.first().clone();
+  const $lastClone = $slides.last().clone();
+
+  $slider.append($firstClone); // add to end
+  $slider.prepend($lastClone); // add to start
+
+  const totalSlides = $slider.children().length;
+
+  // Set initial position to show the first real slide
+  $slider.css('transform', `translateX(-${slideWidth * currentIndex}px)`);
+
+  function goToSlide(index, withTransition = true) {
+    if (!withTransition) {
+      $slider.css('transition', 'none');
+    } else {
+      $slider.css('transition', 'transform 0.5s ease');
+    }
+
+    $slider.css('transform', `translateX(-${slideWidth * index}px)`);
+  }
+
+  function nextSlide() {
+    currentIndex++;
+    goToSlide(currentIndex);
+
+    if (currentIndex === totalSlides - 1) {
+      setTimeout(() => {
+        currentIndex = 1;
+        goToSlide(currentIndex, false);
+      }, 500); // match transition duration
+    }
+  }
+
+  function prevSlide() {
+    currentIndex--;
+    goToSlide(currentIndex);
+
+    if (currentIndex === 0) {
+      setTimeout(() => {
+        currentIndex = totalSlides - 2;
+        goToSlide(currentIndex, false);
+      }, 500);
+    }
+  }
+
+  $('#next').click(nextSlide);
+  $('#prev').click(prevSlide);
+
+  setInterval(nextSlide, 4000);
 });

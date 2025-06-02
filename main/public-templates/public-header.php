@@ -19,13 +19,15 @@ include_once(__DIR__ . '/../../config/functions.php');
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
-    <script src="<?php echo PUBLIC_PATH ?>/js/public-js.js"></script>
+    <!-- Swiper CSS -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
+   
 </head>
 
 <body class="">
 
     <header
-        class="bg-white text-[#181832] px-10 py-4 flex items-center justify-between w-full top-0 border border-slate-200 z-20">
+        class="bg-[#060026] text-white px-10 py-4 flex items-center justify-between w-full top-0 border-b border-slate-800 z-20">
 
         <div class="w-1/2">
             <a href="<?php echo HOMEPAGE_URL ?>">

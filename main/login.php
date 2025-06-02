@@ -28,7 +28,7 @@
                 <div class="flex flex-col justify-center gap-5 mb-5">
                     <a href="send-otp.php">Forgot password?</a>
                     <button type="submit"
-                        class="bg-[#181832] text-white hover:bg-transparent hover:text-[#181832] cursor-pointer text-xl font-bold hover:border p-4 rounded-lg">Login</button>
+                        class="bg-[#1a143b] text-white hover:bg-transparent hover:text-[#181832] cursor-pointer text-xl font-bold hover:border p-4 rounded-lg">Login</button>
                 </div>
                 <div>
                     <p>Don't have account? <a href="<?php echo HOMEPAGE_URL ?>/main/register.php"

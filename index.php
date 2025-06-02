@@ -2,27 +2,29 @@
 include_once('main/public-templates/public-header.php');
 
 ?>
-<section class="w-full h-auto pt-40 bg-[#1a143b]">
-    <div class="flex items-center justify-center w-full flex-col mb-20 text-[#181832]">
+<section class="w-full h-auto bg-[#1a143b]">
+    <div class="flex items-center justify-center w-full flex-col text-[#181832] relative h-screen">
         <div class="text-center mb-6">
-            <h1
-                class="text-7xl font-bold bg-gradient-to-r from-purple-500 via-sky-300 to-purple-400 bg-clip-text text-transparent">
-                Centralize your Project
+            <h1 class="text-7xl font-bold text-white">
+                <span
+                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">Centralize</span>
+                your Project
             </h1>
 
-            <h1
-                class="text-7xl font-bold bg-gradient-to-r from-purple-500 via-sky-300 to-purple-400 bg-clip-text text-transparent">
-                Management with AI Features</h1>
+            <h1 class="text-7xl font-bold text-white">
+                Management with <span
+                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">AI
+                    Features</span></h1>
         </div>
         <div class="w-full px-50 text-center flex flex-col items-center justify-center gap-6 text-white">
-            <p class="px-20 text-slate-400 text-xl">Workfyre is a powerful project management platform built to help teams plan, track, and deliver
+            <p class="px-20 text-slate-400 text-xl">Workfyre is a powerful project management platform built to help
+                teams plan, track, and deliver
                 projects
                 with precision. Whether you're a solo creator or managing a team, Workfyre keeps everything
                 organized,
                 on schedule, and in sync.</p>
             <div class="flex items-center gap-10 justify-center">
-                <button
-                    class="bg-[#6c63ff] px-8 py-3 rounded-full text-lg shadow-md">Get
+                <button class="bg-[#6c63ff] px-8 py-3 rounded-full text-lg shadow-md">Get
                     Started</button>
                 <!-- <button class="px-8 py-3 rounded-full text-lg bg-[#6c63ff] shadow-md">30-Day
                     Free
@@ -30,16 +32,88 @@ include_once('main/public-templates/public-header.php');
             </div>
         </div>
     </div>
-    <div class="px-50 pb-20">
-        <span class="flex items-center justify-center w-full overflow-hidden rounded-3xl shadow-md">
-            <img src="http://workfyre.local/assets/images/landing-image.png" class="w-full h-full object-cover"
-                alt="default profile" />
-        </span>
+    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center top-[95%] gap-6">
+
+        <div class="bg-white rounded-xl p-4 shadow-md w-[270px] shrink-0">
+            <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-semibold">Project is
+                paused</span>
+            <h2 class="mt-3 font-semibold">Working on Dashboard Design</h2>
+            <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-pink-400 h-2 rounded-full" style="width: 70%"></div>
+                </div>
+                <div class="text-sm mt-1 text-right text-gray-500">70%</div>
+            </div>
+            <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                <div class="flex -space-x-2">
+                    <img src="https://i.pravatar.cc/30?img=3" class="w-6 h-6 rounded-full border-2 border-white" />
+                    <img src="https://i.pravatar.cc/30?img=4" class="w-6 h-6 rounded-full border-2 border-white" />
+                    <div
+                        class="w-6 h-6 rounded-full bg-pink-100 text-pink-700 flex items-center justify-center text-xs font-bold border-2 border-white">
+                        +3</div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span>3</span>
+                    <span>4</span>
+                    <span>2 days</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-md w-[270px] shrink-0">
+            <span class="bg-cyan-100 text-cyan-700 px-3 py-1 rounded-full text-xs font-semibold">Project in
+                progress</span>
+            <h2 class="mt-3 font-semibold">Working on Task App UI Kit On dribbble</h2>
+            <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-cyan-500 h-2 rounded-full" style="width: 56%"></div>
+                </div>
+                <div class="text-sm mt-1 text-right text-gray-500">56%</div>
+            </div>
+            <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                <div class="flex -space-x-2">
+                    <img src="https://i.pravatar.cc/30?img=1" class="w-6 h-6 rounded-full border-2 border-white" />
+                    <img src="https://i.pravatar.cc/30?img=2" class="w-6 h-6 rounded-full border-2 border-white" />
+                    <div
+                        class="w-6 h-6 rounded-full bg-cyan-100 text-cyan-700 flex items-center justify-center text-xs font-bold border-2 border-white">
+                        +2</div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span>2</span>
+                    <span>6</span>
+                    <span>4 days</span>
+                </div>
+            </div>
+        </div>
+        <div class="bg-white rounded-xl p-4 shadow-md w-[270px] shrink-0">
+            <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-semibold">Project is
+                paused</span>
+            <h2 class="mt-3 font-semibold">Working on Dashboard Design</h2>
+            <div class="mt-4">
+                <div class="w-full bg-gray-200 rounded-full h-2">
+                    <div class="bg-pink-400 h-2 rounded-full" style="width: 70%"></div>
+                </div>
+                <div class="text-sm mt-1 text-right text-gray-500">70%</div>
+            </div>
+            <div class="mt-4 flex items-center justify-between text-sm text-gray-600">
+                <div class="flex -space-x-2">
+                    <img src="https://i.pravatar.cc/30?img=3" class="w-6 h-6 rounded-full border-2 border-white" />
+                    <img src="https://i.pravatar.cc/30?img=4" class="w-6 h-6 rounded-full border-2 border-white" />
+                    <div
+                        class="w-6 h-6 rounded-full bg-pink-100 text-pink-700 flex items-center justify-center text-xs font-bold border-2 border-white">
+                        +3</div>
+                </div>
+                <div class="flex items-center gap-2">
+                    <span>3</span>
+                    <span>4</span>
+                    <span>2 days</span>
+                </div>
+            </div>
+        </div>
     </div>
 
 </section>
 
-<section class="w-full bg-[#f5f7ff] pt-20 pb-10 flex flex-col items-center justify-center">
+<section class="w-full bg-[#f5f7ff] pt-40 pb-10 flex flex-col items-center justify-center">
     <div class="max-w-6xl flex flex-col md:flex-row items-center justify-between mb-10">
         <!-- Chart Image -->
         <div class="w-full md:w-1/2 flex justify-start">
@@ -87,7 +161,7 @@ include_once('main/public-templates/public-header.php');
 </section>
 
 <!-- carasoul section -->
-<section class="max-w-7xl mx-auto p-20">
+<section class="max-w-7xl mx-auto p-20" id="testimonial">
     <div class="flex flex-col md:flex-row items-start justify-between">
         <!-- Left Text Section -->
         <div class="md:w-1/2 mb-10 md:mb-0">
@@ -380,7 +454,7 @@ include_once('main/public-templates/public-header.php');
 </section>
 
 
-<section class="flex flex-col md:flex-row gap-10 bg-[#f5f7ff] py-20 px-50 text-[#111827] p-10">
+<section class="flex flex-col md:flex-row gap-10 bg-[#f5f7ff] py-20 px-50 text-[#111827] p-10" id="your-work">
 
     <!-- Left Section -->
     <div class="w-full md:w-1/3 space-y-10">
@@ -473,18 +547,18 @@ include_once('main/public-templates/public-header.php');
     </div>
 </section>
 
-<section class="">
-    <div
-        class="bg-gradient-to-b from-black to-gray-900  flex flex-col items-center justify-center text-center p-10">
+<section class="" id="contact">
+    <div class="bg-gradient-to-b from-black to-gray-900  flex flex-col items-center justify-center text-center p-10">
         <h1 class="text-4xl md:text-6xl font-medium mb-6 leading-tight text-white">
             Get started with the <br />
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 font-bold">#1 project
+            <span class="text-transparent bg-clip-text bg-gradient-to-r from-cyan-400 to-purple-500 font-bold">#1
+                project
                 management</span>
         </h1>
 
         <!-- Email Input + Button -->
         <div class="flex w-full max-w-xl mx-auto mt-4 bg-white p-2 rounded-full">
-            <input type="email" placeholder="Enter Your Email" 
+            <input type="email" placeholder="Enter Your Email"
                 class="flex-1 p-4 rounded-l-full text-black focus:outline-none" />
             <button
                 class="bg-gradient-to-r from-blue-500 to-indigo-500 text-white px-6 py-4 rounded-full font-semibold hover:opacity-90 transition-all">
@@ -509,6 +583,12 @@ include_once('main/public-templates/public-header.php');
         </nav>
     </div>
 </section>
+
+<!-- scroll to top   -->
+<button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-gradient-to-t from-blue-400 to-purple-500 text-3xl font-bold hover:bg-cyan-700 text-white px-4 py-2 shadow-lg hidden">
+<i class="fa-solid fa-arrow-up"></i>
+</button>
+
 <?php
 include_once('main/public-templates/public-footer.php');
 

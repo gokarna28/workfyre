@@ -252,4 +252,20 @@ $(document).ready(function () {
 
     animateScroll();
 
+
+    //scroll to top
+    const scrollBtn = document.getElementById('scrollToTopBtn');
+
+    window.addEventListener('scroll', () => {
+      // Show the button when scrolled down 200px
+      scrollBtn.classList.toggle('hidden', window.scrollY < 200);
+    });
+  
+    scrollBtn.addEventListener('click', () => {
+      window.scrollTo({
+        top: 0,
+        behavior: 'smooth'
+      });
+    });
+
 });

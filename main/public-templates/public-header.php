@@ -21,7 +21,7 @@ include_once(__DIR__ . '/../../config/functions.php');
         crossorigin="anonymous"></script>
     <!-- Swiper CSS -->
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@10/swiper-bundle.min.css" />
-   
+
 </head>
 
 <body class="">
@@ -34,8 +34,14 @@ include_once(__DIR__ . '/../../config/functions.php');
                 <h1 class="text-3xl font-bold">Workfyre</h1>
             </a>
         </div>
-        <div>
-            nav bar
+        <div class="w-full px-4 flex justify-between items-center text-sm text-white">
+            <nav class="space-x-6">
+                <a href="#" class="hover:text-sky-500">About</a>
+                <a href="#testimonial" class="hover:text-sky-500">Testimonial</a>
+                <a href="#" class="hover:text-sky-500">Features</a>
+                <a href="#your-work" class="hover:text-sky-500">Your Work</a>
+                <a href="#contact" class="hover:text-sky-500">Contact</a>
+            </nav>
         </div>
         <div class="gap-4 flex items-center">
             <a href="<?php echo HOMEPAGE_URL ?>/main/login.php"

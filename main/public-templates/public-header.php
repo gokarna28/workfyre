@@ -22,9 +22,11 @@ include_once(__DIR__ . '/../../config/functions.php');
     <script src="<?php echo PUBLIC_PATH ?>/js/public-js.js"></script>
 </head>
 
-<body class="bg-[#181832] text-white">
+<body class="">
 
-    <header class="bg-transparent px-10 py-4 flex items-center justify-between z-2 w-full top-0">
+    <header
+        class="bg-white text-[#181832] px-10 py-4 flex items-center justify-between w-full top-0 border border-slate-200 z-20">
+
         <div class="w-1/2">
             <a href="<?php echo HOMEPAGE_URL ?>">
                 <h1 class="text-3xl font-bold">Workfyre</h1>

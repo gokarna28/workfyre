@@ -3,18 +3,17 @@ include_once('main/public-templates/public-header.php');
 
 ?>
 <section class="w-full h-auto bg-[#1a143b]">
-    <div class="flex items-center justify-center w-full flex-col text-[#181832] relative h-screen">
+    <div class="flex items-center pt-20 pb-40 w-full flex-col text-[#181832] relative h-full z-2">
         <div class="text-center mb-6">
             <h1 class="text-7xl font-bold text-white">
-                <span
-                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">Centralize</span>
-                your Project
+                <span class="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">Ignite</span>
+                Your Workflow
             </h1>
 
             <h1 class="text-7xl font-bold text-white">
-                Management with <span
-                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">AI
-                    Features</span></h1>
+                Master Every <span
+                    class="bg-gradient-to-r from-blue-500 to-purple-500 text-transparent bg-clip-text">Deadlines
+                </span></h1>
         </div>
         <div class="w-full px-50 text-center flex flex-col items-center justify-center gap-6 text-white">
             <p class="px-20 text-slate-400 text-xl">Workfyre is a powerful project management platform built to help
@@ -24,15 +23,16 @@ include_once('main/public-templates/public-header.php');
                 organized,
                 on schedule, and in sync.</p>
             <div class="flex items-center gap-10 justify-center">
-                <button class="bg-[#6c63ff] px-8 py-3 rounded-full text-lg shadow-md">Get
-                    Started</button>
+                <button class="bg-[#6c63ff] px-8 py-3 rounded-full text-lg shadow-md"><a href="<?php echo HOMEPAGE_URL ?>/main/register.php">Get
+                    Started</a></button>
                 <!-- <button class="px-8 py-3 rounded-full text-lg bg-[#6c63ff] shadow-md">30-Day
                     Free
                     Trial</button> -->
             </div>
         </div>
     </div>
-    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center top-[95%] gap-6">
+   
+    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center top-[80%] gap-6">
 
         <div class="bg-white rounded-xl p-4 shadow-md w-[270px] shrink-0">
             <span class="bg-pink-100 text-pink-700 px-3 py-1 rounded-full text-xs font-semibold">Project is
@@ -568,26 +568,7 @@ include_once('main/public-templates/public-header.php');
     </div>
 </section>
 
-<section class="bg-black py-4 border-t border-gray-800">
-    <div class="max-w-6xl mx-auto px-4 flex justify-between items-center text-sm text-white">
-        <div class="flex items-center gap-2">
-            <span class="text-white font-bold">Workfyre</span>
-        </div>
-        <nav class="space-x-6">
-            <a href="#" class="hover:text-sky-500">About</a>
-            <a href="#" class="hover:text-sky-500">Testimonial</a>
-            <a href="#" class="hover:text-sky-500">Features</a>
-            <a href="#" class="hover:text-sky-500">Demo</a>
-            <a href="#" class="hover:text-sky-500">Blog</a>
-            <a href="#" class="hover:text-sky-500">Contact</a>
-        </nav>
-    </div>
-</section>
 
-<!-- scroll to top   -->
-<button id="scrollToTopBtn" class="fixed bottom-6 right-6 bg-gradient-to-t from-blue-400 to-purple-500 text-3xl font-bold hover:bg-cyan-700 text-white px-4 py-2 shadow-lg hidden">
-<i class="fa-solid fa-arrow-up"></i>
-</button>
 
 <?php
 include_once('main/public-templates/public-footer.php');

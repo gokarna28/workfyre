@@ -30,8 +30,13 @@ include_once(__DIR__ . '/../../config/functions.php');
         class="bg-[#1a143b] text-white px-10 py-4 flex items-center justify-between w-full top-0 border-b border-slate-800 z-20">
 
         <div class="w-1/2">
-            <a href="<?php echo HOMEPAGE_URL ?>">
-                <h1 class="text-3xl font-bold">Workfyre</h1>
+            <a href="<?php echo HOMEPAGE_URL ?>" class="flex items-center" >
+                <span
+                    class="font-medium flex items-center justify-center w-14 h-14 overflow-hidden p-2">
+                    <img src="http://workfyre.local/assets/images/logo.png"
+                        class="w-full h-full object-cover" alt="default profile" />
+                </span>
+                <h1 class="text-3xl font-bold font-['Josefin Sans">Workfyre</h1>
             </a>
         </div>
         <div class="w-full px-4 flex justify-between items-center text-sm text-white">

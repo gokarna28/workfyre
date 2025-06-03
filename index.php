@@ -23,15 +23,16 @@ include_once('main/public-templates/public-header.php');
                 organized,
                 on schedule, and in sync.</p>
             <div class="flex items-center gap-10 justify-center">
-                <button class="bg-[#6c63ff] px-8 py-3 rounded-full text-lg shadow-md"><a href="<?php echo HOMEPAGE_URL ?>/main/register.php">Get
-                    Started</a></button>
+                <button class="bg-[#6c63ff] px-8 py-3 rounded-full text-lg shadow-md"><a
+                        href="<?php echo HOMEPAGE_URL ?>/main/register.php">Get
+                        Started</a></button>
                 <!-- <button class="px-8 py-3 rounded-full text-lg bg-[#6c63ff] shadow-md">30-Day
                     Free
                     Trial</button> -->
             </div>
         </div>
     </div>
-   
+
     <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center top-[80%] gap-6">
 
         <div class="bg-white rounded-xl p-4 shadow-md w-[270px] shrink-0">
@@ -113,8 +114,8 @@ include_once('main/public-templates/public-header.php');
 
 </section>
 
-<section class="w-full bg-[#f5f7ff] pt-40 pb-10 flex flex-col items-center justify-center">
-    <div class="max-w-6xl flex flex-col md:flex-row items-center justify-between mb-10">
+<section class="w-full bg-[#f5f7ff] pt-50 pb-10 flex flex-col items-center justify-center">
+    <div class="max-w-6xl flex flex-col md:flex-row items-center justify-between mb-20">
         <!-- Chart Image -->
         <div class="w-full md:w-1/2 flex justify-start">
             <img src="/assets/images/Screenshot 2025-06-02 170854.png" alt="Project Statistics Chart"
@@ -124,15 +125,17 @@ include_once('main/public-templates/public-header.php');
         <!-- Text Content -->
         <div class="w-full md:w-1/2">
             <h2 class="text-6xl font-bold text-[#181832] mb-4 leading-tight">
-                Project Statistics <br class="hidden md:block" /> & Analytics
+                Critical Path Management (CPM)
             </h2>
             <p class="text-gray-600 mb-6 leading-relaxed text-xl">
-                Leverage powerful data-driven insights and detailed analytics to monitor and evaluate your project's
-                performance in real-time, empowering informed decision-making and successful project outcomes.
+                Easily map out task dependencies and identify the longest sequence of critical activities.
+                Spot potential delays early and keep your project timeline on track.
             </p>
             <button
-                class="bg-[#6c63ff] hover:bg-[#5a54e4] text-white rounded-full w-18 h-18 flex items-center justify-center transition">
-                <i class="fa-solid fa-arrow-right transform rotate-315"></i>
+                class="bg-[#6c63ff] hover:bg-[#5a54e4] text-white rounded-full w-18 h-18 flex items-center justify-center transition text-2xl font-medium">
+                <a href="<?php echo HOMEPAGE_URL ?>/main/login.php">
+                    <i class="fa-solid fa-arrow-right transform rotate-315"></i>
+                </a>
             </button>
         </div>
     </div>
@@ -141,15 +144,17 @@ include_once('main/public-templates/public-header.php');
         <!-- Text Content -->
         <div class="w-full md:w-1/2">
             <h2 class="text-6xl font-bold text-[#181832] mb-4 leading-tight">
-                Project Statistics <br class="hidden md:block" /> & Analytics
+                Dynamic Project Timelines
             </h2>
             <p class="text-gray-600 text-xl mb-6 leading-relaxed">
-                Leverage powerful data-driven insights and detailed analytics to monitor and evaluate your project's
-                performance in real-time, empowering informed decision-making and successful project outcomes.
+                Plan, assign, and manage tasks with interactive Gantt charts.
+                See how every task connects and adjust timelines in real-time as your project evolves.
             </p>
             <button
-                class="bg-[#6c63ff] hover:bg-[#5a54e4] text-white rounded-full w-18 h-18 flex items-center justify-center transition">
-                <i class="fa-solid fa-arrow-right transform rotate-225"></i>
+                class="bg-[#6c63ff] hover:bg-[#5a54e4] text-white rounded-full w-18 h-18 flex items-center justify-center transition text-2xl font-medium">
+                <a href="<?php echo HOMEPAGE_URL ?>/main/login.php">
+                    <i class="fa-solid fa-arrow-right transform rotate-225"></i>
+                </a>
             </button>
         </div>
         <!-- Chart Image -->
@@ -166,8 +171,9 @@ include_once('main/public-templates/public-header.php');
         <!-- Left Text Section -->
         <div class="md:w-1/2 mb-10 md:mb-0">
             <h2 class="text-6xl font-bold leading-tight mb-6">
-                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500">Trusted</span>
-                by <br />Market Leaders
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-sky-400 to-violet-500">Why Teams
+                </span>
+                Rely on <br />Workfyre
             </h2>
 
             <!-- Nav Buttons -->
@@ -187,10 +193,11 @@ include_once('main/public-templates/public-header.php');
         <div class="md:w-full overflow-hidden relative">
             <div id="slider" class="flex transition-all duration-500 space-x-6 w-full">
                 <!-- Slide 1 -->
-                <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Lorem ipsum dolor sit amet,
-                        consectetur adipiscing elit. Donec eget
-                        lorem eu arcu iaculis.”</p>
+                <div class="min-w-[100px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">"Workfyre
+                        transformed the way we
+                        deliver projects. The CPM visualization is a game-changer!"
+                        — Maya R., Senior Project Manager</p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=1" class="rounded-full" />
                         <div>
@@ -200,13 +207,13 @@ include_once('main/public-templates/public-header.php');
                     </div>
                 </div>
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Lorem ipsum dolor sit amet,
-                        consectetur adipiscing elit. Donec eget
-                        lorem eu arcu iaculis.”</p>
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">Our team
+                        communicates better and finishes faster—Workfyre gave us a system that scales."
+                        — Daniel L., Startup Co-Founder</p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=1" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">Michel Doncic</p>
+                            <p class="font-semibold">Emily W., Product Manager</p>
                             <p class="text-sm text-gray-500">Project Manager</p>
                         </div>
                     </div>
@@ -214,14 +221,14 @@ include_once('main/public-templates/public-header.php');
 
                 <!-- Slide 2 -->
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Sed do eiusmod tempor incididunt
-                        ut
-                        labore et dolore magna aliqua.”
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">Workfyre gave our
+                        team crystal-clear visibility into project timelines. The CPM feature helped us avoid costly
+                        delays.
                     </p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=2" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">July Kerr</p>
+                            <p class="font-semibold">Samantha K., Project Manager</p>
                             <p class="text-sm text-gray-500">Web Developer</p>
                         </div>
                     </div>
@@ -229,61 +236,59 @@ include_once('main/public-templates/public-header.php');
 
                 <!-- Slide 3 -->
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris
-                        nisi.”</p>
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">I love how easy it
+                        is to assign tasks and track progress. The real-time updates keep everyone accountable.</p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">Alex Jordan</p>
+                            <p class="font-semibold">Raj P., Freelancer</p>
                             <p class="text-sm text-gray-500">UI Designer</p>
                         </div>
                     </div>
                 </div>
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris
-                        nisi.”</p>
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">As a startup
+                        founder, Workfyre lets me focus on priorities by highlighting the most critical tasks
+                        automatically.</p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">Alex Jordan</p>
+                            <p class="font-semibold">Lena M., CEO</p>
                             <p class="text-sm text-gray-500">UI Designer</p>
                         </div>
                     </div>
                 </div>
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris
-                        nisi.”</p>
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">The collaborative
+                        features keep our remote team connected. File sharing and chat in one place save us hours every
+                        week.</p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">Alex Jordan</p>
+                            <p class="font-semibold">Carlos D., Marketing Director</p>
                             <p class="text-sm text-gray-500">UI Designer</p>
                         </div>
                     </div>
                 </div>
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris
-                        nisi.”</p>
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">The Gantt charts
+                        are intuitive and flexible. We can quickly adjust plans as client needs change.</p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">Alex Jordan</p>
+                            <p class="font-semibold">Nina S., Creative Agency Lead</p>
                             <p class="text-sm text-gray-500">UI Designer</p>
                         </div>
                     </div>
                 </div>
                 <div class="min-w-[150px] max-h-[200px] bg-[#f5f8ff] p-3 rounded-xl shadow-md">
-                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm">“Ut enim ad minim veniam, quis
-                        nostrud exercitation ullamco laboris
-                        nisi.”</p>
+                    <p class="text-gray-700 mb-4 bg-white p-2 rounded-2xl text-sm max-w-[500px] wrap">Workfyre’s
+                        reporting tools make stakeholder updates effortless. I can export progress reports in minutes.
+                    </p>
                     <div class="flex items-center space-x-3">
                         <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
                         <div>
-                            <p class="font-semibold">Alex Jordan</p>
+                            <p class="font-semibold">Michael B., Construction Project Lead</p>
                             <p class="text-sm text-gray-500">UI Designer</p>
                         </div>
                     </div>

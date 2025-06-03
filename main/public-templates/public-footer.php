@@ -14,11 +14,8 @@ include_once(__DIR__ . '/../../config/config.php');
         </div>
         <nav class="space-x-6">
             <a href="#" class="hover:text-sky-500">About</a>
-            <a href="#" class="hover:text-sky-500">Testimonial</a>
-            <a href="#" class="hover:text-sky-500">Features</a>
             <a href="#" class="hover:text-sky-500">Demo</a>
-            <a href="#" class="hover:text-sky-500">Blog</a>
-            <a href="#" class="hover:text-sky-500">Contact</a>
+            <a href="#contact" class="hover:text-sky-500">Contact</a>
         </nav>
     </div>
 </section>

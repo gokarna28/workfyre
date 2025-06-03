@@ -27,7 +27,7 @@ include_once(__DIR__ . '/../../config/functions.php');
 <body class="">
 
     <header
-        class="bg-[#1a143b] text-white px-10 py-4 flex items-center justify-between w-full top-0 border-b border-slate-800 z-20">
+        class="bg-[#1a143b] text-white px-10 py-4 flex items-center justify-between w-full top-0 border-b border-slate-700 border-dashed z-20">
 
         <div class="w-1/2">
             <a href="<?php echo HOMEPAGE_URL ?>" class="flex items-center" >

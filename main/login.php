@@ -38,3 +38,7 @@
         </form>
     </div>
 </section>
+
+<?php include_once('public-templates/public-footer.php');
+
+?>

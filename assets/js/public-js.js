@@ -92,7 +92,7 @@ $(document).ready(function () {
                 console.log(response);
                 if (response.status == 'success') {
                     $('#successMessage').html(`
-                    <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                    <div class="bg-[#d3f5cb] text-[#5F9747] border border-[#5F9747] rounded-lg py-3 px-4 text-xl">${response.message}</div>
                      `)
                     setTimeout(() => {
                         window.location.href = '/main/dashboard/home.php';
@@ -117,7 +117,7 @@ $(document).ready(function () {
         var invite_id = $(this).find('input[name="invite_id"]').val();
         var inviteData = {
             invite_id: invite_id,
-            invite_statu: 'inrolled',
+            invite_statu: 'enrolled',
             action: 'accept_invite'
         }
 

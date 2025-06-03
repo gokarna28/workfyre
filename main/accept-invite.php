@@ -27,3 +27,7 @@ $project = getProjectDetailsByProjectID($project_id);
         </form>
     </div>
 </section>
+
+
+<?php include_once('public-templates/public-footer.php');
+?>

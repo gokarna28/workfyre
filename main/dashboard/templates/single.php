@@ -70,7 +70,7 @@
                 singleColor: false
             },
             hAxis: {
-                format: 'MMM d',  
+                format: 'MMM d',
                 minorGridlines: {
                     count: 0
                 }
@@ -81,7 +81,7 @@
     }
 </script>
 
-<section class="pt-25 pl-85 w-full pr-10">
+<section class="py-25 pl-85 w-full pr-10">
 
     <?php
     $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
@@ -91,13 +91,47 @@
     ?>
 
     <div class="mb-5">
-        <div class="flex items-center gap-5 mb-2">
-            <a href="http://workfyre.local/main/dashboard/projects.php" class="hover:bg-slate-100 p-2 rounded-lg"><i
-                    class="fa-solid fa-arrow-left"></i></a>
-            <h2 class="text-xl font-medium"><?php echo $project['title']; ?></h2>
+        <div
+            class="flex items-center justify-between gap-5 mb-2 bg-gradient-to-r from-blue-500/60 to-purple-500/60 p-6 rounded-2xl text-white">
+            <div>
+                <a href="http://workfyre.local/main/dashboard/projects.php"
+                    class="hover:bg-slate-100 hover:text-black p-2 rounded-lg mb-2"><i
+                        class="fa-solid fa-arrow-left"></i></a>
+                <div>
+                    <h2 class="text-4xl font-bold text-white mb-2"><?php echo $project['title']; ?></h2>
+                    <p class="text-lg w-[70%]">
+                        <?php echo strlen($project['description']) > 100 ? substr($project['description'], 0, 100) . '...' : $project['description']; ?>
+                    </p>
+                </div>
+            </div>
+            <div class="flex items-center">
+                <!-- First Avatar (AL) -->
+                <div class="w-10 h-10 rounded-full shadow-md bg-white flex items-center justify-center z-20">
+                    <img src="https://i.pravatar.cc/40?img=2" class="rounded-full" />
+                </div>
+                <!-- Second Avatar (DT) -->
+                <div class="w-10 h-10 rounded-full shadow-md flex items-center justify-center  -ml-3 z-10">
+                    <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
+                </div>
+                <div class="w-10 h-10 rounded-full shadow-md flex items-center justify-center  -ml-3 z-10">
+                    <img src="https://i.pravatar.cc/40?img=4" class="rounded-full" />
+                </div>
+                <div class="w-10 h-10 rounded-full shadow-md flex items-center justify-center  -ml-3 z-10">
+                    <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
+                </div>
+                <!-- Invite Button -->
+                <button
+                    class="flex shadow-md cursor-pointer hover:bg-[#1a143b] hover:text-white items-center space-x-1 px-3 py-1.5 bg-white text-blue-900 rounded-full  ml-2">
+                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                        xmlns="http://www.w3.org/2000/svg">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
+                    </svg>
+                    <span class="text-sm font-medium">Invite</span>
+                </button>
+            </div>
+
         </div>
 
-        <p class="text-sm pl-10"><?php echo $project['description'] ?></p>
 
         <?php
         $taskData = getTasksDetailsByProject_id($project_id);
@@ -116,9 +150,9 @@
                 class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer flex gap-2">
                 <span><i class="fa-solid fa-chart-bar"></i></span>Board
             </li>
-            <li id="projectTimeline" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2">
+            <!-- <li id="projectTimeline" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2">
                 <span><i class="fa-solid fa-chart-bar"></i></span>Timeline
-            </li>
+            </li> -->
             <li id="projectFiles" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i
                         class="fa-regular fa-file"></i></span>Files</li>
             <li id="projectTeam" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i
@@ -522,7 +556,7 @@
                         <select id="task_assign" name="task_assign"
                             class="w-full border p-2 rounded mb-4 border border-slate-300" required>
                             <option value="">assign to</option>
-                            <?php $users = getProjectMetaByStatus($project['id'], 'inrolled');
+                            <?php $users = getProjectMetaByStatus($project['id'], 'enrolled');
                             if ($users) {
                                 foreach ($users as $user) {
                                     ?>

@@ -188,7 +188,7 @@ function createTask($params)
 }
 function updateTaskCriticalPathParams($params)
 {
-    
+
     try {
         global $conn;
         $table_name = PREFIX . "tasks";
@@ -328,13 +328,13 @@ function saveTaskAttachments($params)
     }
 }
 
-function getProjectDetails()
+function getProjectDetails($limit, $offset)
 {
     try {
         global $conn;
         $table_name = PREFIX . "projects";
 
-        $stmt = $conn->prepare("SELECT * FROM $table_name ORDER BY id desc");
+        $stmt = $conn->prepare("SELECT * FROM $table_name ORDER BY id DESC LIMIT $limit OFFSET $offset");
 
         if ($stmt->execute()) {
             $projects = $stmt->fetchAll(PDO::FETCH_ASSOC);
@@ -350,6 +350,53 @@ function getProjectDetails()
         return "An error occurred: " . $e->getMessage();
     }
 }
+function getTotalProjects()
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "projects";
+
+        $stmt = $conn->prepare("SELECT COUNT(*) as total FROM $table_name");
+
+        if ($stmt->execute()) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'];
+        }
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return 0;
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return 0;
+    }
+}
+function getTotalTaskByStatus($project_id, $status)
+{
+    try {
+        global $conn;
+        $table_name = PREFIX . "tasks";
+
+        $stmt = $conn->prepare("SELECT COUNT(*) as total FROM $table_name WHERE project_id = :project_id AND status = :status");
+        $stmt->bindParam(':project_id', $project_id, PDO::PARAM_INT);
+        $stmt->bindParam(':status', $status, PDO::PARAM_STR);
+
+        if ($stmt->execute()) {
+            $result = $stmt->fetch(PDO::FETCH_ASSOC);
+            return $result['total'] ?? 0; // safely returns 0 if no row found
+        }
+
+        return 0;
+
+    } catch (PDOException $e) {
+        error_log("Database error: " . $e->getMessage());
+        return 0;
+    } catch (Exception $e) {
+        error_log("An error occurred: " . $e->getMessage());
+        return 0;
+    }
+}
+
 
 function getClasses($params)
 {
@@ -373,16 +420,16 @@ function getClasses($params)
             $classes .= ' bg-stone-200 text-stone-600';
             break;
         case 'medium':
-            $classes .= ' bg-lime-200 text-lime-600';
+            $classes .= ' bg-lime-100 text-lime-600';
             break;
         case 'low':
-            $classes .= ' bg-orange-200 text-orange-600';
+            $classes .= ' bg-orange-100 text-orange-600';
             break;
         case 'active':
             $classes .= ' bg-green-200 text-green-600';
             break;
         case 'high':
-            $classes .= ' bg-red-200 text-red-600';
+            $classes .= ' bg-red-100 text-red-600';
             break;
 
         default:
@@ -841,7 +888,7 @@ function calculateCriticalPath($tasks)
             $es = $maxEf;
         }
 
-        $duration = is_numeric($task['duration']) ? (float)$task['duration'] : 0;
+        $duration = is_numeric($task['duration']) ? (float) $task['duration'] : 0;
         $ef = $es + $duration;
         $esEf[$taskId] = ['es' => $es, 'ef' => $ef];
     };
@@ -877,7 +924,7 @@ function calculateCriticalPath($tasks)
             $lf = $minLs;
         }
 
-        $duration = is_numeric($task['duration']) ? (float)$task['duration'] : 0;
+        $duration = is_numeric($task['duration']) ? (float) $task['duration'] : 0;
         $ls = $lf - $duration;
         $lfLs[$taskId] = ['lf' => $lf, 'ls' => $ls];
     };
@@ -897,13 +944,13 @@ function calculateCriticalPath($tasks)
         $lf = $lfLs[$id]['lf'];
         $slack = $ls - $es;
         $results[$id] = [
-            'task_id'=>$id,
+            'task_id' => $id,
             'es' => $es,
             'ef' => $ef,
             'ls' => $ls,
             'lf' => $lf,
             'slack' => $slack,
-            'critical' => $slack == 0?1:0
+            'critical' => $slack == 0 ? 1 : 0
         ];
     }
 

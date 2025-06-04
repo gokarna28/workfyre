@@ -116,7 +116,7 @@ $(document).ready(function () {
                         setTimeout(() => {
                             $('#taskModal').addClass('hidden');
                         }, 2000);
-                       
+
                     } else {
                         $('#inviteTeamSuccessMessage').html(`
                         <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
@@ -134,7 +134,7 @@ $(document).ready(function () {
                 e.originalEvent.dataTransfer.setData('text/plain', this.id);
             });
 
-           
+
 
         }
     });
@@ -506,4 +506,32 @@ $(document).ready(function () {
         });
     }
     /**Invite team end */
+
+    /**settings tab start */
+    $(document).ready(function () {
+        $('.tab-btn').click(function () {
+            const tabId = $(this).data('tab');
+
+            // Toggle tab content
+            $('.tab-content').addClass('hidden');
+            $('#' + tabId).removeClass('hidden');
+
+            // Toggle active button style
+            $('.tab-btn').removeClass('text-blue-600 border-blue-500 border-b-2').addClass('text-gray-500');
+            $(this).addClass('text-blue-600 border-blue-500 border-b-2').removeClass('text-gray-500');
+        });
+    });
+    /**settings tab ends */
+
+    //preview image while select 
+    $('#img-upload').on('change', function (event) {
+        const file = event.target.files[0];
+        if (file) {
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                $('#preview-img').attr('src', e.target.result);
+            }
+            reader.readAsDataURL(file);
+        }
+    });
 })

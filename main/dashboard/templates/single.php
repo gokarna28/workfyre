@@ -1,7 +1,10 @@
 <?php include_once('../../sidebar.php'); ?>
-<?php include_once('../../header.php'); ?>
+<?php include_once('../../header.php');
 
+$project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
+$taskData = getTasksDetailsByProject_id($project_id);
 
+?>
 <script type="text/javascript">
     google.charts.load('current', { 'packages': ['timeline'] });
     google.charts.setOnLoadCallback(drawChart);
@@ -18,8 +21,7 @@
         dataTable.addColumn({ type: 'date', id: 'End Date' });
 
         <?php
-        $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
-        $taskData = getTasksDetailsByProject_id($project_id);
+
         $chartData = [];
 
         if (is_array($taskData) && !empty($taskData)) {
@@ -87,6 +89,16 @@
     $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
     $project = getProjectDetailsByProjectID($project_id);
 
+    $projectDeadline = 0;
+    if (is_array($taskData)) {
+        foreach ($taskData as $task) {
+            if ($task['latest_finish'] > $projectDeadline) {
+                $projectDeadline = $task['latest_finish'];
+            }
+        }
+    }
+
+
     $attachments = getProjectAttachments($project_id);
     ?>
 
@@ -104,30 +116,35 @@
                     </p>
                 </div>
             </div>
-            <div class="flex items-center">
-                <!-- First Avatar (AL) -->
-                <div class="w-10 h-10 rounded-full shadow-md bg-white flex items-center justify-center z-20">
-                    <img src="https://i.pravatar.cc/40?img=2" class="rounded-full" />
+            <div class="flex flex-col items-end">
+                <div class="flex items-center mb-10">
+                    <div class="flex -space-x-2">
+                        <?php
+                        $projectMeta = getProjectMeta($project['id']);
+                        if (is_array($projectMeta) && isset($projectMeta)) {
+                            foreach ($projectMeta as $projectM) {
+                                ?>
+                                <img src="https://i.pravatar.cc/40?img=4" alt="Avatar 1"
+                                    class="w-10 h-10 rounded-full border border-white">
+                                <?php
+                            }
+                        }
+                        ?>
+
+                    </div>
+                    <button id="header-invite-team"
+                        class="flex shadow-md cursor-pointer hover:bg-[#1a143b] hover:text-white items-center space-x-1 px-3 py-1.5 bg-white text-blue-900 rounded-full  ml-2">
+                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                            xmlns="http://www.w3.org/2000/svg">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
+                            </path>
+                        </svg>
+                        <span class="text-sm font-medium">Invite</span>
+                    </button>
                 </div>
-                <!-- Second Avatar (DT) -->
-                <div class="w-10 h-10 rounded-full shadow-md flex items-center justify-center  -ml-3 z-10">
-                    <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
+                <div class="">
+                    <p class="text-xl font-medium"><?php echo "Deadline: " . $projectDeadline . " " . "Days" ?></p>
                 </div>
-                <div class="w-10 h-10 rounded-full shadow-md flex items-center justify-center  -ml-3 z-10">
-                    <img src="https://i.pravatar.cc/40?img=4" class="rounded-full" />
-                </div>
-                <div class="w-10 h-10 rounded-full shadow-md flex items-center justify-center  -ml-3 z-10">
-                    <img src="https://i.pravatar.cc/40?img=3" class="rounded-full" />
-                </div>
-                <!-- Invite Button -->
-                <button
-                    class="flex shadow-md cursor-pointer hover:bg-[#1a143b] hover:text-white items-center space-x-1 px-3 py-1.5 bg-white text-blue-900 rounded-full  ml-2">
-                    <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                        xmlns="http://www.w3.org/2000/svg">
-                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"></path>
-                    </svg>
-                    <span class="text-sm font-medium">Invite</span>
-                </button>
             </div>
 
         </div>
@@ -150,9 +167,7 @@
                 class="mr-10 text-lg text-sky-700 border-b-2 border-sky-700 pb-4 cursor-pointer flex gap-2">
                 <span><i class="fa-solid fa-chart-bar"></i></span>Board
             </li>
-            <!-- <li id="projectTimeline" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2">
-                <span><i class="fa-solid fa-chart-bar"></i></span>Timeline
-            </li> -->
+
             <li id="projectFiles" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i
                         class="fa-regular fa-file"></i></span>Files</li>
             <li id="projectTeam" class="mr-10 text-lg pb-4 cursor-pointer flex gap-2"><span><i

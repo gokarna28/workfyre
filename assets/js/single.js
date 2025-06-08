@@ -431,7 +431,12 @@ $(document).ready(function () {
     $('#inviteTeamCancelBtn').on('click', function () {
         $('#inviteTeamForm').addClass('hidden');
     });
-
+    //open the invite tab
+    $('#header-invite-team').on('click', function(){
+        $('#projectTeam').trigger('click');
+        $('#inviteTeamBtn').trigger('click');
+    })
+    
 
 
     $('#inviteTeamForm').on('submit', function (e) {

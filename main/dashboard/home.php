@@ -34,40 +34,35 @@
          <div class="flex flex-col bg-white shadow-md items-center gap-2 w-40 rounded-lg p-4">
             <span
                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-14 h-14 overflow-hidden">
-               <img src="http://workfyre.local/assets/images/default-profile.png" class="w-full h-full object-cover"
-                  alt="default profile" />
+               <img src="https://i.pravatar.cc/20" class="w-full h-full object-cover" alt="default profile" />
             </span>
             <p class="text-center">Yegosh Thapa</p>
          </div>
          <div class="flex flex-col bg-white shadow-md items-center gap-2 w-40 rounded-lg p-4">
             <span
                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-14 h-14 overflow-hidden">
-               <img src="http://workfyre.local/assets/images/default-profile.png" class="w-full h-full object-cover"
-                  alt="default profile" />
+               <img src="https://i.pravatar.cc/30" class="w-full h-full object-cover" alt="default profile" />
             </span>
             <p class="text-center">Yegosh Thapa</p>
          </div>
          <div class="flex flex-col bg-white shadow-md items-center gap-2 w-40 rounded-lg p-4">
             <span
                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-14 h-14 overflow-hidden">
-               <img src="http://workfyre.local/assets/images/default-profile.png" class="w-full h-full object-cover"
-                  alt="default profile" />
+               <img src="https://i.pravatar.cc/40" class="w-full h-full object-cover" alt="default profile" />
             </span>
             <p class="text-center">Yegosh Thapa</p>
          </div>
          <div class="flex flex-col bg-white shadow-md items-center gap-2 w-40 rounded-lg p-4">
             <span
                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-14 h-14 overflow-hidden">
-               <img src="http://workfyre.local/assets/images/default-profile.png" class="w-full h-full object-cover"
-                  alt="default profile" />
+               <img src="https://i.pravatar.cc/60" class="w-full h-full object-cover" alt="default profile" />
             </span>
             <p class="text-center">Yegosh Thapa</p>
          </div>
          <div class="flex flex-col bg-white shadow-md items-center gap-2 w-40 rounded-lg p-4">
             <span
                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-14 h-14 overflow-hidden">
-               <img src="http://workfyre.local/assets/images/default-profile.png" class="w-full h-full object-cover"
-                  alt="default profile" />
+               <img src="https://i.pravatar.cc/50" class="w-full h-full object-cover" alt="default profile" />
             </span>
             <p class="text-center">Yegosh Thapa</p>
          </div>

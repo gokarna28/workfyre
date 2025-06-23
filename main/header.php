@@ -8,7 +8,7 @@ if (!isUserLoggedIn()) {
     exit();
 }
 
-$current_page = getCurrentPageName(); 
+$current_page = getCurrentPageName();
 
 ?>
 
@@ -29,51 +29,67 @@ $current_page = getCurrentPageName();
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.11.8/dist/umd/popper.min.js"
         integrity="sha384-I7E8VVD/ismYTF4hNIPjVp/Zjvgyol6VFvRkX/vR+Vc4jQkC+hVqc2pM8ODewa9r"
         crossorigin="anonymous"></script>
-
+    <script src="http://workfyre.local/assets/js/team.js"></script>
     <script src="http://workfyre.local/assets/js/single.js"></script>
     <script src="http://workfyre.local/assets/js/project-js.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
     <script src="http://workfyre.local/assets/js/script.js"></script>
 
+<style>
+    .hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* Internet Explorer 10+ */
+}
 
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari, Opera */
+}
+
+</style>
 </head>
 
 <body>
-    <header
-        class="bg-white px-10 py-4 flex items-center justify-between border-b border-slate-300 z-2 fixed w-full top-0">
-        <div class="w-1/2">
-            <h1 class="text-3xl font-bold"><a href="<?php echo HOMEPAGE_URL?>/main/dashboard/home.php">Workfyre</a></h1>
-        </div>
+    <header class="bg-white px-10 py-4 flex items-center justify-between fixed pl-85 w-full top-0 z-2">
+
         <div class="flex items-center w-full gap-5 justify-between">
-            <div class="bg-slate-100 border border-slate-300 rounded-full py-2 px-4 w-full">
+            <div class="bg-slate-100 border border-gray-100 rounded-full py-2 px-4 w-full">
                 <i class="fa-solid fa-magnifying-glass mr-2"></i>
                 <input type="text" name="search" placeholder="Search here" class="outline-none" />
             </div>
             <div class="w-full">
 
-                <ul class="flex items-center justify-center gap-5">
-                    <li class="flex items-center gap-4 font-medium">
-                        <span
-                            class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden p-2">
-                            <img src="http://workfyre.local/assets/images/notification-bell.png"
-                                class="w-full h-full object-cover" alt="default profile" />
+                <ul class="flex items-center justify-end gap-5">
+                    <li>
+                        <span id="notifiction_icon_header"
+                            class="rounded-full cursor-pointer font-medium border border-slate-300 flex items-center justify-center w-10 h-10  p-2 relative">
+                            <i class="fa-solid fa-bell"></i>
+                            <!-- Notification count badge -->
+                            <span
+                                class="absolute -top-1 -right-3 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center border border-white p-0.5">+99</span>
                         </span>
                     </li>
                     <li class="flex items-center gap-4 font-medium">
+                        <button id="createNewProject"
+                            class="flex items-center gap-2 hover:bg-[#1a143b] hover:text-white border cursor-pointer border-slate-300 px-4 py-2 rounded-full">
+                            <i class="fa-solid fa-plus"></i>
+                            <p class="text-lg font-medium">New Project</p>
+                        </button>
+                    </li>
+                    <!-- <li class="flex items-center gap-4 font-medium">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden p-2">
                             <i class="fa-solid fa-gear md:text-xl text-xl"></i>
                         </span>
-                    </li>
-                    <li class="flex items-center gap-4 font-medium">
+                    </li> -->
+                    <!-- <li class="flex items-center gap-4 font-medium">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
                             <img src="https://i.pravatar.cc/40"
                                 class="w-full h-full object-cover" alt="default profile" />
                         </span>
 
-                    </li>
+                    </li> -->
                 </ul>
 
             </div>

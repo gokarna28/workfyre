@@ -30,7 +30,7 @@ include_once('main/public-templates/public-header.php');
         </div>
     </div>
 
-    <div class="absolute left-1/2 transform -translate-x-1/2 flex items-center justify-center top-[75%] sm:top-[80%] gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 md:px-0 overflow-x-auto w-full pb-4">
+    <div class="relative left-1/2 transform -translate-x-1/2 flex items-center justify-center gap-2 sm:gap-4 md:gap-6 px-2 sm:px-4 md:px-0 overflow-x-auto w-full pb-4 -mb-16 sm:-mb-20 md:-mb-24">
 
         <div class="bg-white rounded-xl p-3 sm:p-4 shadow-md w-[200px] sm:w-[250px] md:w-[270px] shrink-0">
             <span class="bg-pink-100 text-pink-700 px-2 sm:px-3 py-1 rounded-full text-xs font-semibold">Project is

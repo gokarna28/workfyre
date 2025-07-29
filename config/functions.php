@@ -2124,6 +2124,8 @@ function sendPasswordResetEmail($email, $token, $user)
     $headers = "MIME-Version: 1.0" . "\r\n";
     $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
     $headers .= "From: noreply@workfyre.com.np";
+    $headers .= "Reply-To: noreply@workfyre.com.np" . "\r\n";
+    $headers .= "X-Mailer: PHP/" . phpversion();
 
     return mail($email, $subject, $message, $headers);
 }
@@ -2999,7 +3001,8 @@ function isUserAdmin($user_id) {
     try {
         global $conn;
         
-        $sql = "SELECT user_role FROM users WHERE id = :user_id";
+        $table_name = PREFIX . "users";
+        $sql = "SELECT user_role FROM $table_name WHERE id = :user_id";
         $stmt = $conn->prepare($sql);
         $stmt->execute(['user_id' => $user_id]);
         

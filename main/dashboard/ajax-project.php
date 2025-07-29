@@ -29,8 +29,9 @@ if ($_SERVER["REQUEST_METHOD"] == "POST" && isset($data['action'])) {
             case 'update_task_status':
                 ajaxUpdateTaskStatus($data);
                 break;
-
-
+            case 'check_task_dependencies':
+                ajaxCheckTaskDependencies($data);
+                break;
         }
     } catch (Exception $e) {
         error_log('Error processing request: ' . $e->getMessage());
@@ -223,7 +224,7 @@ function ajaxCreateTask($params, $files)
 {
 
     try {
-        if (empty($params['task_title']) || empty($params['task_priority']) || empty($params['task_description'])) {
+        if (empty($params['task_title']) || empty($params['task_description'])) {
             echo json_encode(['status' => 'error', 'message' => 'Missing required fields']);
             return;
         }
@@ -238,15 +239,27 @@ function ajaxCreateTask($params, $files)
         if ($result['status'] == 'success') {
 
             $assignUser = getUsersDetailsByUser_id($params['task_assignto']);
-            $classes = getClasses($params['task_priority']);
+            
+            // Get the created task to check if it's in critical path
+            $createdTask = getTasksDetailsByTask_id($result['task_id']);
+            
+            // Automatically assign priority based on critical path
+            $autoPriority = 'low'; // Default priority
+            if ($createdTask && isset($createdTask['critical']) && $createdTask['critical'] == 1) {
+                $autoPriority = 'high'; // High priority for critical path tasks
+            }
+            
+            $classes = getClasses($autoPriority);
+            
             //data to send in the response 
             $response = [
                 'task_id' => $result['task_id'],
                 'project_id' => $params['project_id'],
                 'title' => $params['task_title'],
-                'priority' => $params['task_priority'],
+                'priority' => $autoPriority,
                 'description' => strlen($params['task_description']) > 20 ? substr($params['task_description'], 0, 40) . '...' : $params['task_description'],
                 'deadline' => $params['task_deadline'],
+                'created_at' => $createdAt,
                 'assignto_user' => $assignUser['firstname'] . ' ' . $assignUser['lastname'],
                 'priority_class' => $classes,
             ];
@@ -346,12 +359,28 @@ function ajaxCreateTask($params, $files)
                 updateTaskCriticalPathParams($criticalParams);
             }
 
+            // Update priority based on critical path analysis
+            $updatedTask = getTasksDetailsByTask_id($result['task_id']);
+            if ($updatedTask && isset($updatedTask['critical']) && $updatedTask['critical'] == 1) {
+                // Update task priority to high if it's in critical path
+                updateTaskPriority($result['task_id'], 'high');
+                $response['priority'] = 'high';
+                $response['priority_class'] = getClasses('high');
+                $response['critical'] = 1; // Add critical status
+            } else {
+                // Update task priority to low if it's not in critical path
+                updateTaskPriority($result['task_id'], 'low');
+                $response['priority'] = 'low';
+                $response['priority_class'] = getClasses('low');
+                $response['critical'] = 0; // Add critical status
+            }
+
             /**ends */
 
-            echo json_encode(['status' => 'success', 'message' => 'Project Created Successfully.', 'task_card_details' => $response]);
+            echo json_encode(['status' => 'success', 'message' => 'Task Created Successfully.', 'task_card_details' => $response]);
 
         } else {
-            echo json_encode(['status' => 'error', 'message' => 'Failed to create the project.']);
+            echo json_encode(['status' => 'error', 'message' => 'Failed to create the task.']);
         }
 
     } catch (Exception $e) {
@@ -364,15 +393,63 @@ function ajaxUpdateTaskStatus($params)
 {
     try {
         if (isset($params)) {
+            // Check if user has permission to modify this task
+            if (!canUserModifyTask($params['task_id'])) {
+                echo json_encode(['status' => 'error', 'message' => 'You do not have permission to modify this task. Only the assigned user or admin can change task status.']);
+                return;
+            }
+            
             $result = updateTaskStatus($params);
             if ($result) {
                 echo json_encode(['status' => 'success', 'message' => 'Task Status Updated to' . ' ' . $params['task_status'] . ' ' . 'Successfully.']);
             } else {
-                echo json_encode(['status' => 'error', 'message' => 'Failed to Delete.']);
+                echo json_encode(['status' => 'error', 'message' => 'Failed to update task status.']);
             }
         }
     } catch (Exception $e) {
         error_log('Error processing request: ' . $e->getMessage());
         echo json_encode(['error' => $e->getMessage()]);
+    }
+}
+
+function ajaxCheckTaskDependencies($params)
+{
+    try {
+        if (empty($params['task_id'])) {
+            echo json_encode(['status' => 'error', 'message' => 'Task ID is required']);
+            return;
+        }
+
+        $taskId = $params['task_id'];
+        
+        // Get task dependencies
+        $dependencies = getTaskDependencies($taskId);
+        
+        if (empty($dependencies)) {
+            // No dependencies, so it's safe to move
+            echo json_encode(['status' => 'success', 'dependencies_completed' => true]);
+            return;
+        }
+        
+        // Check if all dependencies are completed
+        $allCompleted = true;
+        foreach ($dependencies as $dependency) {
+            $dependencyTask = getTasksDetailsByTask_id($dependency['dependency_task_id']);
+            if ($dependencyTask && $dependencyTask['status'] !== 'completed') {
+                $allCompleted = false;
+                break;
+            }
+        }
+        
+        echo json_encode([
+            'status' => 'success', 
+            'dependencies_completed' => $allCompleted,
+            'dependency_count' => count($dependencies),
+            'completed_count' => $allCompleted ? count($dependencies) : 0
+        ]);
+
+    } catch (Exception $e) {
+        error_log('Error checking task dependencies: ' . $e->getMessage());
+        echo json_encode(['status' => 'error', 'message' => 'Failed to check dependencies']);
     }
 }

@@ -10,6 +10,13 @@ if (!isUserLoggedIn()) {
 
 $current_page = getCurrentPageName();
 
+// Get current user data for dynamic profile image
+$currentUser = getCurrentUser();
+$userDetails = getUsersDetailsByUser_id($currentUser['id']);
+
+// Check if current user is admin
+$isAdmin = isUserAdmin($currentUser['id']);
+
 ?>
 
 <!DOCTYPE html>
@@ -50,7 +57,7 @@ $current_page = getCurrentPageName();
 </head>
 
 <body>
-    <header class="bg-white px-10 py-4 flex items-center justify-between fixed pl-85 w-full top-0 z-2">
+    <header class="bg-white px-10 py-4 flex items-center justify-between fixed pl-85 w-full top-0 z-40 shadow-lg border-b border-gray-200">
 
         <div class="flex items-center w-full gap-5 justify-between">
             <div class="bg-slate-100 border border-gray-100 rounded-full py-2 px-4 w-full">
@@ -69,6 +76,7 @@ $current_page = getCurrentPageName();
                                 class="absolute -top-1 -right-3 bg-red-500 text-white text-xs font-bold rounded-full flex items-center justify-center border border-white p-0.5">+99</span>
                         </span>
                     </li>
+                    <?php if ($isAdmin): ?>
                     <li class="flex items-center gap-4 font-medium">
                         <button id="createNewProject"
                             class="flex items-center gap-2 hover:bg-[#1a143b] hover:text-white border cursor-pointer border-slate-300 px-4 py-2 rounded-full">
@@ -76,6 +84,7 @@ $current_page = getCurrentPageName();
                             <p class="text-lg font-medium">New Project</p>
                         </button>
                     </li>
+                    <?php endif; ?>
                     <!-- <li class="flex items-center gap-4 font-medium">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden p-2">
@@ -85,8 +94,8 @@ $current_page = getCurrentPageName();
                     <!-- <li class="flex items-center gap-4 font-medium">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                            <img src="https://i.pravatar.cc/40"
-                                class="w-full h-full object-cover" alt="default profile" />
+                            <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/40'; ?>"
+                                class="w-full h-full object-cover" alt="profile" />
                         </span>
 
                     </li> -->

@@ -1,82 +1,122 @@
 <?php
 include_once('header.php');
+
+// Get current user data for dynamic profile image
+$currentUser = getCurrentUser();
+$userDetails = getUsersDetailsByUser_id($currentUser['id']);
+
+// Debug: Check what data we're getting
+// error_log("User Details: " . print_r($userDetails, true));
 ?>
 <sidebar>
-    <div
-        class="bg-white flex flex-col justify-between border-r border-slate-300 md:w-1/5 w-1/6 md:h-screen h-full p-6 fixed z-3 top-0">
-        <ul>
-            <li>
-                <div class="mb-6 p-2 pb-10 border-b border-slate-300">
-                    <h1 class="text-3xl font-bold"><a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/home.php"></a>
-                    </h1>
+    <div class="bg-white flex flex-col justify-between border-r border-slate-200 md:w-1/5 w-1/6 md:h-screen h-full p-6 fixed z-50 top-0 shadow-lg">
+        <!-- Logo Section -->
+        <div class="mb-6 border-b border-gray-200 pb-4">
+            <h1 class="text-2xl font-bold text-gray-900 text-center">
+                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/home.php" class="hover:text-blue-600 transition-colors">Workfyre</a>
+            </h1>
+        </div>
+
+        <!-- Navigation Menu -->
+        <nav class="flex-1">
+            <ul class="space-y-2">
+                <li>
+                    <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/home.php"
+                        class="<?php echo isset($current_page) && $current_page == 'home.php' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' ?> flex items-center gap-4 rounded-xl p-4 text-sm font-medium transition-all duration-200 group">
+                        <div class="p-2 rounded-lg <?php echo isset($current_page) && $current_page == 'home.php' ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100' ?> transition-colors">
+                            <i class="fa-solid fa-house text-lg"></i>
+                        </div>
+                        <span class="hidden md:block">Dashboard</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/projects.php"
+                        class="<?php echo isset($current_page) && $current_page == 'projects.php' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' ?> flex items-center gap-4 rounded-xl p-4 text-sm font-medium transition-all duration-200 group">
+                        <div class="p-2 rounded-lg <?php echo isset($current_page) && $current_page == 'projects.php' ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100' ?> transition-colors">
+                            <i class="fa-solid fa-folder text-lg"></i>
+                        </div>
+                        <span class="hidden md:block">Projects</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/teams.php"
+                        class="<?php echo isset($current_page) && $current_page == 'teams.php' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' ?> flex items-center gap-4 rounded-xl p-4 text-sm font-medium transition-all duration-200 group">
+                        <div class="p-2 rounded-lg <?php echo isset($current_page) && $current_page == 'teams.php' ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100' ?> transition-colors">
+                            <i class="fa-solid fa-users text-lg"></i>
+                        </div>
+                        <span class="hidden md:block">Team</span>
+                    </a>
+                </li>
+                
+                <li>
+                    <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/notifications.php"
+                        class="<?php echo isset($current_page) && $current_page == 'notifications.php' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' ?> flex items-center gap-4 rounded-xl p-4 text-sm font-medium transition-all duration-200 group">
+                        <div class="p-2 rounded-lg <?php echo isset($current_page) && $current_page == 'notifications.php' ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100' ?> transition-colors relative">
+                            <i class="fa-regular fa-bell text-lg"></i>
+                            <span class="absolute -top-1 -right-1 bg-red-500 text-white text-xs rounded-full h-4 w-4 flex items-center justify-center">3</span>
+                        </div>
+                        <span class="hidden md:block">Notifications</span>
+                    </a>
+                </li>
+            </ul>
+        </nav>
+
+        <!-- Settings & Logout Section -->
+        <div class="space-y-2">
+            <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/settings.php"
+                class="<?php echo isset($current_page) && $current_page == 'settings.php' ? 'bg-blue-50 text-blue-700 border-r-2 border-blue-600' : 'text-gray-700 hover:bg-gray-50 hover:text-blue-600' ?> flex items-center gap-4 rounded-xl p-4 text-sm font-medium transition-all duration-200 group">
+                <div class="p-2 rounded-lg <?php echo isset($current_page) && $current_page == 'settings.php' ? 'bg-blue-100' : 'bg-gray-100 group-hover:bg-blue-100' ?> transition-colors">
+                    <i class="fa-solid fa-gear text-lg"></i>
                 </div>
-            </li>
+                <span class="hidden md:block">Settings</span>
+            </a>
+            
+            <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/logout.php"
+                class="text-gray-700 hover:bg-red-50 hover:text-red-600 flex items-center gap-4 rounded-xl p-4 text-sm font-medium transition-all duration-200 group">
+                <div class="p-2 rounded-lg bg-gray-100 group-hover:bg-red-100 transition-colors">
+                    <i class="fa-solid fa-arrow-right-from-bracket text-lg"></i>
+                </div>
+                <span class="hidden md:block">Logout</span>
+            </a>
+        </div>
 
-            <li>
-                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/home.php"
-                    class="<?php echo isset($current_page) && $current_page == 'home.php' ? 'hover:bg-slate-100 bg-slate-100 ' : 'hover:bg-slate-100 hover:bg-slate-100 ' ?> cursor-pointer flex items-center gap-6 rounded-xl p-3 text-lg font-medium mb-6">
-                    <i class="fa-solid fa-house  text-lg"></i>
-                    <span class="hidden md:block">Home</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/projects.php"
-                    class="<?php echo isset($current_page) && $current_page == 'projects.php' ? 'hover:bg-slate-100 bg-slate-100 ' : 'hover:bg-slate-100 hover:bg-slate-100 ' ?> cursor-pointer flex items-center gap-6 rounded-xl p-3 text-lg font-medium mb-6">
-                    <i class="fa-regular fa-gem  text-lg"></i>
-                    <span class="hidden md:block">Projects</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/teams.php"
-                    class="<?php echo isset($current_page) && $current_page == 'teams.php' ? 'hover:bg-slate-100 bg-slate-100 ' : 'hover:bg-slate-100 hover:bg-slate-100 ' ?> cursor-pointer flex items-center gap-6 rounded-xl p-3 text-lg font-medium mb-6">
-                    <i class="fa-regular fa-user  text-lg"></i>
-                    <span class="hidden md:block">Teams</span>
-                </a>
-            </li>
-            <li>
-                <p class="mb-6 text-gray-500 text-sm">Accounts</p>
-            </li>
-            <li>
-                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/notifications.php"
-                    class="<?php echo isset($current_page) && $current_page == 'notifications.php' ? 'hover:bg-slate-100 bg-slate-100 ' : 'hover:bg-slate-100 hover:bg-slate-100 ' ?> cursor-pointer flex items-center gap-6 rounded-xl p-3 text-lg font-medium mb-6">
-                    <i class="fa-regular fa-bell  text-lg"></i>
-                    <span class="hidden md:block">Notifications</span>
-                </a>
-            </li>
-            <li>
-                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/settings.php"
-                    class="<?php echo isset($current_page) && $current_page == 'settings.php' ? 'hover:bg-slate-100 bg-slate-100 ' : 'hover:bg-slate-100 hover:bg-slate-100 ' ?> cursor-pointer flex items-center gap-6 rounded-xl p-3 text-lg font-medium mb-6">
-                    <i class="fa-solid fa-gear  text-lg"></i>
-                    <span class="hidden md:block">Settings</span>
-                </a>
-            </li>
-
-            <li>
-                <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/logout.php"
-                    class="<?php echo isset($current_page) && $current_page == 'logout.php' ? 'hover:bg-slate-100 bg-slate-100 ' : 'hover:bg-slate-100 hover:bg-slate-100 ' ?> cursor-pointer flex items-center gap-6 rounded-xl p-4 text-lg font-medium mb-6">
-                    <i class="fa-solid fa-arrow-right-from-bracket  text-lg"></i>
-                    <span class="hidden md:block">Logout</span>
-                </a>
-            </li>
-        </ul>
-        <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/settings.php"
-            class="border-t border-slate-300 p-3 flex items-center gap-6">
-            <span
-                class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-14 h-14 overflow-hidden">
-                <img src="https://i.pravatar.cc/40" class="w-full h-full object-cover" alt="default profile" />
-            </span>
-            <span class="">
-                <p class="font-medium">Gokarna</p>
-                <p class="text-sm text-gray-500">gokarnachy</p>
-            </span>
-        </a>
+        <!-- Profile Section -->
+        <div class="border-t border-gray-200 pt-4 mt-4">
+            <a href="<?php echo HOMEPAGE_URL ?>/main/dashboard/settings.php"
+                class="flex items-center gap-4 p-3 rounded-xl hover:bg-gray-50 transition-all duration-200 group">
+                <div class="relative">
+                    <img src="<?php echo (!empty($userDetails['profile_image']) ? (strpos($userDetails['profile_image'], 'http') === 0 ? $userDetails['profile_image'] : HOMEPAGE_URL . $userDetails['profile_image']) : 'https://i.pravatar.cc/40'); ?>" 
+                         class="w-12 h-12 rounded-full object-cover border-2 border-gray-200 group-hover:border-blue-300 transition-colors" 
+                         alt="profile" />
+                    <div class="absolute -bottom-1 -right-1 w-4 h-4 bg-green-500 rounded-full border-2 border-white"></div>
+                </div>
+                <div class="flex-1 min-w-0 hidden md:block">
+                    <p class="font-semibold text-gray-900 truncate"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User'); ?> <?php echo htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
+                    <p class="text-xs text-gray-500 truncate"><?php echo htmlspecialchars($userDetails['email'] ?? ''); ?></p>
+                    <div class="flex items-center gap-1 mt-1">
+                        <span class="inline-flex items-center px-2 py-1 rounded-full text-xs font-medium bg-blue-100 text-blue-800">
+                            <?php echo ucfirst($userDetails['user_role'] ?? 'member'); ?>
+                        </span>
+                    </div>
+                </div>
+                <div class="hidden md:block">
+                    <i class="fa-solid fa-chevron-right text-gray-400 group-hover:text-blue-600 transition-colors"></i>
+                </div>
+            </a>
+        </div>
     </div>
-
 
     <!-- project Modal -->
     <div id="projectModal" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-100">
-        <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">
-            <h3 class="text-xl font-semibold mb-4">Create Project</h3>
+        <div class="bg-white rounded-xl p-6 w-1/2 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-semibold">Create Project</h3>
+                <button id="closeProjectModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
             <div class="mb-2" id="projectSuccessMessage"></div>
             <form id="createProjectForm" method="post" enctype="multipart/form-data">
                 <div>
@@ -120,7 +160,7 @@ include_once('header.php');
                     <button id="cancelBtn" type="button"
                         class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
                     <button type="submit" class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">
-                        Add Task
+                        Create Project
                     </button>
                 </div>
             </form>
@@ -149,11 +189,11 @@ include_once('header.php');
                         <div class="flex items-center gap-4">
                             <span
                                 class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                                <img src="https://i.pravatar.cc/50" class="w-full h-full object-cover"
-                                    alt="default profile" />
+                                <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/50'; ?>" class="w-full h-full object-cover"
+                                    alt="profile" />
                             </span>
                             <div>
-                                <p class="font-medium">Gokarna Chaudhary</p>
+                                <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                                 <p class="text-sm">Create Rest api for data access.</p>
                             </div>
                         </div>
@@ -165,11 +205,11 @@ include_once('header.php');
                         <div class="flex items-center gap-4">
                             <span
                                 class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                                <img src="https://i.pravatar.cc/30" class="w-full h-full object-cover"
-                                    alt="default profile" />
+                                <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/30'; ?>" class="w-full h-full object-cover"
+                                    alt="profile" />
                             </span>
                             <div>
-                                <p class="font-medium">Gokarna Chaudhary</p>
+                                <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                                 <p class="text-sm">Create Rest api for data access.</p>
                             </div>
                         </div>
@@ -184,11 +224,11 @@ include_once('header.php');
                         <div class="flex items-center gap-4">
                             <span
                                 class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                                <img src="https://i.pravatar.cc/60" class="w-full h-full object-cover"
-                                    alt="default profile" />
+                                <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/60'; ?>" class="w-full h-full object-cover"
+                                    alt="profile" />
                             </span>
                             <div>
-                                <p class="font-medium">Gokarna Chaudhary</p>
+                                <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                                 <p class="text-sm">Create Rest api for data access.</p>
                             </div>
                         </div>
@@ -200,11 +240,11 @@ include_once('header.php');
                         <div class="flex items-center gap-4">
                             <span
                                 class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                                <img src="https://i.pravatar.cc/80" class="w-full h-full object-cover"
-                                    alt="default profile" />
+                                <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/80'; ?>" class="w-full h-full object-cover"
+                                    alt="profile" />
                             </span>
                             <div>
-                                <p class="font-medium">Gokarna Chaudhary</p>
+                                <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                                 <p class="text-sm">Create Rest api for data access.</p>
                             </div>
                         </div>
@@ -216,11 +256,11 @@ include_once('header.php');
                         <div class="flex items-center gap-4">
                             <span
                                 class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                                <img src="https://i.pravatar.cc/70" class="w-full h-full object-cover"
-                                    alt="default profile" />
+                                <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/70'; ?>" class="w-full h-full object-cover"
+                                    alt="profile" />
                             </span>
                             <div>
-                                <p class="font-medium">Gokarna Chaudhary</p>
+                                <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                                 <p class="text-sm">Create Rest api for data access.</p>
                             </div>
                         </div>

@@ -206,15 +206,21 @@ $tasks = [
 ];
 
 $results = calculateCriticalPath($tasks);
-echo "<pre>";
- var_dump($results);
-echo "<pre>";
+
 
 foreach ($results as $id => $info) {
   echo "Task $id: ES={$info['es']}, EF={$info['ef']}, LS={$info['ls']}, LF={$info['lf']}, Slack={$info['slack']}";
   echo $info['critical'] ? " (Critical)" : "";
   echo "<br>";
 }
+
+// Task A: Start at day 0, end at day 2
+
+// Task B: Start at day 2, end at day 5
+
+// Task C: Can start anytime between day 2 and day 5
+
+// Task D: Must start at day 5, end at day 7
 
 ?>
 
@@ -225,7 +231,7 @@ foreach ($results as $id => $info) {
 
 
 
-
+<!-- 
 
 <!DOCTYPE html>
 <html>
@@ -239,17 +245,19 @@ foreach ($results as $id => $info) {
 
 <body>
 
-  <div class="mermaid">
-    graph TD
-    A[Task A<br />Duration: 3] --> B[Task B<br />Duration: 2]
-    A --> C[Task C<br />Duration: 1]
-    B --> D[Task D<br />Duration: 4]
-    C --> D
-  </div>
+  <div class="mermaid"> -->
+    <?php
+    // graph TD
+    // A[Task A<br />Duration: 3] --> B[Task B<br />Duration: 2]
+    // A --> C[Task C<br />Duration: 1]
+    // B --> D[Task D<br />Duration: 4]
+    // C --> D
+?>
 
+  <!-- </div>
 </body>
 
-</html>
+</html> -->
 <!-- 
 <html>
   <head>
@@ -310,7 +318,7 @@ foreach ($results as $id => $info) {
     <div id="gantt_chart" style="width: 100%; height: 500px;"></div>
   </body>
 </html> -->
-
+<!-- 
 <!DOCTYPE html>
 <html>
 
@@ -369,4 +377,4 @@ foreach ($results as $id => $info) {
   <div id="chart_div"></div>
 </body>
 
-</html>
+</html> -->

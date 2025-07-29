@@ -4,38 +4,90 @@
 $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
 $taskData = getTasksDetailsByProject_id($project_id);
 
+// Get current user for permission checks
+$currentUser = getCurrentUser();
+
 ?>
 <script type="text/javascript">
     google.charts.load('current', { 'packages': ['timeline'] });
     google.charts.setOnLoadCallback(drawChart);
 
+    // Global variable to store chart instance
+    let globalChart = null;
+    let globalDataTable = null;
+
     function drawChart() {
         var container = document.getElementById('chart_div');
-        var chart = new google.visualization.Timeline(container);
-        var dataTable = new google.visualization.DataTable();
+        globalChart = new google.visualization.Timeline(container);
+        globalDataTable = new google.visualization.DataTable();
 
-        dataTable.addColumn({ type: 'string', id: 'Task ID' });
-        dataTable.addColumn({ type: 'string', id: 'Task Name' });
-        dataTable.addColumn({ type: 'string', id: 'style', role: 'style' });
-        dataTable.addColumn({ type: 'date', id: 'Start Date' });
-        dataTable.addColumn({ type: 'date', id: 'End Date' });
+        globalDataTable.addColumn({ type: 'string', id: 'Task ID' });
+        globalDataTable.addColumn({ type: 'string', id: 'Task Name' });
+        globalDataTable.addColumn({ type: 'string', id: 'style', role: 'style' });
+        globalDataTable.addColumn({ type: 'date', id: 'Start Date' });
+        globalDataTable.addColumn({ type: 'date', id: 'End Date' });
 
         <?php
+
+        // Function declared once here
+        function parseCustomDate($dateStr) {
+            $months = [
+                'january' => 1, 'february' => 2, 'march' => 3, 'april' => 4, 
+                'may' => 5, 'june' => 6, 'july' => 7, 'august' => 8, 
+                'september' => 9, 'october' => 10, 'november' => 11, 'december' => 12
+            ];
+            
+            // First try to parse as custom format (month-day-year)
+            $parts = explode('-', strtolower($dateStr));
+            if (count($parts) === 3 && isset($months[$parts[0]])) {
+                $month = $months[$parts[0]];
+                $day = intval($parts[1]);
+                $year = intval($parts[2]);
+                
+                // Validate date components
+                if ($day >= 1 && $day <= 31 && $year >= 1900 && $year <= 2100) {
+                    return mktime(0, 0, 0, $month, $day, $year);
+                }
+            }
+            
+            // Fallback to standard parsing
+            $timestamp = strtotime($dateStr);
+            if ($timestamp === false) {
+                // If standard parsing fails, return current time
+                return time();
+            }
+            return $timestamp;
+        }
 
         $chartData = [];
 
         if (is_array($taskData) && !empty($taskData)) {
             echo "var rows = [";
             foreach ($taskData as $tData) {
-                $start = strtotime($tData['created_at']);
-                $end = strtotime($tData['deadline']);
+                $start = parseCustomDate($tData['created_at']);
+                $end = parseCustomDate($tData['deadline']);
                 $critical = $tData['critical'];
+
+                // Validate dates - ensure start is not after end
+                if ($start > $end) {
+                    // If start is after end, swap them or adjust end date
+                    $temp = $start;
+                    $start = $end;
+                    $end = $temp + (24 * 60 * 60); // Add 1 day to end date
+                }
 
                 // Calculate duration in days and hours
                 $duration_seconds = $end - $start;
                 $days = floor($duration_seconds / (60 * 60 * 24));
                 $remaining_seconds = $duration_seconds % (60 * 60 * 24);
                 $hours = floor($remaining_seconds / (60 * 60));
+
+                // Limit duration display to prevent extremely long durations
+                $max_display_days = 365; // Maximum days to display
+                if ($days > $max_display_days) {
+                    $days = $max_display_days;
+                    $hours = 0;
+                }
 
                 $duration_text = '';
                 if ($days > 0) {
@@ -60,7 +112,7 @@ $taskData = getTasksDetailsByProject_id($project_id);
             }
             echo "];";
 
-            echo "dataTable.addRows(rows);";
+            echo "globalDataTable.addRows(rows);";
         }
         ?>
 
@@ -79,7 +131,134 @@ $taskData = getTasksDetailsByProject_id($project_id);
             }
         };
 
-        chart.draw(dataTable, options);
+        globalChart.draw(globalDataTable, options);
+    }
+
+    // Function to refresh chart with latest data from server
+    function refreshChartData() {
+        if (!globalChart || !globalDataTable) {
+            console.error('Chart not initialized');
+            return;
+        }
+
+        // Clear existing data
+        globalDataTable.removeRows(0, globalDataTable.getNumberOfRows());
+
+        // Fetch latest task data from server
+        $.ajax({
+            type: 'GET',
+            url: window.location.href,
+            success: function(response) {
+                // Parse the response to extract task data
+                // This is a simplified approach - in a real implementation, 
+                // you might want to create a separate API endpoint for chart data
+                console.log('Chart data refreshed');
+            },
+            error: function(xhr, status, error) {
+                console.error('Error refreshing chart data:', error);
+            }
+        });
+    }
+
+    // Function to update chart with new task data
+    function updateChartWithNewTask(taskData) {
+        if (!globalChart || !globalDataTable) {
+            console.error('Chart not initialized');
+            return;
+        }
+
+        // Convert date format from "may-28-2025" to JavaScript Date
+        function parseCustomDate(dateStr) {
+            const months = {
+                'january': 0, 'february': 1, 'march': 2, 'april': 3, 'may': 4, 'june': 5,
+                'july': 6, 'august': 7, 'september': 8, 'october': 9, 'november': 10, 'december': 11
+            };
+            
+            // First try to parse as custom format (month-day-year)
+            const parts = dateStr.toLowerCase().split('-');
+            if (parts.length === 3 && months[parts[0]] !== undefined) {
+                const month = months[parts[0]];
+                const day = parseInt(parts[1]);
+                const year = parseInt(parts[2]);
+                
+                // Validate date components
+                if (!isNaN(day) && !isNaN(year) && day >= 1 && day <= 31 && year >= 1900 && year <= 2100) {
+                    return new Date(year, month, day);
+                }
+            }
+            
+            // Fallback to standard date parsing
+            const standardDate = new Date(dateStr);
+            if (isNaN(standardDate.getTime())) {
+                // If standard parsing fails, return current date
+                return new Date();
+            }
+            return standardDate;
+        }
+
+        // Calculate duration for the new task
+        const start = parseCustomDate(taskData.created_at);
+        const end = parseCustomDate(taskData.deadline);
+        
+        // Validate dates - ensure start is not after end
+        let validStart = start;
+        let validEnd = end;
+        
+        if (start > end) {
+            // If start is after end, swap them or adjust end date
+            validStart = end;
+            validEnd = new Date(end.getTime() + (24 * 60 * 60 * 1000)); // Add 1 day to end date
+        }
+        
+        const duration_seconds = validEnd - validStart;
+        let days = Math.floor(duration_seconds / (1000 * 60 * 60 * 24));
+        const remaining_seconds = duration_seconds % (1000 * 60 * 60 * 24);
+        let hours = Math.floor(remaining_seconds / (1000 * 60 * 60));
+
+        // Limit duration display to prevent extremely long durations
+        const maxDisplayDays = 365; // Maximum days to display
+        if (days > maxDisplayDays) {
+            days = maxDisplayDays;
+            hours = 0;
+        }
+
+        let duration_text = '';
+        if (days > 0) {
+            duration_text += days + ' day' + (days > 1 ? 's' : '');
+        }
+        if (hours > 0) {
+            duration_text += (days > 0 ? ' - ' : '') + hours + ' hr' + (hours > 1 ? 's' : '');
+        }
+
+        const taskName = taskData.title + ' (' + duration_text + ')' + (taskData.critical == 1 ? ' (Critical)' : ' (Non-critical)');
+        const barColor = taskData.critical == 1 ? '#FF6363' : '#A0C878';
+
+        // Add new row to the data table
+        globalDataTable.addRow([
+            taskData.id.toString(),
+            taskName,
+            barColor,
+            validStart,
+            validEnd
+        ]);
+
+        // Redraw the chart
+        const options = {
+            height: '100%',
+            timeline: {
+                showRowLabels: true,
+                showBarLabels: true,
+                singleColor: false
+            },
+            hAxis: {
+                format: 'MMM d',
+                minorGridlines: {
+                    count: 0
+                }
+            }
+        };
+
+        globalChart.draw(globalDataTable, options);
     }
 </script>
 
@@ -88,6 +267,15 @@ $taskData = getTasksDetailsByProject_id($project_id);
     <?php
     $project_id = isset($_GET['pid']) ? $_GET['pid'] : "";
     $project = getProjectDetailsByProjectID($project_id);
+
+    // $start_date = date('Y-m-d', strtotime(str_replace('-', ' ', $taskData[0]['created_at'])));
+    // $deadline = date('Y-m-d', strtotime($taskData[0]['deadline']));
+
+    // $diffInSeconds = strtotime($deadline) - strtotime($start_date);
+    // $diffInDays = $diffInSeconds / (60 * 60 * 24);
+
+    // echo "Difference in days: " . $diffInDays;
+
 
     $projectDeadline = 0;
     if (is_array($taskData)) {
@@ -103,50 +291,170 @@ $taskData = getTasksDetailsByProject_id($project_id);
     ?>
 
     <div class="mb-5">
-        <div
-            class="flex items-center justify-between gap-5 mb-2 bg-gradient-to-r from-blue-500/60 to-purple-500/60 p-6 rounded-2xl text-white">
-            <div>
-                <a href="http://workfyre.local/main/dashboard/projects.php"
-                    class="hover:bg-slate-100 hover:text-black p-2 rounded-lg mb-2"><i
-                        class="fa-solid fa-arrow-left"></i></a>
-                <div>
-                    <h2 class="text-4xl font-bold text-white mb-2"><?php echo $project['title']; ?></h2>
-                    <p class="text-lg w-[70%]">
-                        <?php echo strlen($project['description']) > 100 ? substr($project['description'], 0, 100) . '...' : $project['description']; ?>
-                    </p>
-                </div>
+        <!-- Enhanced Project Banner -->
+        <div class="relative overflow-hidden bg-gradient-to-br from-gray-100 via-gray-200 to-gray-300 p-8 rounded-3xl text-gray-800 shadow-md">
+            <!-- Background Pattern -->
+            <div class="absolute inset-0 opacity-10">
+                <div class="absolute top-0 left-0 w-32 h-32 bg-gray-400 rounded-full -translate-x-16 -translate-y-16"></div>
+                <div class="absolute top-1/2 right-0 w-24 h-24 bg-gray-400 rounded-full translate-x-12 -translate-y-12"></div>
+                <div class="absolute bottom-0 left-1/3 w-20 h-20 bg-gray-400 rounded-full translate-y-10"></div>
             </div>
-            <div class="flex flex-col items-end">
-                <div class="flex items-center mb-10">
-                    <div class="flex -space-x-2">
-                        <?php
-                        $projectMeta = getProjectMeta($project['id']);
-                        if (is_array($projectMeta) && isset($projectMeta)) {
-                            foreach ($projectMeta as $projectM) {
-                                ?>
-                                <img src="https://i.pravatar.cc/40?img=4" alt="Avatar 1"
-                                    class="w-10 h-10 rounded-full border border-white">
-                                <?php
+            
+            <div class="relative z-10">
+                <!-- Header Section -->
+                <div class="flex items-start justify-between mb-6">
+                    <div class="flex items-center gap-4">
+                        <a href="http://workfyre.local/main/dashboard/projects.php"
+                            class="flex items-center justify-center w-12 h-12 bg-white/20 hover:bg-white/30 rounded-xl transition-all duration-300 group">
+                            <i class="fa-solid fa-arrow-left text-lg group-hover:scale-110 transition-transform"></i>
+                        </a>
+                        <div>
+                            <h1 class="text-5xl font-bold mb-2 drop-shadow-lg"><?php echo $project['title']; ?></h1>
+                            <p class="text-xl opacity-90 max-w-2xl leading-relaxed">
+                                <?php echo strlen($project['description']) > 120 ? substr($project['description'], 0, 120) . '...' : $project['description']; ?>
+                            </p>
+                        </div>
+                    </div>
+                    
+                    <!-- Project Status Badge -->
+                    <div class="flex flex-col items-end gap-3">
+                        <div class="flex items-center gap-2 bg-white/20 px-4 py-2 rounded-full">
+                            <div class="w-2 h-2 bg-green-400 rounded-full animate-pulse"></div>
+                            <span class="text-sm font-medium">Active</span>
+                        </div>
+                        <button id="header-invite-team"
+                            class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-all duration-300 group">
+                            <i class="fa-solid fa-user-plus text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-sm font-medium">Invite Team</span>
+                        </button>
+                    </div>
+                </div>
+                
+                <!-- Project Statistics -->
+                <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-6">
+                    <?php
+                    // Calculate project statistics
+                    $totalTasks = is_array($taskData) ? count($taskData) : 0;
+                    $completedTasks = 0;
+                    $inProgressTasks = 0;
+                    $notStartedTasks = 0;
+                    
+                    if (is_array($taskData)) {
+                        foreach ($taskData as $task) {
+                            switch ($task['status']) {
+                                case 'completed':
+                                    $completedTasks++;
+                                    break;
+                                case 'in-progress':
+                                    $inProgressTasks++;
+                                    break;
+                                case 'not-started':
+                                    $notStartedTasks++;
+                                    break;
                             }
                         }
-                        ?>
-
+                    }
+                    
+                    $progressPercentage = $totalTasks > 0 ? round(($completedTasks / $totalTasks) * 100) : 0;
+                    ?>
+                    
+                    <!-- Progress Card -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                        <div class="flex items-center justify-between mb-2">
+                            <span class="text-sm opacity-80">Progress</span>
+                            <span class="text-lg font-bold"><?php echo $progressPercentage; ?>%</span>
+                        </div>
+                        <div class="w-full bg-white/20 rounded-full h-2">
+                            <div class="bg-gradient-to-r from-green-400 to-emerald-500 h-2 rounded-full transition-all duration-1000" 
+                                 style="width: <?php echo $progressPercentage; ?>%"></div>
+                        </div>
                     </div>
-                    <button id="header-invite-team"
-                        class="flex shadow-md cursor-pointer hover:bg-[#1a143b] hover:text-white items-center space-x-1 px-3 py-1.5 bg-white text-blue-900 rounded-full  ml-2">
-                        <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"
-                            xmlns="http://www.w3.org/2000/svg">
-                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4">
-                            </path>
-                        </svg>
-                        <span class="text-sm font-medium">Invite</span>
-                    </button>
+                    
+                    <!-- Total Tasks -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-blue-500/30 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-tasks text-blue-300"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold"><?php echo $totalTasks; ?></p>
+                                <p class="text-sm opacity-80">Total Tasks</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Completed Tasks -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-green-500/30 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-check text-green-300"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold"><?php echo $completedTasks; ?></p>
+                                <p class="text-sm opacity-80">Completed</p>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <!-- Deadline -->
+                    <div class="bg-white/10 backdrop-blur-sm rounded-2xl p-4 border border-white/20">
+                        <div class="flex items-center gap-3">
+                            <div class="w-10 h-10 bg-orange-500/30 rounded-xl flex items-center justify-center">
+                                <i class="fa-solid fa-calendar text-orange-300"></i>
+                            </div>
+                            <div>
+                                <p class="text-2xl font-bold"><?php echo $projectDeadline; ?></p>
+                                <p class="text-sm opacity-80">Days Left</p>
+                            </div>
+                        </div>
+                    </div>
                 </div>
-                <div class="">
-                    <p class="text-xl font-medium"><?php echo "Deadline: " . $projectDeadline . " " . "Days" ?></p>
+                
+                <!-- Team Section -->
+                <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-4">
+                        <span class="text-sm opacity-80">Team Members:</span>
+                        <div class="flex -space-x-3">
+                            <?php
+                            $projectMeta = getProjectMeta($project['id']);
+                            if (is_array($projectMeta) && isset($projectMeta)) {
+                                foreach ($projectMeta as $index => $projectM) {
+                                    if ($index < 5) { // Show max 5 team members
+                                        ?>
+                                        <div class="relative group">
+                                            <img src="<?php echo $projectM['profile_image'] ?? 'https://i.pravatar.cc/40?img=' . ($index + 1); ?>" 
+                                                 alt="<?php echo $projectM['firstname']; ?>"
+                                                 class="w-12 h-12 rounded-full border-2 border-white/50 hover:border-white transition-all duration-300 shadow-lg object-cover">
+                                            <div class="absolute bottom-full left-1/2 transform -translate-x-1/2 mb-2 px-2 py-1 bg-gray-900 text-white text-xs rounded opacity-0 group-hover:opacity-100 transition-opacity duration-300 whitespace-nowrap">
+                                                <?php echo $projectM['firstname'] . ' ' . $projectM['lastname']; ?>
+                                            </div>
+                                        </div>
+                                        <?php
+                                    }
+                                }
+                            }
+                            ?>
+                            <?php if (is_array($projectMeta) && count($projectMeta) > 5): ?>
+                                <div class="w-12 h-12 rounded-full border-2 border-white/50 bg-white/20 flex items-center justify-center text-sm font-medium">
+                                    +<?php echo is_array($projectMeta) ? count($projectMeta) - 5 : 0; ?>
+                                </div>
+                            <?php endif; ?>
+                        </div>
+                    </div>
+                    
+                    <!-- Quick Actions -->
+                    <div class="flex items-center gap-3">
+                        <button class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-all duration-300 group">
+                            <i class="fa-solid fa-download text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-sm font-medium">Export</span>
+                        </button>
+                        <button class="flex items-center gap-2 bg-white/20 hover:bg-white/30 px-4 py-2 rounded-full transition-all duration-300 group">
+                            <i class="fa-solid fa-share text-sm group-hover:scale-110 transition-transform"></i>
+                            <span class="text-sm font-medium">Share</span>
+                        </button>
+                    </div>
                 </div>
             </div>
-
         </div>
 
 
@@ -182,51 +490,172 @@ $taskData = getTasksDetailsByProject_id($project_id);
         <div class="bg-white rounded shadow p-4">
             <div class="flex justify-between items-center mb-4">
                 <h2 class="text-xl font-semibold">To Do</h2>
+                <?php if ($currentUser && $currentUser['user_role'] === 'admin'): ?>
                 <button
                     class="add-task-btn text-sm px-2 py-1 bg-gray-100 hover:bg-gray-200 border border-slate-300 rounded hover:bg-blue-600"
                     data-target="todo">+ Add</button>
+                <?php endif; ?>
             </div>
             <div id="todo" class="task-column space-y-3 min-h-[200px] max-h-[700px] snap-y overflow-y-auto">
                 <?php
                 $taskDetails = getTasksDetailsByStatus($project_id, 'not-started');
                 if (isset($taskDetails) && is_array($taskDetails)) {
                     foreach ($taskDetails as $taskCard) {
+                        // Check if current user can modify this task
+                        $canModify = canUserModifyTask($taskCard['id']);
+                        $dragClass = $canModify ? 'cursor-move' : 'cursor-not-allowed';
+                        $draggable = $canModify ? 'true' : 'false';
+                        $permissionIndicator = $canModify ? 'text-green-600' : 'text-red-600';
+                        $permissionText = $canModify ? 'You can modify' : 'Assigned to another user';
                         ?>
-                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-gray-100 rounded shadow-md cursor-move"
-                            draggable="true" data-task_id="<?php echo $taskCard['id']; ?>">
-                            <a
-                                href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
-                                <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
-                                <P class="text-sm mb-2 w-full">
-                                    <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
-                                </p>
-                                <div
-                                    class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
-                                    <P><?php echo $taskCard['deadline']; ?></p>
-                                    <span
-                                        class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
-                                        </spam>
+                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-gray-100 rounded shadow-md <?php echo $dragClass; ?> hover:shadow-lg transition-all duration-200"
+                            draggable="<?php echo $draggable; ?>" data-task_id="<?php echo $taskCard['id']; ?>">
+                            
+                            <!-- Permission Indicator -->
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2 text-xs <?php echo $permissionIndicator; ?>">
+                                    <i class="fa-solid <?php echo $canModify ? 'fa-check-circle' : 'fa-lock'; ?>"></i>
+                                    <span><?php echo $permissionText; ?></span>
                                 </div>
-
-                                <div class="flex items-center justify-between text-sm relative">
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-comments"></i>
-                                        <p>12 Comments</p>
-                                    </div>
-                                    <div class="flex items-center gap-1"><span>Assign to:</span>
-                                        <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                            </div>
+                            
+                            <?php
+                            // Check if current user can access the task details
+                            $currentUser = getCurrentUser();
+                            $canAccess = false;
+                            $taskUrl = '';
+                            
+                            if ($currentUser) {
+                                // Admin can access all tasks
+                                if ($currentUser['user_role'] === 'admin') {
+                                    $canAccess = true;
+                                    $taskUrl = "http://workfyre.local/main/dashboard/templates/tasks.php?pid=" . $_GET['pid'] . "&tid=" . $taskCard['id'];
+                                }
+                                // Assigned user can access their tasks
+                                elseif ($taskCard['assign_to'] == $currentUser['id']) {
+                                    $canAccess = true;
+                                    $taskUrl = "http://workfyre.local/main/dashboard/templates/tasks.php?pid=" . $_GET['pid'] . "&tid=" . $taskCard['id'];
+                                }
+                            }
+                            
+                            if ($canAccess) {
+                                // User can access - show clickable link
+                                ?>
+                                <a
+                                    href="<?php echo $taskUrl; ?>"
+                                    class="block hover:bg-gray-50 p-2 -m-2 rounded transition-colors duration-200 cursor-pointer pointer-events-auto">
+                                    <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                    <P class="text-sm mb-2 w-full">
+                                        <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                    </p>
+                                    <div
+                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                        <P><?php echo $taskCard['deadline']; ?></p>
                                         <span
-                                            class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
-                                            <img src="http://workfyre.local/assets/images/default-profile.png"
-                                                class="w-full h-full object-cover" alt="default profile" />
-                                        </span>
-                                        <div
-                                            class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
-                                            <span><?php echo $assignUser['firstname'] . ' ' . $assignUser['lastname']; ?></span>
+                                            class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                            </spam>
+                                    </div>
+
+                                    <!-- Dependency Status Indicator -->
+                                    <?php
+                                    $taskDependencies = getTaskDependencies($taskCard['id']);
+                                    if (is_array($taskDependencies) && !empty($taskDependencies)) {
+                                        $completedDeps = 0;
+                                        $totalDeps = count($taskDependencies);
+                                        foreach ($taskDependencies as $dep) {
+                                            $depTask = getTasksDetailsByTask_id($dep['dependency_task_id']);
+                                            if (is_array($depTask) && isset($depTask['status']) && $depTask['status'] === 'completed') {
+                                                $completedDeps++;
+                                            }
+                                        }
+                                        $depStatusClass = $completedDeps === $totalDeps ? 'text-green-600' : 'text-yellow-600';
+                                        $depStatusText = $completedDeps === $totalDeps ? 'Ready' : 'Waiting';
+                                    ?>
+                                    <div class="flex items-center gap-2 mb-2 text-xs <?php echo $depStatusClass; ?>">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span><?php echo $depStatusText; ?> (<?php echo $completedDeps; ?>/<?php echo $totalDeps; ?> deps)</span>
+                                    </div>
+                                    <?php } ?>
+
+                                    <div class="flex items-center justify-between text-sm relative">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-comments"></i>
+                                            <p>12 Comments</p>
+                                        </div>
+                                        <div class="flex items-center gap-1"><span>Assign to:</span>
+                                            <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                            <span
+                                                class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                    class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <div
+                                                class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                <span><?php echo is_array($assignUser) ? $assignUser['firstname'] . ' ' . $assignUser['lastname'] : 'Unknown User'; ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <?php
+                            } else {
+                                // User cannot access - show non-clickable content
+                                ?>
+                                <div class="block p-2 -m-2 rounded cursor-not-allowed opacity-75">
+                                    <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                    <P class="text-sm mb-2 w-full">
+                                        <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                    </p>
+                                    <div
+                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                        <P><?php echo $taskCard['deadline']; ?></p>
+                                        <span
+                                            class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                            </spam>
+                                    </div>
+
+                                    <!-- Dependency Status Indicator -->
+                                    <?php
+                                    $taskDependencies = getTaskDependencies($taskCard['id']);
+                                    if (is_array($taskDependencies) && !empty($taskDependencies)) {
+                                        $completedDeps = 0;
+                                        $totalDeps = count($taskDependencies);
+                                        foreach ($taskDependencies as $dep) {
+                                            $depTask = getTasksDetailsByTask_id($dep['dependency_task_id']);
+                                            if (is_array($depTask) && isset($depTask['status']) && $depTask['status'] === 'completed') {
+                                                $completedDeps++;
+                                            }
+                                        }
+                                        $depStatusClass = $completedDeps === $totalDeps ? 'text-green-600' : 'text-yellow-600';
+                                        $depStatusText = $completedDeps === $totalDeps ? 'Ready' : 'Waiting';
+                                    ?>
+                                    <div class="flex items-center gap-2 mb-2 text-xs <?php echo $depStatusClass; ?>">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span><?php echo $depStatusText; ?> (<?php echo $completedDeps; ?>/<?php echo $totalDeps; ?> deps)</span>
+                                    </div>
+                                    <?php } ?>
+
+                                    <div class="flex items-center justify-between text-sm relative">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-comments"></i>
+                                            <p>12 Comments</p>
+                                        </div>
+                                        <div class="flex items-center gap-1"><span>Assign to:</span>
+                                            <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                            <span
+                                                class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                    class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <div
+                                                class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                <span><?php echo is_array($assignUser) ? $assignUser['firstname'] . ' ' . $assignUser['lastname'] : 'Unknown User'; ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                                <?php
+                            }
+                            ?>
                         </div>
                         <?php
                     }
@@ -248,42 +677,161 @@ $taskData = getTasksDetailsByProject_id($project_id);
                 $taskDetails = getTasksDetailsByStatus($project_id, 'in-progress');
                 if (isset($taskDetails) && is_array($taskDetails)) {
                     foreach ($taskDetails as $taskCard) {
+                        // Check if current user can modify this task
+                        $canModify = canUserModifyTask($taskCard['id']);
+                        $dragClass = $canModify ? 'cursor-move' : 'cursor-not-allowed';
+                        $draggable = $canModify ? 'true' : 'false';
+                        $permissionIndicator = $canModify ? 'text-green-600' : 'text-red-600';
+                        $permissionText = $canModify ? 'You can modify' : 'Assigned to another user';
                         ?>
-                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-yellow-200 rounded shadow-md cursor-move"
-                            draggable="true" data-task_id="<?php echo $taskCard['id']; ?>">
-                            <a
-                                href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
-                                <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
-                                <P class="text-sm mb-2 w-full">
-                                    <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
-                                </p>
-                                <div
-                                    class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
-                                    <P><?php echo $taskCard['deadline']; ?></p>
-                                    <span
-                                        class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
-                                        </spam>
+                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-yellow-200 rounded shadow-md <?php echo $dragClass; ?> hover:shadow-lg transition-all duration-200"
+                            draggable="<?php echo $draggable; ?>" data-task_id="<?php echo $taskCard['id']; ?>">
+                            
+                            <!-- Permission Indicator -->
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2 text-xs <?php echo $permissionIndicator; ?>">
+                                    <i class="fa-solid <?php echo $canModify ? 'fa-check-circle' : 'fa-lock'; ?>"></i>
+                                    <span><?php echo $permissionText; ?></span>
                                 </div>
-
-                                <div class="flex items-center justify-between text-sm relative">
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-comments"></i>
-                                        <p>12 Comments</p>
-                                    </div>
-                                    <div class="flex items-center gap-1"><span>Assign to:</span>
-                                        <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                            </div>
+                            
+                            <?php
+                            // Check if current user can access the task details
+                            $currentUser = getCurrentUser();
+                            $canAccess = false;
+                            $taskUrl = '';
+                            
+                            if ($currentUser) {
+                                // Admin can access all tasks
+                                if ($currentUser['user_role'] === 'admin') {
+                                    $canAccess = true;
+                                    $taskUrl = "http://workfyre.local/main/dashboard/templates/tasks.php?pid=" . $_GET['pid'] . "&tid=" . $taskCard['id'];
+                                }
+                                // Assigned user can access their tasks
+                                elseif ($taskCard['assign_to'] == $currentUser['id']) {
+                                    $canAccess = true;
+                                    $taskUrl = "http://workfyre.local/main/dashboard/templates/tasks.php?pid=" . $_GET['pid'] . "&tid=" . $taskCard['id'];
+                                }
+                            }
+                            
+                            if ($canAccess) {
+                                // User can access - show clickable link
+                                ?>
+                                <a
+                                    href="<?php echo $taskUrl; ?>"
+                                    class="block hover:bg-gray-50 p-2 -m-2 rounded transition-colors duration-200 cursor-pointer pointer-events-auto">
+                                    <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                    <P class="text-sm mb-2 w-full">
+                                        <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                    </p>
+                                    <div
+                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                        <P><?php echo $taskCard['deadline']; ?></p>
                                         <span
-                                            class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
-                                            <img src="http://workfyre.local/assets/images/default-profile.png"
-                                                class="w-full h-full object-cover" alt="default profile" />
-                                        </span>
-                                        <div
-                                            class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
-                                            <span><?php echo $assignUser['firstname'] . ' ' . $assignUser['lastname']; ?></span>
+                                            class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                            </spam>
+                                    </div>
+
+                                    <!-- Dependency Status Indicator -->
+                                    <?php
+                                    $taskDependencies = getTaskDependencies($taskCard['id']);
+                                    if (is_array($taskDependencies) && !empty($taskDependencies)) {
+                                        $completedDeps = 0;
+                                        $totalDeps = count($taskDependencies);
+                                        foreach ($taskDependencies as $dep) {
+                                            $depTask = getTasksDetailsByTask_id($dep['dependency_task_id']);
+                                            if (is_array($depTask) && isset($depTask['status']) && $depTask['status'] === 'completed') {
+                                                $completedDeps++;
+                                            }
+                                        }
+                                        $depStatusClass = $completedDeps === $totalDeps ? 'text-green-600' : 'text-yellow-600';
+                                        $depStatusText = $completedDeps === $totalDeps ? 'Ready' : 'Waiting';
+                                    ?>
+                                    <div class="flex items-center gap-2 mb-2 text-xs <?php echo $depStatusClass; ?>">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span><?php echo $depStatusText; ?> (<?php echo $completedDeps; ?>/<?php echo $totalDeps; ?> deps)</span>
+                                    </div>
+                                    <?php } ?>
+
+                                    <div class="flex items-center justify-between text-sm relative">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-comments"></i>
+                                            <p>12 Comments</p>
+                                        </div>
+                                        <div class="flex items-center gap-1"><span>Assign to:</span>
+                                            <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                            <span
+                                                class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                    class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <div
+                                                class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                <span><?php echo is_array($assignUser) ? $assignUser['firstname'] . ' ' . $assignUser['lastname'] : 'Unknown User'; ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <?php
+                            } else {
+                                // User cannot access - show non-clickable content
+                                ?>
+                                <div class="block p-2 -m-2 rounded cursor-not-allowed opacity-75">
+                                    <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                    <P class="text-sm mb-2 w-full">
+                                        <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                    </p>
+                                    <div
+                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                        <P><?php echo $taskCard['deadline']; ?></p>
+                                        <span
+                                            class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                            </spam>
+                                    </div>
+
+                                    <!-- Dependency Status Indicator -->
+                                    <?php
+                                    $taskDependencies = getTaskDependencies($taskCard['id']);
+                                    if (is_array($taskDependencies) && !empty($taskDependencies)) {
+                                        $completedDeps = 0;
+                                        $totalDeps = count($taskDependencies);
+                                        foreach ($taskDependencies as $dep) {
+                                            $depTask = getTasksDetailsByTask_id($dep['dependency_task_id']);
+                                            if (is_array($depTask) && isset($depTask['status']) && $depTask['status'] === 'completed') {
+                                                $completedDeps++;
+                                            }
+                                        }
+                                        $depStatusClass = $completedDeps === $totalDeps ? 'text-green-600' : 'text-yellow-600';
+                                        $depStatusText = $completedDeps === $totalDeps ? 'Ready' : 'Waiting';
+                                    ?>
+                                    <div class="flex items-center gap-2 mb-2 text-xs <?php echo $depStatusClass; ?>">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span><?php echo $depStatusText; ?> (<?php echo $completedDeps; ?>/<?php echo $totalDeps; ?> deps)</span>
+                                    </div>
+                                    <?php } ?>
+
+                                    <div class="flex items-center justify-between text-sm relative">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-comments"></i>
+                                            <p>12 Comments</p>
+                                        </div>
+                                        <div class="flex items-center gap-1"><span>Assign to:</span>
+                                            <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                            <span
+                                                class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                    class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <div
+                                                class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                <span><?php echo is_array($assignUser) ? $assignUser['firstname'] . ' ' . $assignUser['lastname'] : 'Unknown User'; ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                                <?php
+                            }
+                            ?>
                         </div>
                         <?php
                     }
@@ -304,42 +852,161 @@ $taskData = getTasksDetailsByProject_id($project_id);
                 $taskDetails = getTasksDetailsByStatus($project_id, 'completed');
                 if (isset($taskDetails) && is_array($taskDetails)) {
                     foreach ($taskDetails as $taskCard) {
+                        // Check if current user can modify this task
+                        $canModify = canUserModifyTask($taskCard['id']);
+                        $dragClass = $canModify ? 'cursor-move' : 'cursor-not-allowed';
+                        $draggable = $canModify ? 'true' : 'false';
+                        $permissionIndicator = $canModify ? 'text-green-600' : 'text-red-600';
+                        $permissionText = $canModify ? 'You can modify' : 'Assigned to another user';
                         ?>
-                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-sky-200 rounded shadow-md cursor-move"
-                            draggable="true" data-task_id="<?php echo $taskCard['id']; ?>">
-                            <a
-                                href="http://workfyre.local/main/dashboard/templates/tasks.php?pid=<?php echo $_GET['pid']; ?>&tid=<?php echo $taskCard['id']; ?>">
-                                <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
-                                <P class="text-sm mb-2 w-full">
-                                    <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
-                                </p>
-                                <div
-                                    class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
-                                    <P><?php echo $taskCard['deadline']; ?></p>
-                                    <span
-                                        class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
-                                        </spam>
+                        <div id="tasks<?php echo $taskCard['id']; ?>" class="p-3 bg-sky-200 rounded shadow-md <?php echo $dragClass; ?> hover:shadow-lg transition-all duration-200"
+                            draggable="<?php echo $draggable; ?>" data-task_id="<?php echo $taskCard['id']; ?>">
+                            
+                            <!-- Permission Indicator -->
+                            <div class="flex items-center justify-between mb-2">
+                                <div class="flex items-center gap-2 text-xs <?php echo $permissionIndicator; ?>">
+                                    <i class="fa-solid <?php echo $canModify ? 'fa-check-circle' : 'fa-lock'; ?>"></i>
+                                    <span><?php echo $permissionText; ?></span>
                                 </div>
-
-                                <div class="flex items-center justify-between text-sm relative">
-                                    <div class="flex items-center gap-1">
-                                        <i class="fa-regular fa-comments"></i>
-                                        <p>12 Comments</p>
-                                    </div>
-                                    <div class="flex items-center gap-1"><span>Assign to:</span>
-                                        <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                            </div>
+                            
+                            <?php
+                            // Check if current user can access the task details
+                            $currentUser = getCurrentUser();
+                            $canAccess = false;
+                            $taskUrl = '';
+                            
+                            if ($currentUser) {
+                                // Admin can access all tasks
+                                if ($currentUser['user_role'] === 'admin') {
+                                    $canAccess = true;
+                                    $taskUrl = "http://workfyre.local/main/dashboard/templates/tasks.php?pid=" . $_GET['pid'] . "&tid=" . $taskCard['id'];
+                                }
+                                // Assigned user can access their tasks
+                                elseif ($taskCard['assign_to'] == $currentUser['id']) {
+                                    $canAccess = true;
+                                    $taskUrl = "http://workfyre.local/main/dashboard/templates/tasks.php?pid=" . $_GET['pid'] . "&tid=" . $taskCard['id'];
+                                }
+                            }
+                            
+                            if ($canAccess) {
+                                // User can access - show clickable link
+                                ?>
+                                <a
+                                    href="<?php echo $taskUrl; ?>"
+                                    class="block hover:bg-gray-50 p-2 -m-2 rounded transition-colors duration-200 cursor-pointer pointer-events-auto">
+                                    <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                    <P class="text-sm mb-2 w-full">
+                                        <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                    </p>
+                                    <div
+                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                        <P><?php echo $taskCard['deadline']; ?></p>
                                         <span
-                                            class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
-                                            <img src="http://workfyre.local/assets/images/default-profile.png"
-                                                class="w-full h-full object-cover" alt="default profile" />
-                                        </span>
-                                        <div
-                                            class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
-                                            <span><?php echo $assignUser['firstname'] . ' ' . $assignUser['lastname']; ?></span>
+                                            class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                            </spam>
+                                    </div>
+
+                                    <!-- Dependency Status Indicator -->
+                                    <?php
+                                    $taskDependencies = getTaskDependencies($taskCard['id']);
+                                    if (is_array($taskDependencies) && !empty($taskDependencies)) {
+                                        $completedDeps = 0;
+                                        $totalDeps = count($taskDependencies);
+                                        foreach ($taskDependencies as $dep) {
+                                            $depTask = getTasksDetailsByTask_id($dep['dependency_task_id']);
+                                            if (is_array($depTask) && isset($depTask['status']) && $depTask['status'] === 'completed') {
+                                                $completedDeps++;
+                                            }
+                                        }
+                                        $depStatusClass = $completedDeps === $totalDeps ? 'text-green-600' : 'text-yellow-600';
+                                        $depStatusText = $completedDeps === $totalDeps ? 'Ready' : 'Waiting';
+                                    ?>
+                                    <div class="flex items-center gap-2 mb-2 text-xs <?php echo $depStatusClass; ?>">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span><?php echo $depStatusText; ?> (<?php echo $completedDeps; ?>/<?php echo $totalDeps; ?> deps)</span>
+                                    </div>
+                                    <?php } ?>
+
+                                    <div class="flex items-center justify-between text-sm relative">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-comments"></i>
+                                            <p>12 Comments</p>
+                                        </div>
+                                        <div class="flex items-center gap-1"><span>Assign to:</span>
+                                            <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                            <span
+                                                class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                    class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <div
+                                                class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                <span><?php echo is_array($assignUser) ? $assignUser['firstname'] . ' ' . $assignUser['lastname'] : 'Unknown User'; ?></span>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </a>
+                                <?php
+                            } else {
+                                // User cannot access - show non-clickable content
+                                ?>
+                                <div class="block p-2 -m-2 rounded cursor-not-allowed opacity-75">
+                                    <h2 class="text-xl font-medium"><?php echo $taskCard['title']; ?></h2>
+                                    <P class="text-sm mb-2 w-full">
+                                        <?php echo strlen($taskCard['description']) > 20 ? substr($taskCard['description'], 0, 40) . '...' : $taskCard['description']; ?>
+                                    </p>
+                                    <div
+                                        class="flex items-center mb-2 border-b border-slate-300 p-2 justify-between text-sm font-light">
+                                        <P><?php echo $taskCard['deadline']; ?></p>
+                                        <span
+                                            class="<?php echo getClasses($taskCard['priority']); ?> rounded-full flex px-2 items-center justify-center"><?php echo $taskCard['priority']; ?>
+                                            </spam>
+                                    </div>
+
+                                    <!-- Dependency Status Indicator -->
+                                    <?php
+                                    $taskDependencies = getTaskDependencies($taskCard['id']);
+                                    if (is_array($taskDependencies) && !empty($taskDependencies)) {
+                                        $completedDeps = 0;
+                                        $totalDeps = count($taskDependencies);
+                                        foreach ($taskDependencies as $dep) {
+                                            $depTask = getTasksDetailsByTask_id($dep['dependency_task_id']);
+                                            if (is_array($depTask) && isset($depTask['status']) && $depTask['status'] === 'completed') {
+                                                $completedDeps++;
+                                            }
+                                        }
+                                        $depStatusClass = $completedDeps === $totalDeps ? 'text-green-600' : 'text-yellow-600';
+                                        $depStatusText = $completedDeps === $totalDeps ? 'Ready' : 'Waiting';
+                                    ?>
+                                    <div class="flex items-center gap-2 mb-2 text-xs <?php echo $depStatusClass; ?>">
+                                        <i class="fa-solid fa-link"></i>
+                                        <span><?php echo $depStatusText; ?> (<?php echo $completedDeps; ?>/<?php echo $totalDeps; ?> deps)</span>
+                                    </div>
+                                    <?php } ?>
+
+                                    <div class="flex items-center justify-between text-sm relative">
+                                        <div class="flex items-center gap-1">
+                                            <i class="fa-regular fa-comments"></i>
+                                            <p>12 Comments</p>
+                                        </div>
+                                        <div class="flex items-center gap-1"><span>Assign to:</span>
+                                            <?php $assignUser = getUsersDetailsByUser_id($taskCard['assign_to']); ?>
+                                            <span
+                                                class="assignUserProfile rounded-full ml-1 font-medium border border-slate-300 flex items-center justify-center w-6 h-6 overflow-hidden">
+                                                <img src="http://workfyre.local/assets/images/default-profile.png"
+                                                    class="w-full h-full object-cover" alt="default profile" />
+                                            </span>
+                                            <div
+                                                class="userNameTooltip bg-slate-900/80 text-white absolute px-4 py-2 rounded top-5 left-8 flex z-50 hidden group-hover:flex">
+                                                <span><?php echo is_array($assignUser) ? $assignUser['firstname'] . ' ' . $assignUser['lastname'] : 'Unknown User'; ?></span>
+                                            </div>
                                         </div>
                                     </div>
                                 </div>
-                            </a>
+                                <?php
+                            }
+                            ?>
                         </div>
                         <?php
                     }
@@ -513,9 +1180,14 @@ $taskData = getTasksDetailsByProject_id($project_id);
     <!-- carate task modal -->
     <div id="taskModal" class="fixed inset-0 bg-gray-500/50 flex items-center justify-center hidden z-50">
         <div class="bg-white rounded-lg p-6 w-1/2 shadow-lg">
+            <div class="flex items-center justify-between mb-4">
+                <h3 class="text-xl font-semibold">Add Task</h3>
+                <button id="closeTaskModal" class="text-gray-500 hover:text-gray-700 text-2xl">
+                    <i class="fa-solid fa-xmark"></i>
+                </button>
+            </div>
             <form id="createTaskForm" method="POST" enctype="multipart/form-data">
                 <input type="hidden" name="project_id" value="<?php echo $project_id; ?>">
-                <h3 class="text-xl font-semibold mb-4">Add Task</h3>
                 <div class="mb-2" id="taskCreateSuccessMessage"></div>
                 <div>
                     <label>Title:</label>
@@ -524,19 +1196,10 @@ $taskData = getTasksDetailsByProject_id($project_id);
                         required>
                 </div>
                 <div class="flex items-center w-full gap-5">
-                    <div class="w-1/2">
-                        <label>priority:</label>
-                        <select id="task_priority" name="task_priority"
-                            class="w-full border p-2 rounded mb-4 border border-slate-300">
-                            <option value="high">High</option>
-                            <option value="medium">Medium</option>
-                            <option value="low">Low</option>
-                        </select>
-                    </div>
-                    <div class="w-1/2">
+                    <div class="w-full">
                         <label>Deadline:</label>
                         <input type="date" id="task_deadline" name="task_deadline"
-                            class="w-full border p-2 rounded mb-4 border border-slate-300" placeholder="Task title"
+                            class="w-full border p-2 rounded mb-4 border border-slate-300" placeholder="Task deadline"
                             required>
                     </div>
                 </div>
@@ -599,8 +1262,6 @@ $taskData = getTasksDetailsByProject_id($project_id);
                         multiple>
                 </div>
                 <div class="flex justify-end space-x-2">
-                    <button type="button" id="cancelBtn"
-                        class="px-4 py-2 bg-gray-300 rounded hover:bg-gray-400">Cancel</button>
                     <button type="submit" id="addTaskBtn" name="addTaskBtn"
                         class="px-4 py-2 bg-blue-500 text-white rounded hover:bg-blue-600">Add
                         Task</button>

@@ -12,13 +12,23 @@
             <div>
                 <div class="flex flex-col mb-5">
                     <label class="mb-2">New Password:</label>
-                    <input type="password" class="border py-2 px-4 text-lg rounded-2xl border-slate-300"
-                        name="new_password" placeholder="Create your neww password" required />
+                    <div class="relative">
+                        <input type="password" class="border py-2 px-4 text-lg rounded-2xl border-slate-300 w-full pr-12"
+                            name="new_password" placeholder="Create your neww password" required />
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 toggle-password" data-target="new_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
                 <div class="flex flex-col mb-5">
                     <label class="mb-2">Confirm Password:</label>
-                    <input type="password" class="border py-2 px-4 text-lg rounded-2xl border-slate-300"
-                        name="confirm_password" placeholder="Retyoe your password" required />
+                    <div class="relative">
+                        <input type="password" class="border py-2 px-4 text-lg rounded-2xl border-slate-300 w-full pr-12"
+                            name="confirm_password" placeholder="Retyoe your password" required />
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-500 hover:text-gray-700 toggle-password" data-target="confirm_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
                 </div>
             </div>
             <div>

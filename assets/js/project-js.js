@@ -10,6 +10,25 @@ $(document).ready(function () {
         $('#projectModal').addClass('hidden');
     });
 
+    // Close modal with X button
+    $('#closeProjectModal').on('click', function () {
+        $('#projectModal').addClass('hidden');
+    });
+
+    // Close modal when clicking outside
+    $('#projectModal').on('click', function (e) {
+        if (e.target === this) {
+            $(this).addClass('hidden');
+        }
+    });
+
+    // Close modal with ESC key
+    $(document).on('keydown', function (e) {
+        if (e.key === 'Escape' && !$('#projectModal').hasClass('hidden')) {
+            $('#projectModal').addClass('hidden');
+        }
+    });
+
     let filesToUpload = [];
 
     $('#project_attachments').on('change', function (e) {
@@ -85,16 +104,23 @@ $(document).ready(function () {
                 // console.log(response);
                 if (response.status == 'success') {
                     $('#projectSuccessMessage').html(`
-                        <div class="bg-green-100 text-green-300 border border-green-300 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                        <div class="bg-green-100 text-green-700 border border-green-300 rounded-lg py-3 px-4 text-sm">${response.message}</div>
                     `);
                     $('#createProjectForm').trigger('reset');
                     $('#previewContainer').html('');
+                    filesToUpload = []; // Clear the files array
+                    
+                    // Hide modal after successful creation
                     setTimeout(() => {
+                        $('#projectModal').addClass('hidden');
                         $('#projectSuccessMessage').html('');
+                        
+                        // Reload the page to show the new project
+                        location.reload();
                     }, 2000);
                 } else {
                     $('#projectSuccessMessage').html(`
-                        <div class="bg-red-100 text-red-400 border border-red-400 rounded-lg py-3 px-4 text-xl">${response.message}</div>
+                        <div class="bg-red-100 text-red-700 border border-red-400 rounded-lg py-3 px-4 text-sm">${response.message}</div>
                     `);
                 }
             },

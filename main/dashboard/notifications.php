@@ -1,5 +1,10 @@
 <?php include_once('../sidebar.php'); ?>
-<?php include_once('../header.php'); ?>
+<?php include_once('../header.php'); 
+
+// Get current user data for dynamic profile image
+$currentUser = getCurrentUser();
+$userDetails = getUsersDetailsByUser_id($currentUser['id']);
+?>
 
 <section class="pt-25 pl-85 w-full pr-10">
     <h2>Notification Dashboard</h2>
@@ -21,11 +26,11 @@
                     <div class="flex items-center gap-4">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                            <img src="https://i.pravatar.cc/50" class="w-full h-full object-cover"
-                                alt="default profile" />
+                            <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/50'; ?>" class="w-full h-full object-cover"
+                                alt="profile" />
                         </span>
                         <div>
-                            <p class="font-medium">Gokarna Chaudhary</p>
+                            <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                             <p class="text-sm">Create Rest api for data access.</p>
                         </div>
                     </div>
@@ -38,11 +43,11 @@
                     <div class="flex items-center gap-4">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                            <img src="https://i.pravatar.cc/30" class="w-full h-full object-cover"
-                                alt="default profile" />
+                            <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/30'; ?>" class="w-full h-full object-cover"
+                                alt="profile" />
                         </span>
                         <div>
-                            <p class="font-medium">Gokarna Chaudhary</p>
+                            <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                             <p class="text-sm">Create Rest api for data access.</p>
                         </div>
                     </div>
@@ -58,11 +63,11 @@
                     <div class="flex items-center gap-4">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                            <img src="https://i.pravatar.cc/60" class="w-full h-full object-cover"
-                                alt="default profile" />
+                            <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/60'; ?>" class="w-full h-full object-cover"
+                                alt="profile" />
                         </span>
                         <div>
-                            <p class="font-medium">Gokarna Chaudhary</p>
+                            <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                             <p class="text-sm">Create Rest api for data access.</p>
                         </div>
                     </div>
@@ -75,11 +80,11 @@
                     <div class="flex items-center gap-4">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                            <img src="https://i.pravatar.cc/80" class="w-full h-full object-cover"
-                                alt="default profile" />
+                            <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/80'; ?>" class="w-full h-full object-cover"
+                                alt="profile" />
                         </span>
                         <div>
-                            <p class="font-medium">Gokarna Chaudhary</p>
+                            <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                             <p class="text-sm">Create Rest api for data access.</p>
                         </div>
                     </div>
@@ -92,11 +97,11 @@
                     <div class="flex items-center gap-4">
                         <span
                             class="rounded-full font-medium border border-slate-300 flex items-center justify-center w-10 h-10 overflow-hidden">
-                            <img src="https://i.pravatar.cc/70" class="w-full h-full object-cover"
-                                alt="default profile" />
+                            <img src="<?php echo $userDetails['profile_image'] ?? 'https://i.pravatar.cc/70'; ?>" class="w-full h-full object-cover"
+                                alt="profile" />
                         </span>
                         <div>
-                            <p class="font-medium">Gokarna Chaudhary</p>
+                            <p class="font-medium"><?php echo htmlspecialchars($userDetails['firstname'] ?? 'User') . ' ' . htmlspecialchars($userDetails['lastname'] ?? ''); ?></p>
                             <p class="text-sm">Create Rest api for data access.</p>
                         </div>
                     </div>

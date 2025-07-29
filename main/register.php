@@ -3,60 +3,90 @@
 include_once('public-templates/public-header.php');
 
 ?>
-<section class="w-full  h-full flex items-center justify-center">
-    <div class="w-1/2 mt-20 bg-white text-black px-10 py-20 rounded-xl mb-10">
-        <div class="items-center justify-center flex flex-col mb-10">
-            <h2>Workfyre</h2>
-            <h1 class="text-3xl font-medium">Welcome to the workfyre</h1>
-            <p>Manage and Track Your Projects</p>
+<section class="min-h-screen bg-gradient-to-br from-blue-50 via-white to-purple-50 flex items-center justify-center py-12 px-4">
+    <div class="w-full max-w-md">
+        <!-- Logo and Header -->
+        <div class="text-center mb-8">
+            <div class="inline-flex items-center justify-center mb-4">
+                <img src="<?php echo HOMEPAGE_URL ?>/assets/images/logo.png" alt="Workfyre" class="h-12 w-auto" />
+            </div>
+            <h1 class="text-3xl font-bold text-gray-900 mb-2">Create Account</h1>
+            <p class="text-gray-600">Join Workfyre and manage your projects efficiently</p>
         </div>
-        <div class="mb-2" id="successMessage"></div>
-        
-        <form id="userRegisterForm" class="items-center justify-center" method="POST">
-            <div>
-                <div class="flex flex-col mb-5">
-                    <label class="mb-2">First Name:</label>
-                    <input type="text" class="border py-2 px-4 text-lg rounded-lg border-slate-300 mb-1" name="firstname"
-                        placeholder="Enter your first name" required />
-                        <span id="firstnameMessage" class="text-sm font-light text-red-600"></span>
+
+        <!-- Form Card -->
+        <div class="bg-white rounded-2xl shadow-xl border border-gray-100 p-8">
+            <div class="mb-6" id="successMessage"></div>
+            
+            <form id="userRegisterForm" class="space-y-6">
+                <!-- Name Fields -->
+                <div class="grid grid-cols-2 gap-4">
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">First Name</label>
+                        <input type="text" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
+                               name="firstname" placeholder="John" required />
+                        <span id="firstnameMessage" class="text-sm text-red-500 mt-1"></span>
+                    </div>
+                    <div>
+                        <label class="block text-sm font-medium text-gray-700 mb-2">Last Name</label>
+                        <input type="text" 
+                               class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
+                               name="lastname" placeholder="Doe" required />
+                        <span id="lastnameMessage" class="text-sm text-red-500 mt-1"></span>
+                    </div>
                 </div>
-                <div class="flex flex-col mb-5">
-                    <label class="mb-2">Last Name:</label>
-                    <input type="text" class="border py-2 px-4 text-lg rounded-lg border-slate-300 mb-1" name="lastname"
-                        placeholder="Enter your last name" required />
-                    <span id="lastnameMessage" class="text-sm font-light text-red-600"></span>
-                </div>
-                <div class="flex flex-col mb-5">
-                    <label class="mb-2">Email:</label>
-                    <input type="email" class="border py-2 px-4 text-lg rounded-lg border-slate-300 mb-1" name="email"
-                        placeholder="Enter your email" required />
-                    <span id="emailMessage" class="text-sm font-light text-red-600"></span>
-                </div>
-                <div class="flex flex-col mb-5">
-                    <label class="mb-2">Password:</label>
-                    <input type="password" class="border py-2 px-4 text-lg rounded-lg border-slate-300 mb-1" name="password"
-                        placeholder="Enter your password" required />
-                </div>
-                <div class="flex flex-col mb-5">
-                    <label class="mb-2">Confirm Password:</label>
-                    <input type="password" class="border py-2 px-4 text-lg rounded-lg border-slate-300 mb-1"
-                        name="confirm_password" placeholder="Retype your password" required />
-                    <span id="confirmPasswordMessage" class="text-sm font-light text-red-600"></span>
-                </div>
-            </div>
-            <div>
-                <div class="flex flex-col justify-center gap-5 mb-5">
-                    <button type="submit"
-                        class="bg-[#181832] text-white hover:bg-transparent hover:text-[#181832] cursor-pointer text-xl font-bold hover:border p-4 rounded-lg">Register</button>
-                </div>
+
+                <!-- Email Field -->
                 <div>
-                    <p>Already have account? <a href="<?php echo HOMEPAGE_URL ?>/main/login.php"
-                            class="text-blue-400">Login</a></p>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Email Address</label>
+                    <input type="email" 
+                           class="w-full px-4 py-3 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
+                           name="email" placeholder="john@example.com" required />
+                    <span id="emailMessage" class="text-sm text-red-500 mt-1"></span>
                 </div>
-            </div>
-        </form>
+
+                <!-- Password Fields -->
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Password</label>
+                    <div class="relative">
+                        <input type="password" 
+                               class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
+                               name="password" placeholder="Create a strong password" required />
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 toggle-password" data-target="password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <div>
+                    <label class="block text-sm font-medium text-gray-700 mb-2">Confirm Password</label>
+                    <div class="relative">
+                        <input type="password" 
+                               class="w-full px-4 py-3 pr-12 border border-gray-300 rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition-all duration-200" 
+                               name="confirm_password" placeholder="Confirm your password" required />
+                        <button type="button" class="absolute right-3 top-1/2 transform -translate-y-1/2 text-gray-400 hover:text-gray-600 toggle-password" data-target="confirm_password">
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                    <span id="confirmPasswordMessage" class="text-sm text-red-500 mt-1"></span>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" 
+                        class="w-full bg-gradient-to-r from-blue-600 to-purple-600 text-white py-3 px-6 rounded-xl font-semibold hover:from-blue-700 hover:to-purple-700 transform hover:scale-105 transition-all duration-200 shadow-lg">
+                    Create Account
+                </button>
+
+                <!-- Login Link -->
+                <div class="text-center">
+                    <p class="text-gray-600">
+                        Already have an account? 
+                        <a href="<?php echo HOMEPAGE_URL ?>/main/login.php" class="text-blue-600 hover:text-blue-700 font-medium">Sign in</a>
+                    </p>
+                </div>
+            </form>
+        </div>
     </div>
 </section>
-<?php include_once('public-templates/public-footer.php');
-
-?>
+<?php include_once('public-templates/public-footer.php'); ?>

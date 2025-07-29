@@ -1,4 +1,19 @@
 $(document).ready(function () {
+    // Password toggle functionality
+    $('.toggle-password').on('click', function() {
+        const target = $(this).data('target');
+        const input = $(this).siblings('input');
+        const icon = $(this).find('i');
+        
+        if (input.attr('type') === 'password') {
+            input.attr('type', 'text');
+            icon.removeClass('fa-eye').addClass('fa-eye-slash');
+        } else {
+            input.attr('type', 'password');
+            icon.removeClass('fa-eye-slash').addClass('fa-eye');
+        }
+    });
+
     // Handle register form submission
     $('#userRegisterForm').submit(function (event) {
         event.preventDefault();
@@ -45,7 +60,7 @@ $(document).ready(function () {
             email: email,
             password: password,
             confirmPassword: confirmPassword,
-            action: 'user_register',
+            action: 'register',
         }
         // console.log(formdata)
         ajaxRegisterLogin(formdata);
@@ -78,7 +93,7 @@ $(document).ready(function () {
         var formdata = {
             email: email,
             password: password,
-            action: 'user_login',
+            action: 'login',
         }
         ajaxRegisterLogin(formdata);
     });
